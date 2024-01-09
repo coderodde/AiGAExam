@@ -49,16 +49,19 @@ public final class Task0 {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
         System.out.println("seed = " +  seed);
+        // Protein length between 2 and 20 codons, inclusively:
         int proteinLength = 2 + random.nextInt(19);
         
         System.out.println("Source protein length: " + proteinLength);
         
-        // Create a random protein 
+        // Create a random protein as a list of codons:
         List<Codon> proteinAsCodonList = 
                 generateRandomProteinAsCodonList(
                         proteinLength, 
                         random);
         
+        // Convert the protein expressed as the codon list to the string of
+        // amino acids:
         String proteinAsAminoAcids = 
                 convertCodonListToAminoAcidString(proteinAsCodonList);
         
@@ -81,6 +84,7 @@ public final class Task0 {
         System.out.println("Number of permutations: " + 
                 computeNumberOfPermutations(proteinFrequencyMap));
         
+        // The fun part starts here:
         processProtein(proteinAsAminoAcids, proteinAsCodonList);
     }
     
@@ -113,33 +117,48 @@ public final class Task0 {
     }
     
     private static void processProtein(String protein, List<Codon> codonList) {
+        // Map each amino acid 'A' in 'protein' to the list of indices at which 
+        // codons encoding 'A' appear. For example, protein "WAW" returns 
+        // {'W': <0, 2>, 'A': <1>}.
         Map<Character, List<Integer>> mapAminoAcidToIndices =
                 computeMapAminoAcidsToCodonIndexList(protein);
         
+        // For example, convert {'W': <0, 2>, 'A': <1>} to <<0, 2>, <1>>:
         List<List<Integer>> indexGroups = getIndexGroups(mapAminoAcidToIndices);
         
+        // Produce all the possible codon group permutations:
         List<List<List<Integer>>> groupPermutations = 
                 new MultipleGroupPermuter<>(indexGroups)
                         .computeGroupPermutations();
         
+        // BEGIN: A hash set trick: removes duplicate permutations:
         Set<List<List<Integer>>> filteredPermutations = 
                 new HashSet<>(groupPermutations);
         
         groupPermutations.clear();
         groupPermutations.addAll(filteredPermutations);
+        // END: A hash set trick: removes duplicate permutations.
         
+        // Compute the list of all codon permutations:
         List<List<List<Integer>>> sortedIndexGroups = sort(groupPermutations);
         
+        // Convert the output of the above statement into the list of protein
+        // permutations:
         List<ProteinPermutation> proteinPermutationList = 
                 computeProteinPermutationList(codonList, 
                                               groupPermutations,
                                               sortedIndexGroups);
         
+        // Sort the protein permutations by f-scores (lowest comes first):
         proteinPermutationList.sort(new ProteinPermutationComparator());
         
+        // Print the permutations:
         proteinPermutationList.forEach(System.out::println);
     }
     
+    // Computes the copy of codon list index permutations into the same data 
+    // structure except that the actual group lists are sorted in ascending 
+    // order.
     private static <T> List<List<List<Integer>>> 
         sort(List<List<List<Integer>>> data) {
         
@@ -160,6 +179,7 @@ public final class Task0 {
         return copy;
     }
     
+    // Converts the group permutation data into a list of protein permutations:
     private static List<ProteinPermutation> 
         computeProteinPermutationList(
                 List<Codon> proteinAsCodonList,
@@ -170,16 +190,23 @@ public final class Task0 {
                 new ArrayList<>(groupPermutations.size());
         
         for (int i = 0; i < groupPermutations.size(); i++) {
+            // For each group permutation, do:
             List<List<Integer>> listOfIndexGroups = groupPermutations.get(i);
-            List<List<Integer>> listOfIndexGroupsSorted = groupPermutationsSorted.get(i);
+            List<List<Integer>> listOfIndexGroupsSorted = 
+                    groupPermutationsSorted.get(i);
+            
+            // Obtain a permuted codon list:
             List<Codon> permutedCodonList = 
                     computePermutedProtein(proteinAsCodonList, 
                                            listOfIndexGroups,
                                            listOfIndexGroupsSorted);
             
+            // Convert the above permuted codon list into a string of amino
+            // acids:
             String permutedAminoAcidString = 
                     convertCodonListToAminoAcidString(permutedCodonList);
             
+            // Get the f-score of the current codon list:
             double f = computeF(permutedCodonList);
             
             ProteinPermutation proteinPermutation = 
@@ -194,6 +221,8 @@ public final class Task0 {
         return proteinPermutationList;
     }
         
+    // Computes the f-score of a codon list <C_1, ..., C_n>. In other words, 
+    // returns (Z(C_1, C_2) + ... + Z(C_{n - 1}, C_n)) / n:
     private static double computeF(List<Codon> codonList) {
         List<Double> zScoreList = computeZScoreList(codonList);
         double sum = 0.0;
@@ -205,6 +234,8 @@ public final class Task0 {
         return sum / zScoreList.size();
     }
         
+    // Computes the list of z-scores. For codon list <C_1, C_2, ..., C_n>, 
+    // returns <Z(C_1, C_2), ..., z(C_{n - 1}, C_n)>:
     private static List<Double> computeZScoreList(List<Codon> codonList) {
         List<Double> zScoreList = new ArrayList<>(codonList.size() - 1);
         Map<String, Integer> codonPairMap = computeCodonPairMap(codonList);
@@ -212,8 +243,10 @@ public final class Task0 {
         for (int i = 0; i < codonList.size() - 1; i++) {
             Codon codon1 = codonList.get(i);
             Codon codon2 = codonList.get(i + 1);
+            
             char aminoAcid1 = Utils.getAminoAcid(codon1.toString());
             char aminoAcid2 = Utils.getAminoAcid(codon2.toString());
+            
             int expectedNumberOfOccurences = 
                     getFrequencyOfCodonPair(aminoAcid1, 
                                             aminoAcid2);
@@ -236,6 +269,7 @@ public final class Task0 {
         return zScoreList;
     }
     
+    // Computes a map mapping a codon PAIR to its frequency:
     private static Map<String, Integer> 
         computeCodonPairMap(List<Codon> codonList) {
         Map<String, Integer> map = new HashMap<>();
@@ -258,6 +292,8 @@ public final class Task0 {
         return map;
     }
         
+    // Converts the codon list to the amino acid string that that codon list 
+    // encodes:
     private static String convertCodonListToAminoAcidString(
             List<Codon> permutedCodonList) {
         StringBuilder stringBuilder = 
@@ -271,6 +307,7 @@ public final class Task0 {
         return stringBuilder.toString();
     }
         
+    // The actual method for permuting a codon list:
     private static List<Codon> computePermutedProtein(
             List<Codon> proteinAsCodonList,
             List<List<Integer>> listOfIndexGroups,
@@ -283,15 +320,23 @@ public final class Task0 {
             outputProteinAsCodonList.add(null);
         }
         
+        // Here, outputProteinAsCodonList can allocate all the codons.
+        
+        // Do permute:
         for (int i = 0; i < listOfIndexGroups.size(); i++) {
             List<Integer> codonGroupIndices = listOfIndexGroups.get(i);
             List<Integer> codonGroupIndicesSorted =
                     listOfIndexGroupsSorted.get(i);
             
             for (int j = 0; j < codonGroupIndices.size(); j++) {
+                // Take current sorted codon index:
                 int codonIndex = codonGroupIndicesSorted.get(j);
+                // Take the codon to place next:
                 Codon codonToPlace = proteinAsCodonList.get(codonIndex);
+                // Take the index at whic to place 'codonToPlace':
                 int placeIndex = codonGroupIndices.get(j);
+                // Set the 'codonToPlace' to its proper location dectated by the
+                // permutation:
                 outputProteinAsCodonList.set(placeIndex, codonToPlace);
             }
         }
@@ -299,6 +344,8 @@ public final class Task0 {
         return outputProteinAsCodonList;
     }    
     
+    // Converts the map mapping each amino acid to its appearance index list to
+    // a simple list of lists:
     private static List<List<Integer>> 
         getIndexGroups(Map<Character, List<Integer>> map) {
         
@@ -311,6 +358,8 @@ public final class Task0 {
         return indexGroups;
     }
 
+    // Computes a map mapping each amino acid to the list of indices at which it
+    // it appears in the input protein:
     private static Map<Character, List<Integer>>
         computeMapAminoAcidsToCodonIndexList(String protein) {
         
@@ -342,6 +391,7 @@ public final class Task0 {
         return resultMap;
     }
     
+    // Computes the f-score:
     static double f(Map<String, Double> m) {
         double sum = 0.0;
         
@@ -352,6 +402,7 @@ public final class Task0 {
         return sum / m.size();
     }
     
+    // Computes the z-map over the list of exons:
     static Map<String, Double> computeZMap(List<String> exons) {
         Map<String, Integer> expectedFrequencies = 
                 getCodonPairFrequencies(exons);
@@ -394,6 +445,9 @@ public final class Task0 {
         return m;
     }
     
+    // Returns the frequency of a codon pair (x, y). Formally, returns the 
+    // number of codons encoding amino acid 'x' times the number of codons
+    // encoding amino acid 'y':
     static int getFrequencyOfCodonPair(char x, char y) {
         return Utils.MAP_AMINO_ACID_TO_CODON_LISTS.get(x).size() *
                Utils.MAP_AMINO_ACID_TO_CODON_LISTS.get(y).size();
