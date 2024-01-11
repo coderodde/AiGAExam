@@ -245,5 +245,22 @@ public final class Utils {
                 return n * factorial(n - 1);
         }
     }
+    
+    public static long parseSeed(String[] args) {
+        if (args.length == 0) {
+            return System.currentTimeMillis();
+        }
+        
+        try {
+            return Long.parseLong(args[0]);
+        } catch (NumberFormatException ex) {
+            System.err.println(
+                    "WARNING: Could not parse " 
+                            + args[0] 
+                            + " as an long value.");
+            
+            return System.currentTimeMillis();
+        }
+    }
 }
 
