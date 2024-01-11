@@ -1,6 +1,6 @@
 package task1;
 
-public interface ChildrenExpander<N> {
+public interface NodeExpander<N> {
     
     N[] expand(N node);
 }

@@ -14,7 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Utils {
+public final class Utils {
     
     public static final SortedMap<Character, SortedSet<String>> 
             MAP_AMINO_ACID_TO_CODON_SETS;    
