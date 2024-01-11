@@ -16,7 +16,7 @@ public final class Task1 {
         System.out.println("Seed = " + seed);
         
         MultipleSequenceAlignmentInstance msai = 
-                getRandomMSAInstance(random, 5);
+                getRandomMSAInstance(random, 1);
         
         long start = System.currentTimeMillis();
         DijkstrasAlgorithm dijkstrasAlgorithm = new DijkstrasAlgorithm();
@@ -47,6 +47,23 @@ public final class Task1 {
         System.out.printf(
                 "Bidirectional Dijsktra's algorithm in %d milliseconds.\n",
                 System.currentTimeMillis() - start);
+        
+        System.out.println("Dijkstra's algorithm returned:");
+        printPath(path1);
+        System.out.println();
+        
+        System.out.println("Bidirectional Dijkstra's algorithm returned:");
+        printPath(path2);
+    }
+    
+    private static void printPath(List<LatticeNode> path) {
+        String maximumLineNumberString = Integer.toString(path.size());
+        String format = "%" + maximumLineNumberString.length() + "d: %s\n";
+        int lineNumber = 1;
+        
+        for (LatticeNode latticeNode : path) {
+            System.out.printf(format, lineNumber++, latticeNode);
+        }
     }
     
     private static MultipleSequenceAlignmentInstance 
@@ -62,7 +79,6 @@ public final class Task1 {
         for (int i = 0; i < sequences.length; i++) {
             String sequence = getRandomSequence(random, 
                                                 probabilityDistribution);
-            
             sequences[i] = sequence;
         }
         
@@ -77,10 +93,10 @@ public final class Task1 {
     
     private static String 
         getRandomSequence(
-                Random random, 
+                Random random,
                 ProbabilityDistribution<Character> probabilityDistribution) {
             
-        int length = 4 + random.nextInt(10); // Between 10 and 40.
+        int length = 2;// + random.nextInt(9); // Length between 5 and 20.
         StringBuilder sb = new StringBuilder(length);
         
         for (int i = 0; i < length;) {

@@ -1,11 +1,11 @@
 package task1;
 
+import java.util.Arrays;
+
 public final class LatticeNode {
     
-    private static int nodeIdCounter = Integer.MIN_VALUE;
-    
-    // The node ID. Used in hashCode and equals.
-    private final int id;
+    // Cached hash code:
+    private final int hashCode;
 
     /**
      * The problem instance this lattice node contributes to.
@@ -19,19 +19,20 @@ public final class LatticeNode {
 
     LatticeNode(MultipleSequenceAlignmentInstance instance,
                 int[] coordinates) {
-        this.id = nodeIdCounter++;
+        this.hashCode = Arrays.hashCode(coordinates);
         this.instance = instance;
         this.coordinates = coordinates;
     }
 
     @Override
     public boolean equals(Object o) {
-        return id == ((LatticeNode) o).id;
+        LatticeNode otherLatticeNode = (LatticeNode) o;
+        return Arrays.equals(this.coordinates, otherLatticeNode.coordinates);
     }
     
     @Override
     public int hashCode() {
-        return id;
+        return Arrays.hashCode(this.coordinates);
     }
 
     @Override

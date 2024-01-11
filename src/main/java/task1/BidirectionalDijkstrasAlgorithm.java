@@ -35,8 +35,7 @@ public final class BidirectionalDijkstrasAlgorithm<N> {
         
         // queueA - the open list in the forward direction.
         // queueB - the open list in the backward direction.
-        // closedA - the closed list in the forward direction.
-        // closedB - the closed list in the backward direction.
+        // closed - the closed list in both directions.
         // distanceMapA - the distance map in the forward direction.
         // distanceMapB - the distance map in the backward direction.
         // parentsMapA - the parent map in the forward direction.
@@ -58,23 +57,30 @@ public final class BidirectionalDijkstrasAlgorithm<N> {
         while (!openA.isEmpty() && !openB.isEmpty()) {
             int deltaA = distanceMapA.get(openA.peek().getNode());
             int deltaB = distanceMapB.get(openB.peek().getNode());
+            int temporaryPathLength = deltaA + deltaB;
             
-            if (touchNode != null && upperCostBound < deltaA + deltaB) {
+            if (touchNode != null && temporaryPathLength > upperCostBound) {
                 return tracebackPath(touchNode, 
                                      parentsMapA, 
                                      parentsMapB);
             }
             
-            int searchFrontierSizeA = openA.size() + closedA.size();
-            int searchFrontierSizeB = openB.size() + closedB.size();
+            int searchFrontierSizeA = openA.size();
+            int searchFrontierSizeB = openB.size();
             
             if (searchFrontierSizeA < searchFrontierSizeB) {
                 N currentNode = openA.remove().getNode();
                 
+                if (closedA.contains(currentNode) || 
+                    closedB.contains(currentNode)) {
+                    continue;
+                }
+                
                 closedA.add(currentNode);
                 
                 for (N childNode : childrenExpander.expand(currentNode)) {
-                    if (closedA.contains(childNode)) {
+                    if (closedA.contains(childNode) ||
+                        closedB.contains(childNode)) {
                         continue;
                     }
                     
@@ -88,25 +94,32 @@ public final class BidirectionalDijkstrasAlgorithm<N> {
                         parentsMapA.put(childNode, currentNode);
                         openA.add(new HeapNodeHolder<>(tentativeScoreA, 
                                                        childNode));
-                        
-                        if (closedB.contains(childNode)) {
-                            int pathLength = 
-                                    tentativeScoreA + 
-                                    distanceMapB.get(childNode);
-                            
-                            if (upperCostBound > pathLength) {
-                                upperCostBound = pathLength;
-                                touchNode = childNode;
-                            }
+                    }
+                    
+                    if (closedB.contains(childNode)) {
+                        int pathLength = 
+                                tentativeScoreA + 
+                                distanceMapB.get(childNode);
+
+                        if (upperCostBound > pathLength) {
+                            upperCostBound = pathLength;
+                            touchNode = childNode;
                         }
                     }
                 }
             } else {
                 N currentNode = openB.remove().getNode();
+                
+                if (closedA.contains(currentNode) ||
+                    closedB.contains(currentNode)) {
+                    continue;
+                }
+                
                 closedB.add(currentNode);
                 
                 for (N parentNode : parentsExpander.expand(currentNode)) {
-                    if (closedB.contains(parentNode)) {
+                    if (closedA.contains(parentNode) ||
+                        closedB.contains(parentNode)) {
                         continue;
                     }
                     
@@ -119,16 +132,16 @@ public final class BidirectionalDijkstrasAlgorithm<N> {
                         distanceMapB.put(parentNode, tentativeScoreB);
                         parentsMapB.put(parentNode, currentNode);
                         openB.add(new HeapNodeHolder<>(tentativeScoreB, 
-                                                       parentNode));
-                        
-                        if (closedA.contains(parentNode)) {
-                            int pathLength = tentativeScoreB + 
-                                             distanceMapA.get(parentNode);
-                            
-                            if (upperCostBound > pathLength) {
-                                upperCostBound = pathLength;
-                                touchNode = parentNode;
-                            }
+                                                       parentNode));    
+                    }
+                    
+                    if (closedA.contains(parentNode)) {
+                        int pathLength = tentativeScoreB + 
+                                         distanceMapA.get(parentNode);
+
+                        if (upperCostBound > pathLength) {
+                            upperCostBound = pathLength;
+                            touchNode = parentNode;
                         }
                     }
                 }
@@ -136,7 +149,7 @@ public final class BidirectionalDijkstrasAlgorithm<N> {
         }
         
         throw new IllegalStateException(
-                "Target node not reachable from the soruce node.");
+                "Target node not reachable from the source node.");
     }
     
     private static <N> List<N> tracebackPath(N touchNode,

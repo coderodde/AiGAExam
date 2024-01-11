@@ -34,7 +34,7 @@ public final class DijkstrasAlgorithm<N> {
             }
             
             if (closed.contains(currentNode)) {
-                throw new IllegalStateException("Fds");
+                continue;
             }
             
             closed.add(currentNode);
