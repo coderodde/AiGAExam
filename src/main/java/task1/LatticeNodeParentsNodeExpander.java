@@ -1,10 +1,12 @@
 package task1;
 
+import java.util.List;
+
 public final class LatticeNodeParentsNodeExpander 
         implements NodeExpander<LatticeNode> {
 
     @Override
-    public LatticeNode[] expand(LatticeNode node) {
+    public List<LatticeNode> expand(LatticeNode node) {
         return node.getParents();
     }
 }

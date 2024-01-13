@@ -1,6 +1,8 @@
 package task1;
 
+import java.util.List;
+
 public interface NodeExpander<N> {
     
-    N[] expand(N node);
+    List<N> expand(N node);
 }

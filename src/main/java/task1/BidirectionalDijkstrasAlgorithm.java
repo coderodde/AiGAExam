@@ -22,156 +22,158 @@ public final class BidirectionalDijkstrasAlgorithm<N> {
             return Arrays.asList(target);
         }
         
-        Queue<HeapNodeHolder<N>> openA = new PriorityQueue<>();
-        Queue<HeapNodeHolder<N>> openB = new PriorityQueue<>();
-        Set<N> closedA = new HashSet<>();
-        Set<N> closedB = new HashSet<>();
-        Map<N, Integer> distanceMapA = new HashMap<>();
-        Map<N, Integer> distanceMapB = new HashMap<>();
-        Map<N, N> parentsMapA = new HashMap<>();
-        Map<N, N> parentsMapB = new HashMap<>();
-        int upperCostBound; 
-        N touchNode;
+        Queue<HeapNodeWrapper<N>> queueF = new PriorityQueue<>();
+        Queue<HeapNodeWrapper<N>> queueB = new PriorityQueue<>();
+        Map<N, Integer> distancesF = new HashMap<>();
+        Map<N, Integer> distancesB = new HashMap<>();
+        Map<N, N> parentsF = new HashMap<>();
+        Map<N, N> parentsB = new HashMap<>();
+        Set<N> settledF = new HashSet<>();
+        Set<N> settledB = new HashSet<>();
         
-        // queueA - the open list in the forward direction.
-        // queueB - the open list in the backward direction.
-        // closed - the closed list in both directions.
-        // distanceMapA - the distance map in the forward direction.
-        // distanceMapB - the distance map in the backward direction.
-        // parentsMapA - the parent map in the forward direction.
-        // parentsMapB - the parent map in the backward direction.
+        queueF.add(new HeapNodeWrapper<>(source, 0));
+        queueB.add(new HeapNodeWrapper<>(target, 0));
         
-        // Initializing state:
-        openA.add(new HeapNodeHolder<>(0, source));
-        openB.add(new HeapNodeHolder<>(0, target));
+        distancesF.put(source, 0);
+        distancesB.put(target, 0);
         
-        distanceMapA.put(source, 0);
-        distanceMapB.put(target, 0);
+        parentsF.put(source, null);
+        parentsB.put(target, null);
         
-        parentsMapA.put(source, null);
-        parentsMapB.put(target, null);
+        int mu = Integer.MAX_VALUE;
+        N touchNodeF = null;
+        N touchNodeB = null;
         
-        upperCostBound = Integer.MAX_VALUE;
-        touchNode = null;
-        
-        while (!openA.isEmpty() && !openB.isEmpty()) {
-            int deltaA = distanceMapA.get(openA.peek().getNode());
-            int deltaB = distanceMapB.get(openB.peek().getNode());
-            int temporaryPathLength = deltaA + deltaB;
+        while (!queueF.isEmpty() && !queueB.isEmpty()) {
+            N currentNodeF = queueF.remove().getNode();
+            N currentNodeB = queueB.remove().getNode();
             
-            if (touchNode != null && temporaryPathLength > upperCostBound) {
-                return tracebackPath(touchNode, 
-                                     parentsMapA, 
-                                     parentsMapB);
+            settledF.add(currentNodeF);
+            settledB.add(currentNodeB);
+            
+            for (N childNode : childrenExpander.expand(currentNodeF)) {
+                if (settledF.contains(childNode)) {
+                    continue;
+                }
+                
+                if (!distancesF.containsKey(childNode)
+                        || distancesF.get(childNode) > 
+                           distancesF.get(currentNodeF) +
+                           weightFunction.getWeight(currentNodeF, childNode)) {
+                    
+                    int tentativeDistance = 
+                            distancesF.get(currentNodeF) + 
+                            weightFunction.getWeight(currentNodeF, childNode);
+                    
+                    distancesF.put(childNode, tentativeDistance);
+                    parentsF.put(childNode, currentNodeF);
+                    queueF.add(new HeapNodeWrapper<>(childNode, 
+                                                     tentativeDistance));
+                } 
+                
+                if (settledB.contains(childNode)) {
+                    int shortestPathUpperBound = 
+                            distancesF.get(currentNodeF) +
+                            weightFunction.getWeight(currentNodeF, childNode) +
+                            distancesB.get(childNode);
+                    
+                    if (mu > shortestPathUpperBound) {
+                        mu = shortestPathUpperBound;
+                        touchNodeF = currentNodeF;
+                        touchNodeB = childNode;
+                    }
+                }
             }
             
-            int searchFrontierSizeA = openA.size();
-            int searchFrontierSizeB = openB.size();
+            for (N parentNode : parentsExpander.expand(currentNodeB)) {
+                if (settledB.contains(parentNode)) {
+                    continue;
+                }
+                
+                if (!distancesB.containsKey(parentNode)
+                        || distancesB.get(parentNode) >
+                           distancesB.get(currentNodeB) + 
+                           weightFunction.getWeight(parentNode, currentNodeB)) {
+                    
+                    int tentativeDistance = 
+                            distancesB.get(currentNodeB) +
+                            weightFunction.getWeight(parentNode, currentNodeB);
+                    
+                    distancesB.put(parentNode, tentativeDistance);
+                    parentsB.put(parentNode, currentNodeB);
+                    queueB.add(new HeapNodeWrapper<>(parentNode, 
+                                                     tentativeDistance));
+                }
+                
+                if (settledF.contains(parentNode)) {
+                    int shortestPathUpperBound = 
+                            distancesF.get(parentNode) +
+                            weightFunction.getWeight(parentNode, currentNodeB) +
+                            distancesB.get(currentNodeB);
+                    
+                    if (mu > shortestPathUpperBound) {
+                        mu = shortestPathUpperBound;
+                        touchNodeF = parentNode;
+                        touchNodeB = currentNodeB;
+                    }
+                }
+            }
             
-            if (searchFrontierSizeA < searchFrontierSizeB) {
-                N currentNode = openA.remove().getNode();
-                
-                if (closedA.contains(currentNode) || 
-                    closedB.contains(currentNode)) {
-                    continue;
-                }
-                
-                closedA.add(currentNode);
-                
-                for (N childNode : childrenExpander.expand(currentNode)) {
-                    if (closedA.contains(childNode) ||
-                        closedB.contains(childNode)) {
-                        continue;
-                    }
-                    
-                    int tentativeScoreA = 
-                            distanceMapA.get(currentNode) + 
-                            weightFunction.getWeight(currentNode, childNode);
-                    
-                    if (!distanceMapA.containsKey(childNode) ||
-                            distanceMapA.get(childNode) > tentativeScoreA) {
-                        distanceMapA.put(childNode, tentativeScoreA);
-                        parentsMapA.put(childNode, currentNode);
-                        openA.add(new HeapNodeHolder<>(tentativeScoreA, 
-                                                       childNode));
-                    }
-                    
-                    if (closedB.contains(childNode)) {
-                        int pathLength = 
-                                tentativeScoreA + 
-                                distanceMapB.get(childNode);
-
-                        if (upperCostBound > pathLength) {
-                            upperCostBound = pathLength;
-                            touchNode = childNode;
-                        }
-                    }
-                }
-            } else {
-                N currentNode = openB.remove().getNode();
-                
-                if (closedA.contains(currentNode) ||
-                    closedB.contains(currentNode)) {
-                    continue;
-                }
-                
-                closedB.add(currentNode);
-                
-                for (N parentNode : parentsExpander.expand(currentNode)) {
-                    if (closedA.contains(parentNode) ||
-                        closedB.contains(parentNode)) {
-                        continue;
-                    }
-                    
-                    int tentativeScoreB = 
-                            distanceMapB.get(currentNode) + 
-                            weightFunction.getWeight(parentNode, currentNode);
-                    
-                    if (!distanceMapB.containsKey(parentNode) ||
-                            distanceMapB.get(parentNode) > tentativeScoreB) {
-                        distanceMapB.put(parentNode, tentativeScoreB);
-                        parentsMapB.put(parentNode, currentNode);
-                        openB.add(new HeapNodeHolder<>(tentativeScoreB, 
-                                                       parentNode));    
-                    }
-                    
-                    if (closedA.contains(parentNode)) {
-                        int pathLength = tentativeScoreB + 
-                                         distanceMapA.get(parentNode);
-
-                        if (upperCostBound > pathLength) {
-                            upperCostBound = pathLength;
-                            touchNode = parentNode;
-                        }
-                    }
-                }
+            if (distancesF.get(currentNodeF) + 
+                distancesB.get(currentNodeB) >= mu) {
+                return tracebackPath(touchNodeF,
+                                     touchNodeB,
+                                     parentsF,
+                                     parentsB);
             }
         }
         
         throw new IllegalStateException(
-                "Target node not reachable from the source node.");
+                "The target node is not reachable from the source node.");
     }
     
-    private static <N> List<N> tracebackPath(N touchNode,
-                                             Map<N, N> parentsMapA,
-                                             Map<N, N> parentsMapB) {
+    private static <N> List<N> tracebackPath(N touchNodeF,
+                                             N touchNodeB,
+                                             Map<N, N> parentsF,
+                                             Map<N, N> parentsB) {
         List<N> path = new ArrayList<>();
-        N currentNode = touchNode;
         
-        while (currentNode != null) {
-            path.add(currentNode);
-            currentNode = parentsMapA.get(currentNode);
+        N node = touchNodeF;
+        
+        while (node != null) {
+            path.add(node);
+            node = parentsF.get(node);
         }
         
         Collections.reverse(path);
+        node = touchNodeB;
         
-        currentNode = parentsMapB.get(touchNode);
-        
-        while (currentNode != null) {
-            path.add(currentNode);
-            currentNode = parentsMapB.get(currentNode);
+        while (node != null) {
+            path.add(node);
+            node = parentsB.get(node);
         }
         
         return path;
+    }
+    
+    private static final class HeapNodeWrapper<N> 
+         implements Comparable<HeapNodeWrapper<N>> {
+        
+        private final N node;
+        private final int distance;
+        
+        HeapNodeWrapper(N node, int distance) {
+            this.node = node;
+            this.distance = distance;
+        }
+        
+        N getNode() {
+            return node;
+        }
+
+        @Override
+        public int compareTo(HeapNodeWrapper<N> other) {
+            return distance - other.distance;
+        }
     }
 }

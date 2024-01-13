@@ -1,12 +1,11 @@
 package task1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class LatticeNode {
     
-    // Cached hash code:
-    private final int hashCode;
-
     /**
      * The problem instance this lattice node contributes to.
      */
@@ -19,7 +18,6 @@ public final class LatticeNode {
 
     LatticeNode(MultipleSequenceAlignmentInstance instance,
                 int[] coordinates) {
-        this.hashCode = Arrays.hashCode(coordinates);
         this.instance = instance;
         this.coordinates = coordinates;
     }
@@ -48,7 +46,7 @@ public final class LatticeNode {
         return sb.append("]").toString();
     }
 
-    LatticeNode[] getChildren() {
+    List<LatticeNode> getChildren() {
         // Find out in how many dimension we can move forward:
         int dimensionsNotReached = 0;
         String[] sequenceArray = instance.getSequenceArray();
@@ -64,7 +62,7 @@ public final class LatticeNode {
 
         // Create the array of children:
         int numberOfChildren = pow2(dimensionsNotReached) - 1;
-        LatticeNode[] children = new LatticeNode[numberOfChildren];
+        List<LatticeNode> children = new ArrayList<>(numberOfChildren);
         loadChildren(children, inclusionMap);
 
         // Convert offsets to actual child coordinates:
@@ -75,7 +73,7 @@ public final class LatticeNode {
         return children;
     }
 
-    LatticeNode[] getParents() {
+    List<LatticeNode> getParents() {
         // Find out in how many dimensions we can move BACKward:
         int dimensionsNotReached = 0;
         String[] sequenceArray = instance.getSequenceArray();
@@ -92,7 +90,7 @@ public final class LatticeNode {
 
         // Create the array of parents:
         int numberOfParents = pow2(dimensionsNotReached) - 1;
-        LatticeNode[] parents = new LatticeNode[numberOfParents];
+        List<LatticeNode> parents = new ArrayList(numberOfParents);
         loadParents(parents, inclusionMap);
 
         // Convert the offsets to actual parent coordinates:
@@ -107,21 +105,24 @@ public final class LatticeNode {
         return coordinates;
     }
 
-    private void loadChildren(LatticeNode[] children, boolean[] inclusionMap) {
+    private void loadChildren(List<LatticeNode> children, 
+                              boolean[] inclusionMap) {
+        
         int[] coords = new int[this.coordinates.length];
 
-        for (int i = 0; i != children.length; ++i) {
+        for (int i = 0; i != children.size(); ++i) {
             increment(coords, inclusionMap);
-            children[i] = new LatticeNode(instance, coords.clone());
+            children.set(i, new LatticeNode(instance, coords.clone()));
         }
     }
 
-    private void loadParents(LatticeNode[] parents, boolean[] inclusionMap) {
+    private void loadParents(List<LatticeNode> parents, 
+                             boolean[] inclusionMap) {
         int[] coords = new int[this.coordinates.length];
 
-        for (int i = 0; i != parents.length; ++i) {
+        for (int i = 0; i != parents.size(); ++i) {
             decrement(coords, inclusionMap);
-            parents[i] = new LatticeNode(instance, coords.clone());
+            parents.set(i, new LatticeNode(instance, coords.clone()));
         }
     }
 
