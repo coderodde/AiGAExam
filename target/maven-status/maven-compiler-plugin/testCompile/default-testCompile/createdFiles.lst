@@ -1,5 +1,7 @@
+task1\DirectedGraphNode.class
+task1\BidirectionalDijkstrasAlgorithmTest$GraphData.class
+task1\BidirectionalDijkstrasAlgorithmTest.class
 task1\DirectedGraphWeightFunction.class
 task1\DirectedGraphNodeChildrenExpander.class
-task1\DirectedGraphNode.class
-task1\BidirectionalDijkstrasAlgorithmTest.class
+task1\BidirectionalDijkstrasAlgorithmTest$Arc.class
 task1\DirectedGraphNodeParentsExpander.class
