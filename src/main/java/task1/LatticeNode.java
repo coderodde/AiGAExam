@@ -63,6 +63,11 @@ public final class LatticeNode {
         // Create the array of children:
         int numberOfChildren = pow2(dimensionsNotReached) - 1;
         List<LatticeNode> children = new ArrayList<>(numberOfChildren);
+        
+        for (int i = 0; i < numberOfChildren; i++) {
+            children.add(null);
+        }
+        
         loadChildren(children, inclusionMap);
 
         // Convert offsets to actual child coordinates:
@@ -91,6 +96,11 @@ public final class LatticeNode {
         // Create the array of parents:
         int numberOfParents = pow2(dimensionsNotReached) - 1;
         List<LatticeNode> parents = new ArrayList(numberOfParents);
+        
+        for (int i = 0; i < numberOfParents; i++) {
+            parents.add(null);
+        }
+        
         loadParents(parents, inclusionMap);
 
         // Convert the offsets to actual parent coordinates:

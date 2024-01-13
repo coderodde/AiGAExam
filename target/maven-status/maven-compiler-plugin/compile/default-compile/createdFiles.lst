@@ -6,6 +6,7 @@ task1\ParentsExpander.class
 task1\HeapNodeHolder.class
 task1\LatticeWeightFunction.class
 util\Codon.class
+task1\Alignment.class
 util\AminoAcidAlphabet.class
 task1\BidirectionalDijkstrasAlgorithm.class
 task1\LatticeNodeChildrenNodeExpander.class

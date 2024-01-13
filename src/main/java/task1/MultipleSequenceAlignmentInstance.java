@@ -1,5 +1,6 @@
 package task1;
 
+import java.util.List;
 import util.PAM250CostMatrix;
 
 public final class MultipleSequenceAlignmentInstance {
@@ -27,6 +28,39 @@ public final class MultipleSequenceAlignmentInstance {
         for (int i = 0; i < sequenceArray.length; i++) {
             this.sequenceArray[i] = sequences[i];
         }
+    }
+    
+    public Alignment computeAlignment(List<LatticeNode> path) {
+        
+        String[] strings = new String[getSequenceArray().length];
+        StringBuilder[] stringBuilders = new StringBuilder[strings.length];
+
+        for (int i = 0; i < stringBuilders.length; ++i) {
+            stringBuilders[i] = new StringBuilder();
+        }
+
+        for (int i = 1; i < path.size(); ++i) {
+            LatticeNode tail = path.get(i - 1);
+            LatticeNode head = path.get(i);
+
+            int[] tailCoordinates = tail.getCoordinates();
+            int[] headCoordinates = head.getCoordinates();
+
+            for (int j = 0; j < tailCoordinates.length; ++j) {
+                if (tailCoordinates[j] != headCoordinates[j]) {
+                    stringBuilders[j].
+                            append(sequenceArray[j].charAt(tailCoordinates[j]));
+                } else {
+                    stringBuilders[j].append(GAP_CHARACTER);
+                }
+            }
+        }
+
+        for (int i = 0; i < strings.length; ++i) {
+            strings[i] = stringBuilders[i].toString();
+        }
+
+        return new Alignment(strings);
     }
         
     public LatticeNode getSourceNode() {

@@ -33,10 +33,6 @@ public final class DijkstrasAlgorithm<N> {
                 return tracebackSolution(target, parentMap);
             }
             
-            if (closed.contains(currentNode)) {
-                continue;
-            }
-            
             closed.add(currentNode);
             
             for (N childNode : childrenExpander.expand(currentNode)) {

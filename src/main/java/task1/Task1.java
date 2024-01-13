@@ -16,17 +16,18 @@ public final class Task1 {
         System.out.println("Seed = " + seed);
         
         MultipleSequenceAlignmentInstance msai = 
-                getRandomMSAInstance(random, 1);
+                getRandomMSAInstance(random, 5);
         
         long start = System.currentTimeMillis();
         DijkstrasAlgorithm dijkstrasAlgorithm = new DijkstrasAlgorithm();
+        LatticeWeightFunction weightFunction = new LatticeWeightFunction(msai);
         
         List<LatticeNode> path1 =
                 dijkstrasAlgorithm.findShortestPath(
                         msai.getSourceNode(), 
                         msai.getTargetNode(),
                         new LatticeNodeChildrenNodeExpander(), 
-                        new LatticeWeightFunction(msai));
+                        weightFunction);
         
         System.out.printf(
                 "Dijkstra's algorithm in %d milliseconds.\n", 
@@ -42,10 +43,10 @@ public final class Task1 {
                         msai.getTargetNode(), 
                         new LatticeNodeChildrenNodeExpander(), 
                         new LatticeNodeParentsNodeExpander(), 
-                        new LatticeWeightFunction(msai));
+                        weightFunction);
         
         System.out.printf(
-                "Bidirectional Dijsktra's algorithm in %d milliseconds.\n",
+                "Bidirectional Dijsktra's algorithm in %d milliseconds.\n\n",
                 System.currentTimeMillis() - start);
         
         System.out.println("Dijkstra's algorithm returned:");
@@ -54,6 +55,22 @@ public final class Task1 {
         
         System.out.println("Bidirectional Dijkstra's algorithm returned:");
         printPath(path2);
+        
+        System.out.println("Dijkstra's algorithm path cost: " + 
+                getLatticePathCost(path1, weightFunction));
+        
+        System.out.println("Bidirectional Dijkstra's algorithm path cost: " +
+                getLatticePathCost(path2, weightFunction));
+        
+        System.out.println();
+        
+        System.out.printf("Dijkstra's alignment:\n%s\n", 
+                          msai.computeAlignment(path1));
+        
+        System.out.println();
+        
+        System.out.printf("Bidirectional Dijkstra's alignment:\n%s", 
+                msai.computeAlignment(path2));
     }
     
     private static void printPath(List<LatticeNode> path) {
@@ -96,7 +113,7 @@ public final class Task1 {
                 Random random,
                 ProbabilityDistribution<Character> probabilityDistribution) {
             
-        int length = 2;// + random.nextInt(9); // Length between 5 and 20.
+        int length = random.nextInt(10) + 5;
         StringBuilder sb = new StringBuilder(length);
         
         for (int i = 0; i < length;) {
@@ -127,5 +144,18 @@ public final class Task1 {
         }
         
         return probabilityDistribution;
+    }
+        
+    private static int getLatticePathCost(
+            List<LatticeNode> path, 
+            LatticeWeightFunction weightFunction) {
+        int cost = 0;
+        
+        for (int i = 0; i < path.size() - 1; i++) {
+            cost += weightFunction.getWeight(path.get(i),
+                                             path.get(i + 1));
+        }
+        
+        return cost;
     }
 }
