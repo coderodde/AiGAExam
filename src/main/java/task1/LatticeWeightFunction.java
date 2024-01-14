@@ -11,7 +11,8 @@ public final class LatticeWeightFunction
     
     @Override
     public int getWeight(LatticeNode tail, LatticeNode head) {
-        int weight = instance.getWeight(tail, head);
-        return Math.max(0, weight);
+        return instance.getWeight(tail, head) + 17; // + 17: normalize to non-
+                                                    // negative weights. Dumb,
+                                                    // but no can do.
     }
 }

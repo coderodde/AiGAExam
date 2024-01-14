@@ -16,7 +16,7 @@ public final class Task1 {
         System.out.println("Seed = " + seed);
         
         MultipleSequenceAlignmentInstance msai = 
-                getRandomMSAInstance(random, 5);
+                getRandomMSAInstance(random, 4);
         
         long start = System.currentTimeMillis();
         DijkstrasAlgorithm dijkstrasAlgorithm = new DijkstrasAlgorithm();
@@ -113,7 +113,7 @@ public final class Task1 {
                 Random random,
                 ProbabilityDistribution<Character> probabilityDistribution) {
             
-        int length = random.nextInt(10) + 5;
+        int length = random.nextInt(10) + 11;
         StringBuilder sb = new StringBuilder(length);
         
         for (int i = 0; i < length;) {
