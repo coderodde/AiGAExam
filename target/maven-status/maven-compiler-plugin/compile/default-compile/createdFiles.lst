@@ -14,10 +14,12 @@ task1\LatticeNodeParentsNodeExpander.class
 task2\Task2$LevenshteinEditDistanceResult.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
 task2\Task2$EditOperation.class
+task10\Task10.class
 task1\LatticeWeightFunction.class
 util\Codon.class
 task1\Alignment.class
 util\AminoAcidAlphabet.class
+task10\BinarySearchTreeNode.class
 task2\Task2.class
 util\MultipleGroupPermuter.class
 task1\DijkstrasAlgorithm.class
