@@ -22,7 +22,7 @@ public class Task10 {
         
         BinarySearchTreeNode root = buildBalancedBinaryTreeImpl(keys);
         
-        System.out.printf("Tree:\n%s\n", root.convertTreeToString());
+        System.out.printf("Tree:\n%s\n", root.convertTreeToString() );
     }
     
     private static List<Integer> getKeyList(long seed) {

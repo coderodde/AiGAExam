@@ -1,5 +1,6 @@
 task0\ProteinPermutationComparator.class
 util\PAM250CostMatrix.class
+task3\Task3.class
 util\Utils.class
 task1\ParentsExpander.class
 task1\HeapNodeHolder.class
@@ -13,6 +14,7 @@ task1\ProbabilityDistribution$Entry.class
 task1\LatticeNodeParentsNodeExpander.class
 task2\Task2$LevenshteinEditDistanceResult.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
+task3\BitVector.class
 task2\Task2$EditOperation.class
 task10\Task10.class
 task1\LatticeWeightFunction.class
