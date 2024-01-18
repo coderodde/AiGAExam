@@ -1,9 +1,6 @@
 package task3;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,16 +10,7 @@ public final class BitVectorTest {
     
     @Before 
     public void before() {
-        bitVector = new BitVector();
-    }
-    
-    @Test
-    public void testGetNumberOfBits() {
-        assertEquals(8, bitVector.getNumberOfBits());
-        bitVector.writeBit(8, false);
-        assertEquals(16, bitVector.getNumberOfBits());
-        bitVector.writeBit(23, true);
-        assertEquals(32, bitVector.getNumberOfBits());
+        bitVector = new BitVector(100);
     }
     
     @Test
@@ -32,5 +20,31 @@ public final class BitVectorTest {
         bitVector.writeBit(12, false);
         assertFalse(bitVector.read(12));
         assertFalse(bitVector.read(13));
+    }
+    
+    @Test
+    public void rank() {
+        bitVector.writeBit(2, true);
+        bitVector.writeBit(3, true);
+        bitVector.writeBit(5, true);
+        bitVector.writeBit(11, true);
+        
+        bitVector.buildIndices();
+        
+        assertEquals(0, bitVector.rank(0));
+        assertEquals(0, bitVector.rank(1));
+        assertEquals(1, bitVector.rank(2));
+        assertEquals(2, bitVector.rank(3));
+        assertEquals(2, bitVector.rank(4));
+        assertEquals(3, bitVector.rank(5));
+        assertEquals(3, bitVector.rank(6));
+        assertEquals(3, bitVector.rank(7));
+        assertEquals(3, bitVector.rank(8));
+        assertEquals(3, bitVector.rank(9));
+        assertEquals(3, bitVector.rank(10));
+        assertEquals(4, bitVector.rank(11));
+        assertEquals(4, bitVector.rank(12));
+        assertEquals(4, bitVector.rank(13));
+        
     }
 }
