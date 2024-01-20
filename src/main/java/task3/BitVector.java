@@ -56,13 +56,15 @@ public final class BitVector {
         }
         
         //// Deal with the 'third': four Russians technique:
-        this.third = new int[(int) Math.pow(2.0, k)][];
+        this.third = new int[(int) Math.pow(2.0, k - 1)][];
         
         for (int i = 0; i < third.length; i++) {
             third[i] = new int[k - 1];
+            
+            for (int j = 0; j < third[0].length; j++) {
+                third[i][j] = 1;
+            }
         }
-        
-        
     }
     
     public int getNumberOfBits() {
