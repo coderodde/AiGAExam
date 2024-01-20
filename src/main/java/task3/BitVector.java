@@ -24,7 +24,8 @@ public final class BitVector {
         //// Deal with the 'first'.
         // n - total number of bit slots:
         int n = getNumberOfBits();
-        // l - the l value:
+        
+        // elll - the l value:
         this.ell = (int) Math.pow(Math.ceil(log2(n) / 2.0), 2.0);
         this.first = new int[n / ell + 1];
         
@@ -45,12 +46,11 @@ public final class BitVector {
         this.k = (int) Math.ceil(log2(n) / 2.0);
         this.second = new int[n / k + 1];
         
-//        for (int i = 0; i < second.length; i++) {
-//            int j = i * k;
-//            int startIndex = ell * (j / ell) + 1;
-//            int endIndex = j;
-//            second[i] = count(startIndex, endIndex);
-//        }
+        for (int i = k; i < n; i++) {
+            if (i % k == 0) {
+                second[i/k] = bruteForceRank(ell * (i / ell) + 1, i);
+            }
+        }
     }
     
     public int getNumberOfBits() {
@@ -96,10 +96,8 @@ public final class BitVector {
         int startIndex = k * (index / k) + 1;
         int endIndex = index;
         
-        int firstIndex = first[index / ell];
-        int secondIndex = second[index / k];
-        
-        return firstIndex + secondIndex + count(startIndex, endIndex);
+        return first[index / ell] + second[index / k] + count(startIndex, 
+                                                              endIndex);
     }
     
     private void checkDirtyState() {

@@ -1,29 +1,15 @@
 package task3;
 
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 
 public final class BitVectorTest {
 
-    private BitVector bitVector;
+    private static BitVector bitVector = new BitVector(100);
     
-    @Before 
-    public void before() {
-        bitVector = new BitVector(100);
-    }
-    
-    @Test
-    public void readWriteBit() {
-        bitVector.writeBit(12, true);
-        assertTrue(bitVector.read(12));
-        bitVector.writeBit(12, false);
-        assertFalse(bitVector.read(12));
-        assertFalse(bitVector.read(13));
-    }
-    
-    @Test
-    public void rankFirst() {
+    @BeforeClass
+    public static void beforeClass() {
         // 01101000001
         bitVector.writeBit(2, true);
         bitVector.writeBit(3, true);
@@ -34,9 +20,21 @@ public final class BitVectorTest {
         bitVector.writeBit(23, true);
         bitVector.writeBit(50, true);
         bitVector.writeBit(70, true);
-        
-        bitVector.buildIndices();
-        
+        bitVector.writeBit(99, true);
+    }
+    
+    @Test
+    public void readWriteBit() {
+        BitVector bitVector = new BitVector(30);
+        bitVector.writeBit(12, true);
+        assertTrue(bitVector.read(12));
+        bitVector.writeBit(12, false);
+        assertFalse(bitVector.read(12));
+        assertFalse(bitVector.read(13));
+    }
+    
+    @Test
+    public void rankFirst() {
         assertEquals(0, bitVector.rankFirst(1));
         assertEquals(1, bitVector.rankFirst(2));
         assertEquals(2, bitVector.rankFirst(3));
@@ -51,9 +49,25 @@ public final class BitVectorTest {
         assertEquals(4, bitVector.rankFirst(12));
         assertEquals(4, bitVector.rankFirst(13));
         assertEquals(4, bitVector.rankFirst(14));
-        
-        bitVector.writeBit(99, true);
-        
         assertEquals(10, bitVector.rankFirst(99));
+    }
+    
+    @Test
+    public void rankSecond() {
+        assertEquals(0, bitVector.rankSecond(1));
+        assertEquals(1, bitVector.rankSecond(2));
+        assertEquals(2, bitVector.rankSecond(3));
+        assertEquals(2, bitVector.rankSecond(4));
+        assertEquals(3, bitVector.rankSecond(5));
+        assertEquals(3, bitVector.rankSecond(6));
+        assertEquals(3, bitVector.rankSecond(7));
+        assertEquals(3, bitVector.rankSecond(8));
+        assertEquals(3, bitVector.rankSecond(9));
+        assertEquals(3, bitVector.rankSecond(10));
+        assertEquals(4, bitVector.rankSecond(11));
+        assertEquals(4, bitVector.rankSecond(12));
+        assertEquals(4, bitVector.rankSecond(13));
+        assertEquals(4, bitVector.rankSecond(14));
+        assertEquals(10, bitVector.rankSecond(99));
     }
 }
