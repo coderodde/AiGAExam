@@ -2,12 +2,15 @@ package task3;
 
 public final class BitVector {
     
+    private static final int MAXIMUM_NUMBER_OF_BITS = 31;
+    
     private boolean hasDirtyState = true;
     private final byte[] bytes;
     private int ell;
     private int k;
     private int[] first;
     private int[] second;
+    private int[][] third;
     
     public BitVector(int capacity) {
         capacity++;
@@ -51,6 +54,15 @@ public final class BitVector {
                 second[i/k] = bruteForceRank(ell * (i / ell) + 1, i);
             }
         }
+        
+        //// Deal with the 'third': four Russians technique:
+        this.third = new int[(int) Math.pow(2.0, k)][];
+        
+        for (int i = 0; i < third.length; i++) {
+            third[i] = new int[k - 1];
+        }
+        
+        
     }
     
     public int getNumberOfBits() {
@@ -69,15 +81,8 @@ public final class BitVector {
         hasDirtyState = true;
     }
     
-    public boolean read(int index) {
-        index = convertIndexToInternal(index);
-        
-        int byteIndex = index / Byte.SIZE;
-        int targetByteBitIndex = index % Byte.SIZE;
-        
-        byte targetByte = bytes[byteIndex];
-        
-        return (targetByte & (1 << targetByteBitIndex)) != 0;
+    public boolean readBit(int index) {
+        return readBitImpl(convertIndexToInternal(index));
     }
     
     public int rankFirst(int index) {
@@ -98,6 +103,14 @@ public final class BitVector {
         
         return first[index / ell] + second[index / k] + count(startIndex, 
                                                               endIndex);
+    }
+    
+    private boolean readBitImpl(int index) {
+        int byteIndex = index / Byte.SIZE;
+        int targetByteBitIndex = index % Byte.SIZE;
+        byte targetByte = bytes[byteIndex];
+        
+        return (targetByte & (1 << targetByteBitIndex)) != 0;
     }
     
     private void checkDirtyState() {
@@ -135,23 +148,41 @@ public final class BitVector {
         return index + 1;
     }
     
-    private int bruteForceRank(int index) {
-        int rank = 0;
+    int toInteger() {
+        int integer = 0;
         
-        for (int i = 0; i < index; i++) {
-            if (read(i)) {
-                rank++;
+        for (int i = 0, n = Math.min(MAXIMUM_NUMBER_OF_BITS, getNumberOfBits());
+                i < n; 
+                i++) {
+            
+            boolean bit = readBit(i);
+            
+            if (bit == true) {
+                integer |= (1 << (i - 1));
             }
         }
         
-        return rank;
+        return integer;
+    }
+    
+    private BitVector extractBitVector(int i, int k) {
+        int startIndex = k * (i / k) + 1;
+        int endIndex = k * (i / k + 1) - 1;
+        int extractedBitVectorLength = endIndex - startIndex;
+        BitVector extractedBitVector = new BitVector(extractedBitVectorLength);
+        
+        for (int index = 0, j = startIndex; j <= endIndex; j++, index++) {
+            extractedBitVector.writeBit(index, this.readBit(j));
+        }
+        
+        return extractedBitVector;
     }
     
     private int bruteForceRank(int startIndex, int endIndex) {
         int rank = 0; 
         
         for (int i = startIndex; i <= endIndex; i++) {
-            if (read(i)) {
+            if (readBit(i)) {
                 rank++;
             }
         }
@@ -160,15 +191,7 @@ public final class BitVector {
     }
     
     private int count(int startIndex, int endIndex) {
-        int c = 0;
-        
-        for (int i = startIndex; i <= endIndex; i++) {
-            if (read(i)) {
-                c++;
-            }
-        }
-        
-        return c;
+        return bruteForceRank(startIndex, endIndex);
     }
     
     private static double log2(double v) {

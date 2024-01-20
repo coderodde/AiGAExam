@@ -27,10 +27,10 @@ public final class BitVectorTest {
     public void readWriteBit() {
         BitVector bitVector = new BitVector(30);
         bitVector.writeBit(12, true);
-        assertTrue(bitVector.read(12));
+        assertTrue(bitVector.readBit(12));
         bitVector.writeBit(12, false);
-        assertFalse(bitVector.read(12));
-        assertFalse(bitVector.read(13));
+        assertFalse(bitVector.readBit(12));
+        assertFalse(bitVector.readBit(13));
     }
     
     @Test
@@ -69,5 +69,20 @@ public final class BitVectorTest {
         assertEquals(4, bitVector.rankSecond(13));
         assertEquals(4, bitVector.rankSecond(14));
         assertEquals(10, bitVector.rankSecond(99));
+    }
+
+    @Test
+    public void toInteger() {
+        BitVector bitVector = new BitVector(31);
+        assertEquals(0, bitVector.toInteger());
+        
+        bitVector.writeBit(1, true);
+        assertEquals(1, bitVector.toInteger());
+        
+        bitVector.writeBit(2, true);
+        assertEquals(3, bitVector.toInteger());
+        
+        bitVector.writeBit(4, true);
+        assertEquals(11, bitVector.toInteger());
     }
 }
