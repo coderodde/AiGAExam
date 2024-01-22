@@ -187,7 +187,9 @@ public final class RankSelectBitVector {
         
         return first[index / ell] + 
                second[index / k] +
-               third[selectorIndex][index % (k - 1)];
+               // Need to map index = 3 to 2:
+               third[selectorIndex]
+                    [Math.abs((index - 1) % (k - 1))];
     }
     
     /**
