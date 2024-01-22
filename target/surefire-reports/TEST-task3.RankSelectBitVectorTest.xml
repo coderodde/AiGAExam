@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="task3.RankSelectBitVectorTest" time="0.565" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="task3.RankSelectBitVectorTest" time="0.053" tests="3" errors="0" skipped="0" failures="1">
   <properties>
     <property name="sun.desktop" value="windows"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -19,7 +19,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GB"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_202\jre\bin"/>
-    <property name="sun.java.command" value="C:\Users\rodio\AppData\Local\Temp\surefire6746459597714469400\surefirebooter-20240122090252907_3.jar C:\Users\rodio\AppData\Local\Temp\surefire6746459597714469400 2024-01-22T09-02-52_681-jvmRun1 surefire-20240122090252907_1tmp surefire_0-20240122090252907_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\rodio\AppData\Local\Temp\surefire2197204530912078447\surefirebooter-20240122100216064_3.jar C:\Users\rodio\AppData\Local\Temp\surefire2197204530912078447 2024-01-22T10-02-15_831-jvmRun1 surefire-20240122100216064_1tmp surefire_0-20240122100216064_2tmp"/>
     <property name="test" value="task3.RankSelectBitVectorTest"/>
     <property name="surefire.test.class.path" value="C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\target\test-classes;C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\target\classes;C:\Users\rodio\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\rodio\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -33,7 +33,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="C:\Users\rodio\AppData\Local\Temp\surefire6746459597714469400\surefirebooter-20240122090252907_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\rodio\AppData\Local\Temp\surefire2197204530912078447\surefirebooter-20240122100216064_3.jar"/>
     <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.8.0_202\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\rt.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_202\jre\classes"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -63,112 +63,48 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="52.0"/>
   </properties>
-  <testcase name="bruteForceTest" classname="task3.RankSelectBitVectorTest" time="0.524">
+  <testcase name="bruteForceTest" classname="task3.RankSelectBitVectorTest" time="0.011">
+    <failure message="expected:&lt;2&gt; but was:&lt;0&gt;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expected:<2> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at task3.RankSelectBitVectorTest.bruteForceTest(RankSelectBitVectorTest.java:53)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:316)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:240)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:214)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+]]></failure>
     <system-out><![CDATA[-- bruteForceTest, seed = 1705906498693
-Iteration = 0, actual rank = 0, rank1 = 0, rank2 = 0.
-Iteration = 1, actual rank = 1, rank1 = 1, rank2 = 1.
-Iteration = 2, actual rank = 2, rank1 = 2, rank2 = 2.
-Iteration = 3, actual rank = 2, rank1 = 2, rank2 = 2.
-Iteration = 4, actual rank = 2, rank1 = 2, rank2 = 2.
-Iteration = 5, actual rank = 3, rank1 = 3, rank2 = 3.
-Iteration = 6, actual rank = 3, rank1 = 3, rank2 = 3.
-Iteration = 7, actual rank = 3, rank1 = 3, rank2 = 3.
-Iteration = 8, actual rank = 3, rank1 = 3, rank2 = 3.
-Iteration = 9, actual rank = 3, rank1 = 3, rank2 = 3.
-Iteration = 10, actual rank = 4, rank1 = 4, rank2 = 4.
-Iteration = 11, actual rank = 4, rank1 = 4, rank2 = 4.
-Iteration = 12, actual rank = 5, rank1 = 5, rank2 = 5.
-Iteration = 13, actual rank = 5, rank1 = 5, rank2 = 5.
-Iteration = 14, actual rank = 6, rank1 = 6, rank2 = 6.
-Iteration = 15, actual rank = 6, rank1 = 6, rank2 = 6.
-Iteration = 16, actual rank = 6, rank1 = 6, rank2 = 6.
-Iteration = 17, actual rank = 6, rank1 = 6, rank2 = 6.
-Iteration = 18, actual rank = 7, rank1 = 7, rank2 = 7.
-Iteration = 19, actual rank = 7, rank1 = 7, rank2 = 7.
-Iteration = 20, actual rank = 7, rank1 = 7, rank2 = 7.
-Iteration = 21, actual rank = 7, rank1 = 7, rank2 = 7.
-Iteration = 22, actual rank = 8, rank1 = 8, rank2 = 8.
-Iteration = 23, actual rank = 8, rank1 = 8, rank2 = 8.
-Iteration = 24, actual rank = 9, rank1 = 9, rank2 = 9.
-Iteration = 25, actual rank = 10, rank1 = 10, rank2 = 10.
-Iteration = 26, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 27, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 28, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 29, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 30, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 31, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 32, actual rank = 11, rank1 = 11, rank2 = 11.
-Iteration = 33, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 34, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 35, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 36, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 37, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 38, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 39, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 40, actual rank = 12, rank1 = 12, rank2 = 12.
-Iteration = 41, actual rank = 13, rank1 = 13, rank2 = 13.
-Iteration = 42, actual rank = 14, rank1 = 14, rank2 = 14.
-Iteration = 43, actual rank = 14, rank1 = 14, rank2 = 14.
-Iteration = 44, actual rank = 14, rank1 = 14, rank2 = 14.
-Iteration = 45, actual rank = 15, rank1 = 15, rank2 = 15.
-Iteration = 46, actual rank = 16, rank1 = 16, rank2 = 16.
-Iteration = 47, actual rank = 16, rank1 = 16, rank2 = 16.
-Iteration = 48, actual rank = 16, rank1 = 16, rank2 = 16.
-Iteration = 49, actual rank = 17, rank1 = 17, rank2 = 17.
-Iteration = 50, actual rank = 17, rank1 = 17, rank2 = 17.
-Iteration = 51, actual rank = 18, rank1 = 18, rank2 = 18.
-Iteration = 52, actual rank = 18, rank1 = 18, rank2 = 18.
-Iteration = 53, actual rank = 18, rank1 = 18, rank2 = 18.
-Iteration = 54, actual rank = 18, rank1 = 18, rank2 = 18.
-Iteration = 55, actual rank = 18, rank1 = 18, rank2 = 18.
-Iteration = 56, actual rank = 19, rank1 = 19, rank2 = 19.
-Iteration = 57, actual rank = 19, rank1 = 19, rank2 = 19.
-Iteration = 58, actual rank = 19, rank1 = 19, rank2 = 19.
-Iteration = 59, actual rank = 19, rank1 = 19, rank2 = 19.
-Iteration = 60, actual rank = 20, rank1 = 20, rank2 = 20.
-Iteration = 61, actual rank = 21, rank1 = 21, rank2 = 21.
-Iteration = 62, actual rank = 21, rank1 = 21, rank2 = 21.
-Iteration = 63, actual rank = 21, rank1 = 21, rank2 = 21.
-Iteration = 64, actual rank = 21, rank1 = 21, rank2 = 21.
-Iteration = 65, actual rank = 22, rank1 = 22, rank2 = 22.
-Iteration = 66, actual rank = 22, rank1 = 22, rank2 = 22.
-Iteration = 67, actual rank = 23, rank1 = 23, rank2 = 23.
-Iteration = 68, actual rank = 24, rank1 = 24, rank2 = 24.
-Iteration = 69, actual rank = 25, rank1 = 25, rank2 = 25.
-Iteration = 70, actual rank = 25, rank1 = 25, rank2 = 25.
-Iteration = 71, actual rank = 26, rank1 = 26, rank2 = 26.
-Iteration = 72, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 73, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 74, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 75, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 76, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 77, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 78, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 79, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 80, actual rank = 27, rank1 = 27, rank2 = 27.
-Iteration = 81, actual rank = 28, rank1 = 28, rank2 = 28.
-Iteration = 82, actual rank = 28, rank1 = 28, rank2 = 28.
-Iteration = 83, actual rank = 29, rank1 = 29, rank2 = 29.
-Iteration = 84, actual rank = 30, rank1 = 30, rank2 = 30.
-Iteration = 85, actual rank = 30, rank1 = 30, rank2 = 30.
-Iteration = 86, actual rank = 30, rank1 = 30, rank2 = 30.
-Iteration = 87, actual rank = 31, rank1 = 31, rank2 = 31.
-Iteration = 88, actual rank = 31, rank1 = 31, rank2 = 31.
-Iteration = 89, actual rank = 31, rank1 = 31, rank2 = 31.
-Iteration = 90, actual rank = 31, rank1 = 31, rank2 = 31.
-Iteration = 91, actual rank = 32, rank1 = 32, rank2 = 32.
-Iteration = 92, actual rank = 33, rank1 = 33, rank2 = 33.
-Iteration = 93, actual rank = 34, rank1 = 34, rank2 = 34.
-Iteration = 94, actual rank = 34, rank1 = 34, rank2 = 34.
-Iteration = 95, actual rank = 35, rank1 = 35, rank2 = 35.
-Iteration = 96, actual rank = 35, rank1 = 35, rank2 = 35.
-Iteration = 97, actual rank = 35, rank1 = 35, rank2 = 35.
-Iteration = 98, actual rank = 35, rank1 = 35, rank2 = 35.
-Iteration = 99, actual rank = 36, rank1 = 36, rank2 = 36.
-Iteration = 100, actual rank = 37, rank1 = 37, rank2 = 37.
-Iteration = 101, actual rank = 37, rank1 = 37, rank2 = 37.
-Iteration = 102, actual rank = 37, rank1 = 37, rank2 = 37.
-Iteration = 103, actual rank = 37, rank1 = 37, rank2 = 37.
+Iteration = 0, actual rank = 0, rank1 = 0, rank2 = 0, rank3 = 0.
+Iteration = 1, actual rank = 1, rank1 = 1, rank2 = 1, rank3 = 1.
+Iteration = 2, actual rank = 2, rank1 = 2, rank2 = 2, rank3 = 2.
+Iteration = 3, actual rank = 2, rank1 = 2, rank2 = 2, rank3 = 0.
 ]]></system-out>
   </testcase>
   <testcase name="toInteger" classname="task3.RankSelectBitVectorTest" time="0.0"/>

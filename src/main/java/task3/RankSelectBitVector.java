@@ -146,7 +146,6 @@ public final class RankSelectBitVector {
      */
     public int rankFirst(int index) {
         makeSureStateIsCompiled();
-//        index++;
         
         int startIndex = ell * (index / ell);
         int endIndex = index - 1;
@@ -181,7 +180,6 @@ public final class RankSelectBitVector {
      */
     public int rankThird(int index) {
         makeSureStateIsCompiled();
-        index++;
         
         int selectorIndex = 
                 extractBitVector(index)
@@ -189,7 +187,7 @@ public final class RankSelectBitVector {
         
         return first[index / ell] + 
                second[index / k] +
-               third[selectorIndex][index % k - 1];
+               third[selectorIndex][index % (k - 1)];
     }
     
     /**
@@ -300,13 +298,16 @@ public final class RankSelectBitVector {
     }
     
     private RankSelectBitVector extractBitVector(int i) {
-        int startIndex = k * (i / k) + 1;
-        int endIndex = k * (i / k + 1) - 1;
+        int startIndex = k * (i / k);
+        int endIndex = k * (i / k + 1) - 2;
+        
         int extractedBitVectorLength = endIndex - startIndex + 1;
-        RankSelectBitVector extractedBitVector = new RankSelectBitVector(extractedBitVectorLength);
+        
+        RankSelectBitVector extractedBitVector = 
+                new RankSelectBitVector(extractedBitVectorLength);
         
         for (int index = 0, j = startIndex; j <= endIndex; j++, index++) {
-            extractedBitVector.writeBit(index, this.readBit(j));
+            extractedBitVector.writeBitImpl(index, this.readBitImpl(j));
         }
         
         return extractedBitVector;
