@@ -14,7 +14,6 @@ task1\ProbabilityDistribution$Entry.class
 task1\LatticeNodeParentsNodeExpander.class
 task2\Task2$LevenshteinEditDistanceResult.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
-task3\BitVector.class
 task2\Task2$EditOperation.class
 task10\Task10.class
 task1\LatticeWeightFunction.class
@@ -25,6 +24,7 @@ task10\BinarySearchTreeNode.class
 task2\Task2.class
 util\MultipleGroupPermuter.class
 task1\DijkstrasAlgorithm.class
+task3\RankSelectBitVector.class
 task1\Task1.class
 task1\LatticeNode.class
 task1\MultipleSequenceAlignmentInstance.class

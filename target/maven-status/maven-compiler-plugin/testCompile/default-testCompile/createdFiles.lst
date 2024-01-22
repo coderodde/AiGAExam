@@ -1,8 +1,8 @@
 task3\BruteForceBitVector.class
-task3\BitVectorTest.class
 task1\DirectedGraphNode.class
 task1\BidirectionalDijkstrasAlgorithmTest$GraphData.class
 task1\BidirectionalDijkstrasAlgorithmTest.class
+task3\RankSelectBitVectorTest.class
 task1\DirectedGraphWeightFunction.class
 task1\DirectedGraphNodeChildrenExpander.class
 task1\BidirectionalDijkstrasAlgorithmTest$Arc.class

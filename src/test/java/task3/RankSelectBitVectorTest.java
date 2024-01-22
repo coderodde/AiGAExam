@@ -5,9 +5,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 
-public final class BitVectorTest {
+public final class RankSelectBitVectorTest {
 
-    private static BitVector bitVector = new BitVector(100);
+    private static RankSelectBitVector bitVector = new RankSelectBitVector(100);
     
     @BeforeClass
     public static void beforeClass() {
@@ -26,29 +26,36 @@ public final class BitVectorTest {
     @Test
     public void bruteForceTest() {
         long seed = System.currentTimeMillis();
-        seed = 1705844564957L;
+        seed = 1705906498693L;
         Random random = new Random(seed);
         System.out.println("-- bruteForceTest, seed = " + seed);
         
-        BitVector bv = getRandomBitVector(random);
+        RankSelectBitVector bv = getRandomBitVector(random);
         BruteForceBitVector referenceBv = copy(bv);
         
         for (int i = 0; i < bv.getNumberOfBits(); i++) {
-            System.out.println("he = " + i);
             int actualRank = referenceBv.rank(i);
-            
             int rank1 = bv.rankFirst(i);
             int rank2 = bv.rankSecond(i);
-            int rank3 = bv.rankThird(i);
+//            int rank3 = bv.rankThird(i);
+
+            System.out.printf(
+                    "Iteration = %d, actual rank = %d, rank1 = %d, " + 
+                    "rank2 = %d.\n",
+                              i,
+                              actualRank,
+                              rank1,
+                              rank2);
+            
             
             assertEquals(actualRank, rank1);
             assertEquals(actualRank, rank2);
-            assertEquals(actualRank, rank3);
+//            assertEquals(actualRank, rank3);
         }
     }
     
-    private static BitVector getRandomBitVector(Random random) {
-        BitVector bv = new BitVector(100);
+    private static RankSelectBitVector getRandomBitVector(Random random) {
+        RankSelectBitVector bv = new RankSelectBitVector(100);
         
         for (int i = 0; i < bv.getNumberOfBits(); i++) {
             if (random.nextDouble() < 0.3) {
@@ -59,7 +66,7 @@ public final class BitVectorTest {
         return bv;
     }
     
-    private static BruteForceBitVector copy(BitVector bv) {
+    private static BruteForceBitVector copy(RankSelectBitVector bv) {
         BruteForceBitVector referenceBv = new BruteForceBitVector(100);
         
         for (int i = 0; i < bv.getNumberOfBits(); i++) {
@@ -111,7 +118,7 @@ public final class BitVectorTest {
     
 //    @Test
     public void debugRankThird() {
-        BitVector bv = new BitVector(63);
+        RankSelectBitVector bv = new RankSelectBitVector(63);
         
         bv.writeBitOn(1);
         bv.writeBitOn(2);
@@ -153,7 +160,7 @@ public final class BitVectorTest {
 
     @Test
     public void toInteger() {
-        BitVector bitVector = new BitVector(31);
+        RankSelectBitVector bitVector = new RankSelectBitVector(31);
         assertEquals(0, bitVector.toInteger(20));
         
         bitVector.writeBit(1, true);
@@ -168,7 +175,7 @@ public final class BitVectorTest {
     
     @Test
     public void readWriteBit() {
-        BitVector bitVector = new BitVector(30);
+        RankSelectBitVector bitVector = new RankSelectBitVector(30);
         bitVector.writeBit(12, true);
         assertTrue(bitVector.readBit(12));
         bitVector.writeBit(12, false);

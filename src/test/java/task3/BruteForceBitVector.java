@@ -56,8 +56,8 @@ public final class BruteForceBitVector {
     public int rank(int index) {
         int rank = 0;
         
-        for (int i = 1; i <= index; i++) {
-            if (readBit(index)) {
+        for (int i = 0; i < index; i++) {
+            if (readBit(i)) {
                 rank++;
             }
         }

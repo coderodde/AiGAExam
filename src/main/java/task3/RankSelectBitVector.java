@@ -1,6 +1,6 @@
 package task3;
 
-public final class BitVector {
+public final class RankSelectBitVector {
     
     /**
      * Indicates whether some bits were changed since the previous building of
@@ -19,7 +19,7 @@ public final class BitVector {
     private int[] second;
     private int[][] third;
     
-    public BitVector(int capacity) {
+    public RankSelectBitVector(int capacity) {
         bytes = new byte[
                  capacity / Byte.SIZE + 
                 (capacity % Byte.SIZE != 0 
@@ -56,7 +56,7 @@ public final class BitVector {
         
         for (int i = k; i < n; i++) {
             if (i % k == 0) {
-                second[i/k] = bruteForceRank(ell * (i / ell) + 1, i);
+                second[i/k] = bruteForceRank(ell * (i / ell), i - 1);
             }
         }
         
@@ -146,7 +146,7 @@ public final class BitVector {
      */
     public int rankFirst(int index) {
         makeSureStateIsCompiled();
-        index++;
+//        index++;
         
         int startIndex = ell * (index / ell);
         int endIndex = index - 1;
@@ -164,8 +164,8 @@ public final class BitVector {
     public int rankSecond(int index) {
         makeSureStateIsCompiled();
         
-        int startIndex = k * (index / k) + 1;
-        int endIndex = index;
+        int startIndex = k * (index / k);
+        int endIndex = index - 1;
         
         return first[index / ell] +
                second[index / k] + 
@@ -252,7 +252,7 @@ public final class BitVector {
         bytes[byteIndex] &= ~mask;
     }
     
-    private BitVector getCi(int i) {
+    private RankSelectBitVector getCi(int i) {
         return extractBitVector(i);
     }
     
@@ -299,11 +299,11 @@ public final class BitVector {
         return integer;
     }
     
-    private BitVector extractBitVector(int i) {
+    private RankSelectBitVector extractBitVector(int i) {
         int startIndex = k * (i / k) + 1;
         int endIndex = k * (i / k + 1) - 1;
         int extractedBitVectorLength = endIndex - startIndex + 1;
-        BitVector extractedBitVector = new BitVector(extractedBitVectorLength);
+        RankSelectBitVector extractedBitVector = new RankSelectBitVector(extractedBitVectorLength);
         
         for (int index = 0, j = startIndex; j <= endIndex; j++, index++) {
             extractedBitVector.writeBit(index, this.readBit(j));
@@ -316,7 +316,7 @@ public final class BitVector {
         int rank = 0; 
         
         for (int i = startIndex; i <= endIndex; i++) {
-            if (readBit(i)) {
+            if (readBitImpl(i)) {
                 rank++;
             }
         }
