@@ -1,5 +1,7 @@
 package task3;
 
+import java.util.Arrays;
+
 public final class RankSelectBitVector {
     
     /**
@@ -63,15 +65,23 @@ public final class RankSelectBitVector {
         //// Deal with the 'third': four Russians' technique:
         this.third = new int[(int) Math.pow(2.0, k - 1)][];
         
-        for (int i = 0; i < third.length; i++) {
-            third[i] = new int[k - 1];
-            third[i][0] = bitIsSet(i, k - 2) ? 1 : 0;
+        for (int selectorIndex = 0;
+                 selectorIndex < third.length;
+                 selectorIndex++) {
+            
+            third[selectorIndex] = new int[k - 1];
+            
+            // third[selectorIndex][0] is always zero (0).
+            third[selectorIndex][0] = (bitIsSet(selectorIndex, k - 2) ? 1 : 0);
             
             for (int j = 1; j < k - 1; j++) {
-                third[i][j] = third[i][j - 1] 
-                            + (bitIsSet(i, k - 2 - j) ? 1 : 0);
+                third[selectorIndex][j] = 
+                third[selectorIndex][j - 1] + 
+                        (bitIsSet(selectorIndex, k - j - 2) ? 1 : 0);
             }
         }
+        
+        hasDirtyState = false;
     }
     
     /**
@@ -150,8 +160,7 @@ public final class RankSelectBitVector {
         int startIndex = ell * (index / ell);
         int endIndex = index - 1;
         
-        int firstIndex = first[index / ell];
-        return firstIndex + bruteForceRank(startIndex, endIndex);
+        return first[index / ell] + bruteForceRank(startIndex, endIndex);
     }
     
     /**
@@ -185,11 +194,30 @@ public final class RankSelectBitVector {
                 extractBitVector(index)
                         .toInteger(k - 1);
         
-        return first[index / ell] + 
-               second[index / k] +
-               // Need to map index = 3 to 2:
-               third[selectorIndex]
-                    [Math.abs((index - 1) % (k - 1))];
+        int f = first[index / ell];
+        int s = second[index / k];
+        
+        int thirdEntryIndex = index % k - 1;
+        
+        System.out.printf(
+                "index = %d, " + 
+                "selectorIndex = %d, " + 
+                "f = %d, " + 
+                "s = %d, " + 
+                "thirdEntryIndex = %d, " +
+                "row = %s\n",
+                index,
+                selectorIndex,
+                f,
+                s,
+                thirdEntryIndex,
+                Arrays.toString(third[selectorIndex]));
+        
+        if (thirdEntryIndex == -1) {
+            return f + s;
+        }
+        
+        return f + s + third[selectorIndex][thirdEntryIndex];
     }
     
     /**
@@ -289,7 +317,7 @@ public final class RankSelectBitVector {
         
         for (int i = 0; i < numberOfBitsToRead; i++) {
             
-            boolean bit = readBit(i);
+            boolean bit = readBitImpl(i);
             
             if (bit == true) {
                 integer |= 1 << i;
