@@ -15,6 +15,7 @@ public final class RankSelectBitVector {
     
     private int ell;
     private int k;
+    private final int maximumVectorBitIndex;
     private int[] first;
     private int[] second;
     private int[][] third;
@@ -26,6 +27,8 @@ public final class RankSelectBitVector {
                 ? 1 
                 : 0)
         ];
+        
+        maximumVectorBitIndex = bytes.length * Byte.SIZE - 1;
     }
     
     @Override
@@ -226,11 +229,6 @@ public final class RankSelectBitVector {
      * @param bitIndex the target index.
      * @return the index of the {@code index}th 1-bit.
      */
-    // 00101101
-    // select(1) = 2
-    // select(2) = 4
-    // select(3) = 5
-    // select(4) = 7
     public int select(int bitIndex) {
         return selectImpl(bitIndex, 0, getNumberOfBits());
     }
@@ -388,7 +386,7 @@ public final class RankSelectBitVector {
     
     private RankSelectBitVector extractBitVector(int i) {
         int startIndex = k * (i / k);
-        int endIndex = k * (i / k + 1) - 2;
+        int endIndex = Math.min(k * (i / k + 1) - 2, maximumVectorBitIndex);
         
         int extractedBitVectorLength = endIndex - startIndex + 1;
         
