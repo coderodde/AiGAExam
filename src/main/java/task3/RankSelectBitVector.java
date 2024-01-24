@@ -30,6 +30,28 @@ public final class RankSelectBitVector {
         ];
     }
     
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder().append("[Bit vector, size = ");
+        
+        sb.append(getNumberOfBits())
+          .append(" bits, data = ");
+        
+        int bitNumber = 0;
+        
+        for (int i = 0; i < getNumberOfBits(); i++) {
+            sb.append(readBitImpl(i) ? "1" : "0");
+            
+            bitNumber++;
+            
+            if (bitNumber % 8 == 0) {
+                sb.append(" ");
+            }
+        }
+        
+        return sb.append("]").toString();
+    }
+    
     public void buildIndices() {
         //// Deal with the 'first'.
         // n - total number of bit slots:
@@ -181,6 +203,16 @@ public final class RankSelectBitVector {
                               endIndex);
     }
     
+    private static int reverseBits(int word) {
+        int out = 0;
+        
+        for (int i = 0; i < Integer.SIZE; i++) {
+            
+        }
+        
+        return out;
+    }
+    
     /**
      * Returns the {@code index}th rank. Runs in {@code O(1)} time.
      * 
@@ -190,28 +222,34 @@ public final class RankSelectBitVector {
     public int rankThird(int index) {
         makeSureStateIsCompiled();
         
+        if (index == getNumberOfBits()) {
+            return rankThird(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
+        }
+        
         int selectorIndex = 
                 extractBitVector(index)
                         .toInteger(k - 1);
+        
+//        selectorIndex = reverseBits(selectorIndex);
         
         int f = first[index / ell];
         int s = second[index / k];
         
         int thirdEntryIndex = index % k - 1;
         
-        System.out.printf(
-                "index = %d, " + 
-                "selectorIndex = %d, " + 
-                "f = %d, " + 
-                "s = %d, " + 
-                "thirdEntryIndex = %d, " +
-                "row = %s\n",
-                index,
-                selectorIndex,
-                f,
-                s,
-                thirdEntryIndex,
-                Arrays.toString(third[selectorIndex]));
+//        System.out.printf(
+//                "index = %d, " + 
+//                "selectorIndex = %d, " + 
+//                "f = %d, " + 
+//                "s = %d, " + 
+//                "thirdEntryIndex = %d, " +
+//                "row = %s\n",
+//                index,
+//                selectorIndex,
+//                f,
+//                s,
+//                thirdEntryIndex,
+//                Arrays.toString(third[selectorIndex]));
         
         if (thirdEntryIndex == -1) {
             return f + s;
@@ -336,7 +374,11 @@ public final class RankSelectBitVector {
         RankSelectBitVector extractedBitVector = 
                 new RankSelectBitVector(extractedBitVectorLength);
         
-        for (int index = 0, j = startIndex; j <= endIndex; j++, index++) {
+        for (int index = extractedBitVectorLength - 1,
+                j = startIndex; 
+                j <= endIndex;
+                j++, index--) {
+            
             extractedBitVector.writeBitImpl(index, this.readBitImpl(j));
         }
         

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="task3.RankSelectBitVectorTest" time="0.679" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="task3.RankSelectBitVectorTest" time="61.472" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="sun.desktop" value="windows"/>
+    <property name="jpda.address" value="64475"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
     <property name="file.encoding.pkg" value="sun.io"/>
     <property name="java.specification.version" value="1.8"/>
@@ -14,12 +15,13 @@
     <property name="java.vendor.url" value="http://java.oracle.com/"/>
     <property name="user.timezone" value="Europe/Helsinki"/>
     <property name="user.country.format" value="FI"/>
+    <property name="forkMode" value="once"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="os.name" value="Windows 10"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GB"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_202\jre\bin"/>
-    <property name="sun.java.command" value="C:\Users\rodio\AppData\Local\Temp\surefire4131641557652337379\surefirebooter-20240123120100836_3.jar C:\Users\rodio\AppData\Local\Temp\surefire4131641557652337379 2024-01-23T12-01-00_350-jvmRun1 surefire-20240123120100836_1tmp surefire_0-20240123120100836_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\rodio\AppData\Local\Temp\surefire7920226672433059846\surefirebooter-20240124083736330_3.jar C:\Users\rodio\AppData\Local\Temp\surefire7920226672433059846 2024-01-24T08-37-36_127-jvmRun1 surefire-20240124083736330_1tmp surefire_0-20240124083736330_2tmp"/>
     <property name="test" value="task3.RankSelectBitVectorTest"/>
     <property name="surefire.test.class.path" value="C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\target\test-classes;C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\target\classes;C:\Users\rodio\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\rodio\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -33,7 +35,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="C:\Users\rodio\AppData\Local\Temp\surefire4131641557652337379\surefirebooter-20240123120100836_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\rodio\AppData\Local\Temp\surefire7920226672433059846\surefirebooter-20240124083736330_3.jar"/>
     <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.8.0_202\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\rt.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_202\jre\classes"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -45,6 +47,7 @@
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="file.encoding" value="Cp1252"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="jpda.listen" value="true"/>
     <property name="maven.ext.class.path" value="C:\Program Files\NetBeans-20\netbeans\java\maven-nblib\netbeans-eventspy.jar"/>
     <property name="localRepository" value="C:\Users\rodio\.m2\repository"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
@@ -62,138 +65,11 @@
     <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.8.0_202\jre\lib\ext;C:\WINDOWS\Sun\Java\lib\ext"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="52.0"/>
+    <property name="maven.surefire.debug" value="-agentlib:jdwp=transport=dt_socket,server=n,address=64475"/>
   </properties>
-  <testcase name="bruteForceTest" classname="task3.RankSelectBitVectorTest" time="0.573">
-    <system-out><![CDATA[-- bruteForceTest, seed = 1705906498693
-index = 0, selectorIndex = 3, f = 0, s = 0, thirdEntryIndex = -1, row = [0, 1, 2]
-index = 1, selectorIndex = 3, f = 0, s = 0, thirdEntryIndex = 0, row = [0, 1, 2]
-ERROR: i = 1, actual rank = 1, rank1 = 1, rank2 = 1, rank3 = 0.
-index = 2, selectorIndex = 3, f = 0, s = 0, thirdEntryIndex = 1, row = [0, 1, 2]
-ERROR: i = 2, actual rank = 2, rank1 = 2, rank2 = 2, rank3 = 1.
-index = 3, selectorIndex = 3, f = 0, s = 0, thirdEntryIndex = 2, row = [0, 1, 2]
-index = 4, selectorIndex = 1, f = 0, s = 2, thirdEntryIndex = -1, row = [0, 0, 1]
-index = 5, selectorIndex = 1, f = 0, s = 2, thirdEntryIndex = 0, row = [0, 0, 1]
-ERROR: i = 5, actual rank = 3, rank1 = 3, rank2 = 3, rank3 = 2.
-index = 6, selectorIndex = 1, f = 0, s = 2, thirdEntryIndex = 1, row = [0, 0, 1]
-ERROR: i = 6, actual rank = 3, rank1 = 3, rank2 = 3, rank3 = 2.
-index = 7, selectorIndex = 1, f = 0, s = 2, thirdEntryIndex = 2, row = [0, 0, 1]
-index = 8, selectorIndex = 2, f = 0, s = 3, thirdEntryIndex = -1, row = [0, 1, 1]
-index = 9, selectorIndex = 2, f = 0, s = 3, thirdEntryIndex = 0, row = [0, 1, 1]
-index = 10, selectorIndex = 2, f = 0, s = 3, thirdEntryIndex = 1, row = [0, 1, 1]
-index = 11, selectorIndex = 2, f = 0, s = 3, thirdEntryIndex = 2, row = [0, 1, 1]
-index = 12, selectorIndex = 2, f = 0, s = 5, thirdEntryIndex = -1, row = [0, 1, 1]
-index = 13, selectorIndex = 2, f = 0, s = 5, thirdEntryIndex = 0, row = [0, 1, 1]
-index = 14, selectorIndex = 2, f = 0, s = 5, thirdEntryIndex = 1, row = [0, 1, 1]
-index = 15, selectorIndex = 2, f = 0, s = 5, thirdEntryIndex = 2, row = [0, 1, 1]
-index = 16, selectorIndex = 2, f = 6, s = 0, thirdEntryIndex = -1, row = [0, 1, 1]
-index = 17, selectorIndex = 2, f = 6, s = 0, thirdEntryIndex = 0, row = [0, 1, 1]
-index = 18, selectorIndex = 2, f = 6, s = 0, thirdEntryIndex = 1, row = [0, 1, 1]
-index = 19, selectorIndex = 2, f = 6, s = 0, thirdEntryIndex = 2, row = [0, 1, 1]
-index = 20, selectorIndex = 2, f = 6, s = 1, thirdEntryIndex = -1, row = [0, 1, 1]
-index = 21, selectorIndex = 2, f = 6, s = 1, thirdEntryIndex = 0, row = [0, 1, 1]
-index = 22, selectorIndex = 2, f = 6, s = 1, thirdEntryIndex = 1, row = [0, 1, 1]
-index = 23, selectorIndex = 2, f = 6, s = 1, thirdEntryIndex = 2, row = [0, 1, 1]
-index = 24, selectorIndex = 3, f = 6, s = 3, thirdEntryIndex = -1, row = [0, 1, 2]
-index = 25, selectorIndex = 3, f = 6, s = 3, thirdEntryIndex = 0, row = [0, 1, 2]
-ERROR: i = 25, actual rank = 10, rank1 = 10, rank2 = 10, rank3 = 9.
-index = 26, selectorIndex = 3, f = 6, s = 3, thirdEntryIndex = 1, row = [0, 1, 2]
-ERROR: i = 26, actual rank = 11, rank1 = 11, rank2 = 11, rank3 = 10.
-index = 27, selectorIndex = 3, f = 6, s = 3, thirdEntryIndex = 2, row = [0, 1, 2]
-index = 28, selectorIndex = 0, f = 6, s = 5, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 29, selectorIndex = 0, f = 6, s = 5, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 30, selectorIndex = 0, f = 6, s = 5, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 31, selectorIndex = 0, f = 6, s = 5, thirdEntryIndex = 2, row = [0, 0, 0]
-index = 32, selectorIndex = 1, f = 11, s = 0, thirdEntryIndex = -1, row = [0, 0, 1]
-index = 33, selectorIndex = 1, f = 11, s = 0, thirdEntryIndex = 0, row = [0, 0, 1]
-ERROR: i = 33, actual rank = 12, rank1 = 12, rank2 = 12, rank3 = 11.
-index = 34, selectorIndex = 1, f = 11, s = 0, thirdEntryIndex = 1, row = [0, 0, 1]
-ERROR: i = 34, actual rank = 12, rank1 = 12, rank2 = 12, rank3 = 11.
-index = 35, selectorIndex = 1, f = 11, s = 0, thirdEntryIndex = 2, row = [0, 0, 1]
-index = 36, selectorIndex = 0, f = 11, s = 1, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 37, selectorIndex = 0, f = 11, s = 1, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 38, selectorIndex = 0, f = 11, s = 1, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 39, selectorIndex = 0, f = 11, s = 1, thirdEntryIndex = 2, row = [0, 0, 0]
-index = 40, selectorIndex = 3, f = 11, s = 1, thirdEntryIndex = -1, row = [0, 1, 2]
-index = 41, selectorIndex = 3, f = 11, s = 1, thirdEntryIndex = 0, row = [0, 1, 2]
-ERROR: i = 41, actual rank = 13, rank1 = 13, rank2 = 13, rank3 = 12.
-index = 42, selectorIndex = 3, f = 11, s = 1, thirdEntryIndex = 1, row = [0, 1, 2]
-ERROR: i = 42, actual rank = 14, rank1 = 14, rank2 = 14, rank3 = 13.
-index = 43, selectorIndex = 3, f = 11, s = 1, thirdEntryIndex = 2, row = [0, 1, 2]
-index = 44, selectorIndex = 3, f = 11, s = 3, thirdEntryIndex = -1, row = [0, 1, 2]
-index = 45, selectorIndex = 3, f = 11, s = 3, thirdEntryIndex = 0, row = [0, 1, 2]
-ERROR: i = 45, actual rank = 15, rank1 = 15, rank2 = 15, rank3 = 14.
-index = 46, selectorIndex = 3, f = 11, s = 3, thirdEntryIndex = 1, row = [0, 1, 2]
-ERROR: i = 46, actual rank = 16, rank1 = 16, rank2 = 16, rank3 = 15.
-index = 47, selectorIndex = 3, f = 11, s = 3, thirdEntryIndex = 2, row = [0, 1, 2]
-index = 48, selectorIndex = 5, f = 16, s = 0, thirdEntryIndex = -1, row = [1, 1, 2]
-index = 49, selectorIndex = 5, f = 16, s = 0, thirdEntryIndex = 0, row = [1, 1, 2]
-index = 50, selectorIndex = 5, f = 16, s = 0, thirdEntryIndex = 1, row = [1, 1, 2]
-index = 51, selectorIndex = 5, f = 16, s = 0, thirdEntryIndex = 2, row = [1, 1, 2]
-index = 52, selectorIndex = 0, f = 16, s = 2, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 53, selectorIndex = 0, f = 16, s = 2, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 54, selectorIndex = 0, f = 16, s = 2, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 55, selectorIndex = 0, f = 16, s = 2, thirdEntryIndex = 2, row = [0, 0, 0]
-index = 56, selectorIndex = 0, f = 16, s = 3, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 57, selectorIndex = 0, f = 16, s = 3, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 58, selectorIndex = 0, f = 16, s = 3, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 59, selectorIndex = 0, f = 16, s = 3, thirdEntryIndex = 2, row = [0, 0, 0]
-index = 60, selectorIndex = 1, f = 16, s = 4, thirdEntryIndex = -1, row = [0, 0, 1]
-index = 61, selectorIndex = 1, f = 16, s = 4, thirdEntryIndex = 0, row = [0, 0, 1]
-ERROR: i = 61, actual rank = 21, rank1 = 21, rank2 = 21, rank3 = 20.
-index = 62, selectorIndex = 1, f = 16, s = 4, thirdEntryIndex = 1, row = [0, 0, 1]
-ERROR: i = 62, actual rank = 21, rank1 = 21, rank2 = 21, rank3 = 20.
-index = 63, selectorIndex = 1, f = 16, s = 4, thirdEntryIndex = 2, row = [0, 0, 1]
-index = 64, selectorIndex = 5, f = 21, s = 0, thirdEntryIndex = -1, row = [1, 1, 2]
-index = 65, selectorIndex = 5, f = 21, s = 0, thirdEntryIndex = 0, row = [1, 1, 2]
-index = 66, selectorIndex = 5, f = 21, s = 0, thirdEntryIndex = 1, row = [1, 1, 2]
-index = 67, selectorIndex = 5, f = 21, s = 0, thirdEntryIndex = 2, row = [1, 1, 2]
-index = 68, selectorIndex = 5, f = 21, s = 3, thirdEntryIndex = -1, row = [1, 1, 2]
-index = 69, selectorIndex = 5, f = 21, s = 3, thirdEntryIndex = 0, row = [1, 1, 2]
-index = 70, selectorIndex = 5, f = 21, s = 3, thirdEntryIndex = 1, row = [1, 1, 2]
-index = 71, selectorIndex = 5, f = 21, s = 3, thirdEntryIndex = 2, row = [1, 1, 2]
-index = 72, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 73, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 74, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 75, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = 2, row = [0, 0, 0]
-index = 76, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 77, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 78, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 79, selectorIndex = 0, f = 21, s = 6, thirdEntryIndex = 2, row = [0, 0, 0]
-index = 80, selectorIndex = 5, f = 27, s = 0, thirdEntryIndex = -1, row = [1, 1, 2]
-index = 81, selectorIndex = 5, f = 27, s = 0, thirdEntryIndex = 0, row = [1, 1, 2]
-index = 82, selectorIndex = 5, f = 27, s = 0, thirdEntryIndex = 1, row = [1, 1, 2]
-index = 83, selectorIndex = 5, f = 27, s = 0, thirdEntryIndex = 2, row = [1, 1, 2]
-index = 84, selectorIndex = 4, f = 27, s = 3, thirdEntryIndex = -1, row = [1, 1, 1]
-index = 85, selectorIndex = 4, f = 27, s = 3, thirdEntryIndex = 0, row = [1, 1, 1]
-ERROR: i = 85, actual rank = 30, rank1 = 30, rank2 = 30, rank3 = 31.
-index = 86, selectorIndex = 4, f = 27, s = 3, thirdEntryIndex = 1, row = [1, 1, 1]
-ERROR: i = 86, actual rank = 30, rank1 = 30, rank2 = 30, rank3 = 31.
-index = 87, selectorIndex = 4, f = 27, s = 3, thirdEntryIndex = 2, row = [1, 1, 1]
-index = 88, selectorIndex = 4, f = 27, s = 4, thirdEntryIndex = -1, row = [1, 1, 1]
-index = 89, selectorIndex = 4, f = 27, s = 4, thirdEntryIndex = 0, row = [1, 1, 1]
-ERROR: i = 89, actual rank = 31, rank1 = 31, rank2 = 31, rank3 = 32.
-index = 90, selectorIndex = 4, f = 27, s = 4, thirdEntryIndex = 1, row = [1, 1, 1]
-ERROR: i = 90, actual rank = 31, rank1 = 31, rank2 = 31, rank3 = 32.
-index = 91, selectorIndex = 4, f = 27, s = 4, thirdEntryIndex = 2, row = [1, 1, 1]
-index = 92, selectorIndex = 5, f = 27, s = 6, thirdEntryIndex = -1, row = [1, 1, 2]
-index = 93, selectorIndex = 5, f = 27, s = 6, thirdEntryIndex = 0, row = [1, 1, 2]
-index = 94, selectorIndex = 5, f = 27, s = 6, thirdEntryIndex = 1, row = [1, 1, 2]
-index = 95, selectorIndex = 5, f = 27, s = 6, thirdEntryIndex = 2, row = [1, 1, 2]
-index = 96, selectorIndex = 4, f = 35, s = 0, thirdEntryIndex = -1, row = [1, 1, 1]
-index = 97, selectorIndex = 4, f = 35, s = 0, thirdEntryIndex = 0, row = [1, 1, 1]
-ERROR: i = 97, actual rank = 35, rank1 = 35, rank2 = 35, rank3 = 36.
-index = 98, selectorIndex = 4, f = 35, s = 0, thirdEntryIndex = 1, row = [1, 1, 1]
-ERROR: i = 98, actual rank = 35, rank1 = 35, rank2 = 35, rank3 = 36.
-index = 99, selectorIndex = 4, f = 35, s = 0, thirdEntryIndex = 2, row = [1, 1, 1]
-index = 100, selectorIndex = 0, f = 35, s = 2, thirdEntryIndex = -1, row = [0, 0, 0]
-index = 101, selectorIndex = 0, f = 35, s = 2, thirdEntryIndex = 0, row = [0, 0, 0]
-index = 102, selectorIndex = 0, f = 35, s = 2, thirdEntryIndex = 1, row = [0, 0, 0]
-index = 103, selectorIndex = 0, f = 35, s = 2, thirdEntryIndex = 2, row = [0, 0, 0]
-Matches: 84.
-Errors:  20.
-
-]]></system-out>
-  </testcase>
+  <testcase name="debugTest1" classname="task3.RankSelectBitVectorTest" time="0.003"/>
+  <testcase name="debugTest2" classname="task3.RankSelectBitVectorTest" time="0.0"/>
+  <testcase name="debugTest3" classname="task3.RankSelectBitVectorTest" time="61.417"/>
   <testcase name="toInteger" classname="task3.RankSelectBitVectorTest" time="0.0"/>
-  <testcase name="readWriteBit" classname="task3.RankSelectBitVectorTest" time="0.0"/>
+  <testcase name="readWriteBit" classname="task3.RankSelectBitVectorTest" time="0.001"/>
 </testsuite>

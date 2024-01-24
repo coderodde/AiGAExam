@@ -7,6 +7,112 @@ import static org.junit.Assert.*;
 public final class RankSelectBitVectorTest {
     
     @Test
+    public void debugTest1() {
+        // 00101101
+        RankSelectBitVector bv = new RankSelectBitVector(8);
+        bv.writeBitOn(2);
+        bv.writeBitOn(4);
+        bv.writeBitOn(5);
+        bv.writeBitOn(7);
+        
+        assertEquals(0, bv.rankThird(0));
+        assertEquals(0, bv.rankThird(1));
+        assertEquals(0, bv.rankThird(2));
+        assertEquals(1, bv.rankThird(3));
+        assertEquals(1, bv.rankThird(4));
+        assertEquals(2, bv.rankThird(5));
+        assertEquals(3, bv.rankThird(6));
+        assertEquals(3, bv.rankThird(7));
+        assertEquals(4, bv.rankThird(8));
+    }
+    
+    @Test
+    public void debugTest2() {
+        // 00101101 10101101
+        RankSelectBitVector bv = new RankSelectBitVector(16);
+        
+        bv.writeBitOn(2);
+        bv.writeBitOn(4);
+        bv.writeBitOn(5);
+        bv.writeBitOn(7);
+        
+        bv.writeBitOn(8);
+        bv.writeBitOn(10);
+        bv.writeBitOn(12);
+        bv.writeBitOn(13);
+        bv.writeBitOn(15);
+        
+        assertEquals(0, bv.rankThird(0));
+        assertEquals(0, bv.rankThird(1));
+        assertEquals(0, bv.rankThird(2));
+        assertEquals(1, bv.rankThird(3));
+        assertEquals(1, bv.rankThird(4));
+        assertEquals(2, bv.rankThird(5));
+        assertEquals(3, bv.rankThird(6));
+        assertEquals(3, bv.rankThird(7));
+        assertEquals(4, bv.rankThird(8));
+        
+        assertEquals(5, bv.rankThird(9));
+        assertEquals(5, bv.rankThird(10));
+        assertEquals(6, bv.rankThird(11));
+        assertEquals(6, bv.rankThird(12));
+        assertEquals(7, bv.rankThird(13));
+        assertEquals(8, bv.rankThird(14));
+        assertEquals(8, bv.rankThird(15));
+        assertEquals(9, bv.rankThird(16));
+    }
+    
+    
+    @Test
+    public void debugTest3() {
+        // 00101101 10101101 00010010
+        RankSelectBitVector bv = new RankSelectBitVector(17);
+        
+        bv.writeBitOn(2);
+        bv.writeBitOn(4);
+        bv.writeBitOn(5);
+        bv.writeBitOn(7);
+        
+        bv.writeBitOn(8);
+        bv.writeBitOn(10);
+        bv.writeBitOn(12);
+        bv.writeBitOn(13);
+        bv.writeBitOn(15);
+        
+        bv.writeBitOn(19);
+        bv.writeBitOn(22);
+        
+        assertEquals(0, bv.rankThird(0));
+        assertEquals(0, bv.rankThird(1));
+        assertEquals(0, bv.rankThird(2));
+        assertEquals(1, bv.rankThird(3));
+        assertEquals(1, bv.rankThird(4));
+        assertEquals(2, bv.rankThird(5));
+        assertEquals(3, bv.rankThird(6));
+        assertEquals(3, bv.rankThird(7));
+        assertEquals(4, bv.rankThird(8));
+        
+        assertEquals(5, bv.rankThird(9));
+        assertEquals(5, bv.rankThird(10));
+        assertEquals(6, bv.rankThird(11));
+        assertEquals(6, bv.rankThird(12));
+        assertEquals(7, bv.rankThird(13));
+        assertEquals(8, bv.rankThird(14));
+        assertEquals(8, bv.rankThird(15));
+        assertEquals(9, bv.rankThird(16));
+        
+        // 00010010
+        assertEquals(9, bv.rankThird(17));
+        assertEquals(9, bv.rankThird(18));
+        assertEquals(9, bv.rankThird(19));
+        assertEquals(10, bv.rankThird(20));
+        assertEquals(10, bv.rankThird(21));
+        assertEquals(10, bv.rankThird(22));
+        assertEquals(11, bv.rankThird(23));
+        assertEquals(11, bv.rankThird(24));
+    }
+    
+//    @Test
     public void bruteForceTest() {
         long seed = System.currentTimeMillis();
         seed = 1705906498693L;
