@@ -1,6 +1,6 @@
 package task3;
 
-public final class BruteForceBitVector {
+final class BruteForceBitVector {
     
     /**
      * The actual bit storage array.
@@ -63,6 +63,22 @@ public final class BruteForceBitVector {
         }
         
         return rank;
+    }
+    
+    public int select(int index) {
+        int counted = 0;
+        
+        for (int i = 0; i < getNumberOfBits(); i++) {
+            if (readBitImpl(i)) {
+                counted++;
+                
+                if (counted == index) {
+                    return i;
+                }
+            }
+        }
+        
+        return getNumberOfBits();
     }
     
     private void turnBitOn(int index) {

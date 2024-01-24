@@ -1,7 +1,5 @@
 package task3;
 
-import java.util.Arrays;
-
 public final class RankSelectBitVector {
     
     /**
@@ -146,6 +144,117 @@ public final class RankSelectBitVector {
     }
     
     /**
+     * Reads the {@code index}th bit where indexation starts from zero (0).
+     * 
+     * @param index the bit index.
+     * @return {@code true} if and only if the {@code index}th bit is set.
+     */
+    public boolean readBit(int index) {
+        checkBitIndex(index);
+        return readBitImpl(index);
+    }
+    
+    /**
+     * Returns the rank of {@code index}, i.e., the number of set bits in the 
+     * subvector {@code vector[1..index]}. Runs in {@code O((log n)^2)} time.
+     * 
+     * @param index the target index.
+     * @return the rank for the input target.
+     */
+    public int rankFirst(int index) {
+        checkBitIndex(index);
+        makeSureStateIsCompiled();
+        
+        int startIndex = ell * (index / ell);
+        int endIndex = index - 1;
+        
+        return first[index / ell] + bruteForceRank(startIndex, endIndex);
+    }
+    
+    /**
+     * Returns the {@code index}th rank. Runs in {@code O(log n)} time.
+     * 
+     * @param index the target index.
+     * @return the rank of the input index.
+     */
+    public int rankSecond(int index) {
+        checkBitIndex(index);
+        makeSureStateIsCompiled();
+        
+        int startIndex = k * (index / k);
+        int endIndex = index - 1;
+        
+        return first[index / ell] +
+               second[index / k] + 
+               bruteForceRank(startIndex, 
+                              endIndex);
+    }
+    
+    /**
+     * Returns the {@code index}th rank. Runs in {@code O(1)} time.
+     * 
+     * @param index the target index.
+     * @return the rank of the input index.
+     */
+    public int rankThird(int index) {
+        checkBitIndexForRank(index);
+        makeSureStateIsCompiled();
+        
+        if (index == getNumberOfBits()) {
+            return rankThird(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
+        }
+        
+        int selectorIndex = 
+                extractBitVector(index)
+                        .toInteger(k - 1);
+        
+        int f = first[index / ell];
+        int s = second[index / k];
+        
+        int thirdEntryIndex = index % k - 1;
+        
+        if (thirdEntryIndex == -1) {
+            return f + s;
+        }
+        
+        return f + s + third[selectorIndex][thirdEntryIndex];
+    }
+    
+    /**
+     * Returns the index of the {@code index}th 1-bit.
+     * 
+     * @param bitIndex the target index.
+     * @return the index of the {@code index}th 1-bit.
+     */
+    // 00101101
+    // select(1) = 2
+    // select(2) = 4
+    // select(3) = 5
+    // select(4) = 7
+    public int select(int bitIndex) {
+        return selectImpl(bitIndex, 0, getNumberOfBits());
+    }
+    
+    private int selectImpl(int bitIndex, int rangeStartIndex, int rangeLength) {
+        if (rangeLength == 1) {
+            return rangeStartIndex;
+        }
+        
+        int halfRangeLength = rangeLength / 2;
+        int r = rankThird(halfRangeLength + rangeStartIndex);
+        
+        if (r >= bitIndex) {
+            return selectImpl(bitIndex, 
+                              rangeStartIndex,
+                              halfRangeLength);
+        } else {
+            return selectImpl(bitIndex, 
+                              rangeStartIndex + halfRangeLength,
+                              rangeLength - halfRangeLength);
+        }
+    }
+    
+    /**
      * The delegate for manipulating bits.
      * 
      * @param index the index of the target bit.
@@ -170,112 +279,12 @@ public final class RankSelectBitVector {
     }
     
     /**
-     * Returns the rank of {@code index}, i.e., the number of set bits in the 
-     * subvector {@code vector[1..index]}. Runs in {@code O((log n)^2)} time.
-     * 
-     * @param index the target index.
-     * @return the rank for the input target.
-     */
-    public int rankFirst(int index) {
-        makeSureStateIsCompiled();
-        
-        int startIndex = ell * (index / ell);
-        int endIndex = index - 1;
-        
-        return first[index / ell] + bruteForceRank(startIndex, endIndex);
-    }
-    
-    /**
-     * Returns the {@code index}th rank. Runs in {@code O(log n)} time.
-     * 
-     * @param index the target index.
-     * @return the rank of the input index.
-     */
-    public int rankSecond(int index) {
-        makeSureStateIsCompiled();
-        
-        int startIndex = k * (index / k);
-        int endIndex = index - 1;
-        
-        return first[index / ell] +
-               second[index / k] + 
-               bruteForceRank(startIndex, 
-                              endIndex);
-    }
-    
-    private static int reverseBits(int word) {
-        int out = 0;
-        
-        for (int i = 0; i < Integer.SIZE; i++) {
-            
-        }
-        
-        return out;
-    }
-    
-    /**
-     * Returns the {@code index}th rank. Runs in {@code O(1)} time.
-     * 
-     * @param index the target index.
-     * @return the rank of the input index.
-     */
-    public int rankThird(int index) {
-        makeSureStateIsCompiled();
-        
-        if (index == getNumberOfBits()) {
-            return rankThird(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
-        }
-        
-        int selectorIndex = 
-                extractBitVector(index)
-                        .toInteger(k - 1);
-        
-//        selectorIndex = reverseBits(selectorIndex);
-        
-        int f = first[index / ell];
-        int s = second[index / k];
-        
-        int thirdEntryIndex = index % k - 1;
-        
-//        System.out.printf(
-//                "index = %d, " + 
-//                "selectorIndex = %d, " + 
-//                "f = %d, " + 
-//                "s = %d, " + 
-//                "thirdEntryIndex = %d, " +
-//                "row = %s\n",
-//                index,
-//                selectorIndex,
-//                f,
-//                s,
-//                thirdEntryIndex,
-//                Arrays.toString(third[selectorIndex]));
-        
-        if (thirdEntryIndex == -1) {
-            return f + s;
-        }
-        
-        return f + s + third[selectorIndex][thirdEntryIndex];
-    }
-    
-    /**
-     * Reads the {@code index}th bit where indexation starts from zero (0).
-     * 
-     * @param index the bit index.
-     * @return {@code true} if and only if the {@code index}th bit is set.
-     */
-    public boolean readBit(int index) {
-        checkBitIndex(index);
-        return readBitImpl(index);
-    }
-    
-    /**
      * Implements the actual reading of a bit.
      * 
      * @param index the index of the target bit to read.
      * @return the value of the target bit.
      */
-    public boolean readBitImpl(int index) {
+    boolean readBitImpl(int index) {
         int byteIndex = index / Byte.SIZE;
         int targetByteBitIndex = index % Byte.SIZE;
         byte targetByte = bytes[byteIndex];
@@ -318,8 +327,20 @@ public final class RankSelectBitVector {
         bytes[byteIndex] &= ~mask;
     }
     
-    private RankSelectBitVector getCi(int i) {
-        return extractBitVector(i);
+    private void checkBitIndexForRank(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException(
+                    String.format("Negative bit index: %d.", index));
+        } 
+        
+        if (index > getNumberOfBits()) {
+            throw new IndexOutOfBoundsException(
+                    String.format(
+                            "Too large bit index (%d), number of bits " + 
+                            "supported is %d.",
+                            index, 
+                            getNumberOfBits()));
+        }
     }
     
     private void checkBitIndex(int index) {
