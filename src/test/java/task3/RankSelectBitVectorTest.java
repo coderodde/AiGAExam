@@ -112,10 +112,9 @@ public final class RankSelectBitVectorTest {
         assertEquals(11, bv.rankThird(24));
     }
     
-//    @Test
+    @Test
     public void bruteForceTest() {
         long seed = System.currentTimeMillis();
-        seed = 1705906498693L;
         Random random = new Random(seed);
         System.out.println("-- bruteForceTest, seed = " + seed);
         
