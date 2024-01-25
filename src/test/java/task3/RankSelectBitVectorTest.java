@@ -44,6 +44,7 @@ public final class RankSelectBitVectorTest {
     public void debugTest1() {
         // 00101101
         RankSelectBitVector bv = new RankSelectBitVector(8);
+        
         bv.writeBitOn(2);
         bv.writeBitOn(4);
         bv.writeBitOn(5);
@@ -117,7 +118,7 @@ public final class RankSelectBitVectorTest {
     @Test
     public void debugTest3() {
         // 00101101 10101101 00010010
-        RankSelectBitVector bv = new RankSelectBitVector(17);
+        RankSelectBitVector bv = new RankSelectBitVector(24);
         
         bv.writeBitOn(2);
         bv.writeBitOn(4);
@@ -182,6 +183,7 @@ public final class RankSelectBitVectorTest {
     @Test
     public void bruteForceTest() {
         long seed = System.currentTimeMillis();
+        seed = 1706163778488L;
         Random random = new Random(seed);
         System.out.println("-- bruteForceTest, seed = " + seed);
         
@@ -190,9 +192,9 @@ public final class RankSelectBitVectorTest {
         
         bv.buildIndices();
        
-        int numberOfOneBits = bv.rankThird(bv.getNumberOfBits());
+        int numberOfOneBits = bv.rankThird(bv.getNumberOfSupportedBits());
         
-        for (int i = 0; i < bv.getNumberOfBits(); i++) {
+        for (int i = 0; i < bv.getNumberOfSupportedBits(); i++) {
             int actualRank = referenceBv.rank(i);
             int rank1 = bv.rankFirst(i);
             int rank2 = bv.rankSecond(i);
@@ -231,7 +233,7 @@ public final class RankSelectBitVectorTest {
     private static RankSelectBitVector getRandomBitVector(Random random) {
         RankSelectBitVector bv = new RankSelectBitVector(5973);
         
-        for (int i = 0; i < bv.getNumberOfBits(); i++) {
+        for (int i = 0; i < bv.getNumberOfSupportedBits(); i++) {
             if (random.nextDouble() < 0.3) {
                 bv.writeBitOn(i);
             }
@@ -242,9 +244,9 @@ public final class RankSelectBitVectorTest {
     
     private static BruteForceBitVector copy(RankSelectBitVector bv) {
         BruteForceBitVector referenceBv = 
-                new BruteForceBitVector(bv.getNumberOfBits());
+                new BruteForceBitVector(bv.getNumberOfSupportedBits());
         
-        for (int i = 0; i < bv.getNumberOfBits(); i++) {
+        for (int i = 0; i < bv.getNumberOfSupportedBits(); i++) {
             if (bv.readBit(i)) {
                 referenceBv.writeBitOn(i);
             }
@@ -291,5 +293,26 @@ public final class RankSelectBitVectorTest {
         assertEquals(4, bv.select(2));
         assertEquals(6, bv.select(3));
         assertEquals(7, bv.select(4));
+    }
+    
+    @Test
+    public void debugFindSmallestFailingBitVector() {
+        for (int len = 1; len < 1000; len++) {
+            RankSelectBitVector bv = new RankSelectBitVector(len);
+            int numberOfBits = bv.getNumberOfSupportedBits();
+            
+            int rank1 = bv.rankFirst(numberOfBits);
+            int rank3 = bv.rankThird(numberOfBits);
+            
+            if (rank1 != rank3) {
+                System.out.printf(
+                        "Disagreed at len = %d, rank1 = %d, rank3 = %d.\n",
+                        len,
+                        rank1,
+                        rank3);
+                
+                fail("Should not get here.");
+            }
+        }
     }
 }

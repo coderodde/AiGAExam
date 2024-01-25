@@ -12,35 +12,38 @@ public final class RankSelectBitVector {
      * The actual bit storage array.
      */
     private final byte[] bytes;
+    private final int numberOfRequestedBits;
     
     private int ell;
     private int k;
-    private final int maximumVectorBitIndex;
     private int[] first;
     private int[] second;
     private int[][] third;
     
-    public RankSelectBitVector(int capacity) {
-        bytes = new byte[
-                 capacity / Byte.SIZE + 
-                (capacity % Byte.SIZE != 0 
-                ? 1 
-                : 0)
-        ];
+    public RankSelectBitVector(int numberOfRequestedBits) {
+        checkNumberOfRequestedBits(numberOfRequestedBits);
         
-        maximumVectorBitIndex = bytes.length * Byte.SIZE - 1;
+        this.numberOfRequestedBits = numberOfRequestedBits;
+        
+        int numberOfBytes = numberOfRequestedBits / Byte.SIZE + 
+                           (numberOfRequestedBits % Byte.SIZE != 0 ? 1 : 0);
+        
+        numberOfBytes++; // Padding tail byte in order to simplify the last 
+                         // rank/select.
+        
+        bytes = new byte[numberOfBytes];
     }
     
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("[Bit vector, size = ");
         
-        sb.append(getNumberOfBits())
+        sb.append(getNumberOfSupportedBits())
           .append(" bits, data = ");
         
         int bitNumber = 0;
         
-        for (int i = 0; i < getNumberOfBits(); i++) {
+        for (int i = 0; i < getNumberOfSupportedBits(); i++) {
             sb.append(readBitImpl(i) ? "1" : "0");
             
             bitNumber++;
@@ -53,10 +56,18 @@ public final class RankSelectBitVector {
         return sb.append("]").toString();
     }
     
+    /**
+     * Preprocesses the internal data structures in {@code O(n)}.
+     */
     public void buildIndices() {
+        if (hasDirtyState == false) {
+            // Nothing to do.
+            return;
+        }
+        
         //// Deal with the 'first'.
         // n - total number of bit slots:
-        int n = getNumberOfBits();
+        int n = bytes.length * Byte.SIZE;
         
         // elll - the l value:
         this.ell = (int) Math.pow(Math.ceil(log2(n) / 2.0), 2.0);
@@ -112,8 +123,8 @@ public final class RankSelectBitVector {
      * 
      * @return the number of bits supported.
      */
-    public int getNumberOfBits() {
-        return bytes.length * Byte.SIZE;
+    public int getNumberOfSupportedBits() {
+        return numberOfRequestedBits;
     }
     
     /**
@@ -168,10 +179,6 @@ public final class RankSelectBitVector {
         checkBitIndexForRank(index);
         makeSureStateIsCompiled();
         
-        if (index == getNumberOfBits()) {
-            return rankFirst(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
-        }
-        
         int startIndex = ell * (index / ell);
         int endIndex = index - 1;
         
@@ -187,10 +194,6 @@ public final class RankSelectBitVector {
     public int rankSecond(int index) {
         checkBitIndexForRank(index);
         makeSureStateIsCompiled();
-        
-        if (index == getNumberOfBits()) {
-            return rankSecond(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
-        }
         
         int startIndex = k * (index / k);
         int endIndex = index - 1;
@@ -210,10 +213,6 @@ public final class RankSelectBitVector {
     public int rankThird(int index) {
         checkBitIndexForRank(index);
         makeSureStateIsCompiled();
-        
-        if (index == getNumberOfBits()) {
-            return rankThird(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
-        }
         
         int selectorIndex = 
                 extractBitVector(index)
@@ -238,7 +237,7 @@ public final class RankSelectBitVector {
      * @return the index of the {@code index}th 1-bit.
      */
     public int select(int bitIndex) {
-        return selectImpl(bitIndex, 0, getNumberOfBits());
+        return selectImpl(bitIndex, 0, getNumberOfSupportedBits());
     }
     
     private int selectImpl(int bitIndex, int rangeStartIndex, int rangeLength) {
@@ -302,8 +301,8 @@ public final class RankSelectBitVector {
      */
     private void makeSureStateIsCompiled() {
         if (hasDirtyState) {
-            hasDirtyState = false;
             buildIndices();
+            hasDirtyState = false;
         }
     }
     
@@ -339,13 +338,13 @@ public final class RankSelectBitVector {
                     String.format("Negative bit index: %d.", index));
         } 
         
-        if (index > getNumberOfBits()) {
+        if (index > numberOfRequestedBits) {
             throw new IndexOutOfBoundsException(
                     String.format(
                             "Too large bit index (%d), number of bits " + 
                             "supported is %d.",
                             index, 
-                            getNumberOfBits()));
+                            numberOfRequestedBits));
         }
     }
     
@@ -355,13 +354,12 @@ public final class RankSelectBitVector {
                     String.format("Negative bit index: %d.", index));
         } 
         
-        if (index >= getNumberOfBits()) {
+        if (index >= getNumberOfSupportedBits()) {
             throw new IndexOutOfBoundsException(
-                    String.format(
-                            "Too large bit index (%d), number of bits " + 
+                    String.format("Too large bit index (%d), number of bits " + 
                             "supported is %d.",
                             index, 
-                            getNumberOfBits()));
+                            getNumberOfSupportedBits()));
         }
     }
     
@@ -394,7 +392,7 @@ public final class RankSelectBitVector {
     
     private RankSelectBitVector extractBitVector(int i) {
         int startIndex = k * (i / k);
-        int endIndex = Math.min(k * (i / k + 1) - 2, maximumVectorBitIndex);
+        int endIndex = k * (i / k + 1) - 2;
         
         int extractedBitVectorLength = endIndex - startIndex + 1;
         
@@ -422,6 +420,19 @@ public final class RankSelectBitVector {
         }
         
         return rank;
+    }
+    
+    private void checkNumberOfRequestedBits(int numberOfRequestedBits) {
+        if (numberOfRequestedBits == 0) {
+            throw new IllegalArgumentException("Requested zero (0) bits.");
+        }
+        
+        if (numberOfRequestedBits < 0) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Requested negative number of bits (%d).\n", 
+                            numberOfRequestedBits));
+        }
     }
     
     private static double log2(double v) {

@@ -24,7 +24,7 @@ public final class Task3 {
         System.out.printf("Preprocessed the bit vector in %d milliseconds.\n",
                           System.currentTimeMillis() - st);
         
-        int numberOfBits = rankSelectBitVector.getNumberOfBits();
+        int numberOfBits = rankSelectBitVector.getNumberOfSupportedBits();
         
         int[] answers1 = new int[numberOfBits];
         int[] answers2 = new int[numberOfBits];
@@ -80,7 +80,7 @@ public final class Task3 {
                 new RankSelectBitVector(BIT_VECTOR_LENGTH);
         
         for (int bitIndex = 0;
-                bitIndex != rankSelectBitVector.getNumberOfBits(); 
+                bitIndex != rankSelectBitVector.getNumberOfSupportedBits(); 
                 bitIndex++) {
             
             if (random.nextBoolean()) {
