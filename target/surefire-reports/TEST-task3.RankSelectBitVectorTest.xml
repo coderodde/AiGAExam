@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="task3.RankSelectBitVectorTest" time="0.128" tests="9" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="task3.RankSelectBitVectorTest" time="1.028" tests="10" errors="0" skipped="0" failures="0">
   <properties>
     <property name="sun.desktop" value="windows"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -19,7 +19,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GB"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_202\jre\bin"/>
-    <property name="sun.java.command" value="C:\Users\rodio\AppData\Local\Temp\surefire5519940166972075506\surefirebooter-20240125082954818_3.jar C:\Users\rodio\AppData\Local\Temp\surefire5519940166972075506 2024-01-25T08-29-54_590-jvmRun1 surefire-20240125082954818_1tmp surefire_0-20240125082954818_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\rodio\AppData\Local\Temp\surefire8542977667462780851\surefirebooter-20240125104709081_3.jar C:\Users\rodio\AppData\Local\Temp\surefire8542977667462780851 2024-01-25T10-47-08_606-jvmRun1 surefire-20240125104709081_1tmp surefire_0-20240125104709081_2tmp"/>
     <property name="test" value="task3.RankSelectBitVectorTest"/>
     <property name="surefire.test.class.path" value="C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\target\test-classes;C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\target\classes;C:\Users\rodio\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\rodio\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -33,7 +33,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="C:\Users\rodio\AppData\Local\Temp\surefire5519940166972075506\surefirebooter-20240125082954818_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\rodio\AppData\Local\Temp\surefire8542977667462780851\surefirebooter-20240125104709081_3.jar"/>
     <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.8.0_202\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\rt.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_202\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_202\jre\classes"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -63,12 +63,16 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="52.0"/>
   </properties>
-  <testcase name="debugTest1" classname="task3.RankSelectBitVectorTest" time="0.003"/>
+  <testcase name="debugTest1" classname="task3.RankSelectBitVectorTest" time="0.007"/>
   <testcase name="debugTest2" classname="task3.RankSelectBitVectorTest" time="0.0"/>
   <testcase name="debugTest3" classname="task3.RankSelectBitVectorTest" time="0.0"/>
-  <testcase name="debugFindSmallestFailingBitVector" classname="task3.RankSelectBitVectorTest" time="0.019"/>
+  <testcase name="debugFindSmallestFailingBitVector" classname="task3.RankSelectBitVectorTest" time="0.768">
+    <system-out><![CDATA[33554419
+]]></system-out>
+  </testcase>
   <testcase name="smallSelect" classname="task3.RankSelectBitVectorTest" time="0.0"/>
-  <testcase name="bruteForceTest" classname="task3.RankSelectBitVectorTest" time="0.064">
+  <testcase name="countSetBits" classname="task3.RankSelectBitVectorTest" time="0.006"/>
+  <testcase name="bruteForceTest" classname="task3.RankSelectBitVectorTest" time="0.147">
     <system-out><![CDATA[-- bruteForceTest, seed = 1706163778488
 ]]></system-out>
   </testcase>
