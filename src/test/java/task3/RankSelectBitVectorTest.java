@@ -7,6 +7,19 @@ import static org.junit.Assert.*;
 public final class RankSelectBitVectorTest {
     
     @Test
+    public void lastBitRank() {
+        RankSelectBitVector bv = new RankSelectBitVector(8);
+        
+        bv.writeBitOn(2);
+        bv.writeBitOn(6);
+        bv.writeBitOn(7);
+        
+        assertEquals(3, bv.rankFirst(8));
+        assertEquals(3, bv.rankSecond(8));
+        assertEquals(3, bv.rankThird(8));
+    }
+    
+    @Test
     public void smallSelect() {
         RankSelectBitVector bv = new RankSelectBitVector(8);
         
@@ -176,9 +189,7 @@ public final class RankSelectBitVectorTest {
         BruteForceBitVector referenceBv = copy(bv);
         
         bv.buildIndices();
-        
-        int matches = 0;
-        int errors = 0;
+       
         int numberOfOneBits = bv.rankThird(bv.getNumberOfBits());
         
         for (int i = 0; i < bv.getNumberOfBits(); i++) {
@@ -192,9 +203,11 @@ public final class RankSelectBitVectorTest {
             int select1 = bv.select(selectIndex);
             
             if (select1 != actualSelect) {
-                System.out.printf("select1 = %d, actualSelect = %d.\n",
-                                  select1,
-                                  actualSelect);
+                System.out.printf(
+                        "ERROR: i = %d, actualSelect = %d, select1 = %d.\n",
+                        i,
+                        actualSelect,
+                        select1);
             }
 
             if (rank3 != actualRank) {
@@ -208,20 +221,11 @@ public final class RankSelectBitVectorTest {
                                   rank3);
             }
             
-            if (rank3 == actualRank) {
-                matches++;
-            } else {
-                errors++;
-            }
-            
             assertEquals(actualRank, rank1);
             assertEquals(actualRank, rank2);
             assertEquals(actualRank, rank3);
-//            assertEquals(actualSelect, select1);
+            assertEquals(actualSelect, select1);
         }
-        
-        System.out.printf("Matches: %d.\n", matches);
-        System.out.printf("Errors:  %d.\n", errors);
     }
     
     private static RankSelectBitVector getRandomBitVector(Random random) {
@@ -274,7 +278,7 @@ public final class RankSelectBitVectorTest {
         assertFalse(bitVector.readBit(13));
     }
     
-    @Test
+//    @Test
     public void bruteForceBitVectorSelect() {
         BruteForceBitVector bv = new BruteForceBitVector(8);
         

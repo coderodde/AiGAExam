@@ -92,6 +92,10 @@ public final class Task3 {
     }
     
     private static boolean rankArraysEqual(int[] rankArray1, int[] rankArray2) {
+        if (rankArray1.length != rankArray2.length) {
+            throw new IllegalArgumentException("Rank array length mismatch.");
+        }
+        
         int n = Math.max(rankArray1.length, rankArray2.length);
         
         for (int i = 0; i != n; i++) {

@@ -165,8 +165,12 @@ public final class RankSelectBitVector {
      * @return the rank for the input target.
      */
     public int rankFirst(int index) {
-        checkBitIndex(index);
+        checkBitIndexForRank(index);
         makeSureStateIsCompiled();
+        
+        if (index == getNumberOfBits()) {
+            return rankFirst(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
+        }
         
         int startIndex = ell * (index / ell);
         int endIndex = index - 1;
@@ -181,8 +185,12 @@ public final class RankSelectBitVector {
      * @return the rank of the input index.
      */
     public int rankSecond(int index) {
-        checkBitIndex(index);
+        checkBitIndexForRank(index);
         makeSureStateIsCompiled();
+        
+        if (index == getNumberOfBits()) {
+            return rankSecond(index - 1) + (readBitImpl(index - 1) ? 1 : 0);
+        }
         
         int startIndex = k * (index / k);
         int endIndex = index - 1;
