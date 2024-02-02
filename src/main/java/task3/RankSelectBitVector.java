@@ -12,21 +12,52 @@ public final class RankSelectBitVector {
      * The actual bit storage array.
      */
     private final byte[] bytes;
+    
+    /**
+     * The actual requested number of bits in this bit vector. Will be smaller 
+     * than the total capacity.
+     */
     private final int numberOfRequestedBits;
+    
+    /**
+     * Denotes index of the most rightmost meaningful bit. Will be set to 
+     * {@code numberOfRequestedBits - 1}.
+     */
     private final int maximumBitIndex;
+    
+    /**
+     * Caches the number of bits set to one (1).
+     */
     private int numberOfSetBits;
     
+    /**
+     * The block size in the {@code first} table.
+     */
     private int ell;
+    
+    /**
+     * The block size in the {@code second} table.
+     */
     private int k;
+    
+    // The following three tables hold the index necessary for efficient rank 
+    // operation. According to internet, has space 
+    // O(sgrt(n) * log log n * log n.
     private int[] first;
     private int[] second;
     private int[][] third;
     
+    /**
+     * Constructs a new bit vector.
+     * 
+     * @param numberOfRequestedBits the actual number of bits to support.
+     */
     public RankSelectBitVector(int numberOfRequestedBits) {
         checkNumberOfRequestedBits(numberOfRequestedBits);
         
         this.numberOfRequestedBits = numberOfRequestedBits;
         
+        // Calculate the actual number of storage bytes:
         int numberOfBytes = numberOfRequestedBits / Byte.SIZE + 
                            (numberOfRequestedBits % Byte.SIZE != 0 ? 1 : 0);
         
@@ -34,6 +65,8 @@ public final class RankSelectBitVector {
                          // rank/select.
         
         bytes = new byte[numberOfBytes];
+        
+        // Set the rightmost, valid index:
         this.maximumBitIndex = this.bytes.length * Byte.SIZE - 1;
     }
     
@@ -121,6 +154,11 @@ public final class RankSelectBitVector {
         hasDirtyState = false;
     }
     
+    /**
+     * Returns the number of bits that are set (have value of one (1)).
+     * 
+     * @return the number of set bits.
+     */
     public int getNumberOfSetBits() {
         return numberOfSetBits;
     }
@@ -221,10 +259,6 @@ public final class RankSelectBitVector {
         checkBitIndexForRank(index);
         makeSureStateIsCompiled();
         
-        int selectorIndex = 
-                extractBitVector(index)
-                        .toInteger(k - 1);
-        
         int f = first[index / ell];
         int s = second[index / k];
         
@@ -233,6 +267,10 @@ public final class RankSelectBitVector {
         if (thirdEntryIndex == -1) {
             return f + s;
         }
+        
+        int selectorIndex = 
+                extractBitVector(index)
+                        .toInteger(k - 1);
         
         return f + s + third[selectorIndex][thirdEntryIndex];
     }
@@ -310,13 +348,13 @@ public final class RankSelectBitVector {
         int r = rankSecond(halfRangeLength + rangeStartIndex);
         
         if (r >= bitIndex) {
-            return selectImplFirst(bitIndex, 
-                              rangeStartIndex,
-                              halfRangeLength);
+            return selectImplSecond(bitIndex, 
+                                    rangeStartIndex,
+                                    halfRangeLength);
         } else {
-            return selectImplFirst(bitIndex, 
-                              rangeStartIndex + halfRangeLength,
-                              rangeLength - halfRangeLength);
+            return selectImplSecond(bitIndex, 
+                                    rangeStartIndex + halfRangeLength,
+                                    rangeLength - halfRangeLength);
         }
     }
     
@@ -332,13 +370,13 @@ public final class RankSelectBitVector {
         int r = rankThird(halfRangeLength + rangeStartIndex);
         
         if (r >= bitIndex) {
-            return selectImplFirst(bitIndex, 
-                              rangeStartIndex,
-                              halfRangeLength);
+            return selectImplThird(bitIndex, 
+                                   rangeStartIndex,
+                                   halfRangeLength);
         } else {
-            return selectImplFirst(bitIndex, 
-                              rangeStartIndex + halfRangeLength,
-                              rangeLength - halfRangeLength);
+            return selectImplThird(bitIndex, 
+                                   rangeStartIndex + halfRangeLength,
+                                   rangeLength - halfRangeLength);
         }
     }
     

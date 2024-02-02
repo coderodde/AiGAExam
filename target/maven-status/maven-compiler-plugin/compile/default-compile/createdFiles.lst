@@ -7,6 +7,7 @@ task1\HeapNodeHolder.class
 task1\BidirectionalDijkstrasAlgorithm.class
 task1\LatticeNodeChildrenNodeExpander.class
 task0\Task0.class
+task9\Task9.class
 task0\ProteinPermutation.class
 task1\IntWeightFunction.class
 task1\NodeExpander.class
@@ -15,14 +16,16 @@ task1\LatticeNodeParentsNodeExpander.class
 task2\Task2$LevenshteinEditDistanceResult.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
 task2\Task2$EditOperation.class
-task10\Task10.class
 task1\LatticeWeightFunction.class
 util\Codon.class
 task1\Alignment.class
+task4\RMQTreeBuilder.class
 util\AminoAcidAlphabet.class
-task10\BinarySearchTreeNode.class
 task2\Task2.class
 util\MultipleGroupPermuter.class
+task4\Task4.class
+task9\BinarySearchTreeNode.class
+task4\RMQTreeNode.class
 task1\DijkstrasAlgorithm.class
 task3\RankSelectBitVector.class
 task1\Task1.class

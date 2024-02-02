@@ -124,7 +124,7 @@ public final class Task3 {
         long answersDuration3 = System.currentTimeMillis() - st;
         
         System.out.printf(
-                "rankThird() ran for %d milliseconds.\n.",
+                "rankThird() ran for %d milliseconds.\n",
                 answersDuration3);
         
         if (!rankArraysEqual(answers1, answers2)) {
@@ -178,7 +178,7 @@ public final class Task3 {
         long answersDuration3 = System.currentTimeMillis() - st;
         
         System.out.printf(
-                "selectThird() ran for %d milliseconds.\n.",
+                "selectThird() ran for %d milliseconds.\n",
                 answersDuration3);
         
         if (!rankArraysEqual(answers1, answers2)) {

@@ -2,9 +2,6 @@ package task3;
 
 final class BruteForceBitVector {
     
-    /**
-     * The actual bit storage array.
-     */
     private final byte[] bytes;
     
     public BruteForceBitVector(int capacity) {

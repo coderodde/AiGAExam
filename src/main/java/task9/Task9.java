@@ -1,4 +1,4 @@
-package task10;
+package task9;
 
 // Additional fun: the task 3.2 from the course book; convert sorted kay array 
 // to a balanced binary search tree in lenear time. (Uses logarithmic time for
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 import util.Utils;
 
-public class Task10 {
+public class Task9 {
     
     public static void main(String[] args) {
         long seed = Utils.parseSeed(args);
