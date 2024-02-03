@@ -5,11 +5,12 @@ import java.util.Objects;
 public abstract class AbstractRMQTreeNode
         <N extends AbstractRMQTreeNode<N, K, V>,
          K extends Comparable<? super K>,
-         V>
+         V extends Comparable<? super V>>
         implements Comparable<AbstractRMQTreeNode<N, K, V>>{
     
     protected K key;
-    
+    protected V value;
+
     public K getKey() {
         return key;
     }
@@ -18,6 +19,14 @@ public abstract class AbstractRMQTreeNode
         this.key = key;
     }
 
+    public V getValue() {
+        return value;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+    
     @Override
     public int compareTo(AbstractRMQTreeNode<N, K, V> o) {
         return key.compareTo(o.key);

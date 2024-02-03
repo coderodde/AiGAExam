@@ -17,6 +17,7 @@ task1\ProbabilityDistribution$Entry.class
 task1\LatticeNodeParentsNodeExpander.class
 task4\InternalRMQTreeNode.class
 task2\Task2$LevenshteinEditDistanceResult.class
+task4\RMQTree.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
 task2\Task2$EditOperation.class
 task1\LatticeWeightFunction.class

@@ -3,11 +3,12 @@ package task4;
 import java.util.Collections;
 import java.util.List;
 
-public final class RMQTreeBuilder<K extends Comparable<? super K>, V> {
+public final class RMQTreeBuilder<K extends Comparable<? super K>,
+                                  V extends Comparable<? super V>> {
 
     public static <N extends AbstractRMQTreeNode<N, K, V>,
                    K extends Comparable<? super K>,
-                   V>
+                   V extends Comparable<? super V>>
                     
     AbstractRMQTreeNode<N, K, V> 
         buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
@@ -25,7 +26,7 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>, V> {
     // unlike the algorithm in Task9.java.
     private static <N extends AbstractRMQTreeNode<N, K, V>,
                     K extends Comparable<? super K>,
-                    V>
+                    V extends Comparable<? super V>>
                     
     AbstractRMQTreeNode<N, K, V> 
         buildRMQTreeImpl(List<KeyValuePair<K, V>> keyValuePairs) {
@@ -55,8 +56,23 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>, V> {
         
         localRoot.setLeftChild(leftSubTreeRoot);
         localRoot.setRightChild(rightSubTreeRoot);
-        localRoot.setKey(rightSubTreeRoot.getKey()); // Important step!
+        
+        localRoot.setKey(rightSubTreeRoot.getKey()); // Important steps!
+        localRoot.setValue(min(leftSubTreeRoot.getValue(),
+                               rightSubTreeRoot.getValue()));
 
         return localRoot;
+    }
+        
+    /**
+     * Returns the smaller of the two given values.
+     * 
+     * @param <V>    the value of type. Must be {@link java.lang.Comparable}.
+     * @param value1 the first value.
+     * @param value2 the second value.
+     * @return the smaller of the two input values.
+     */
+    private static <V extends Comparable<? super V>> V min(V value1, V value2) {
+        return value1.compareTo(value2) < 0 ? value1 : value2;
     }
 }

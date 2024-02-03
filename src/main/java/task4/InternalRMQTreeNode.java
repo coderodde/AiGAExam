@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public final class InternalRMQTreeNode<N extends AbstractRMQTreeNode<N, K, V>,
                                        K extends Comparable<? super K>, 
-                                       V> 
+                                       V extends Comparable<? super V>>
 extends AbstractRMQTreeNode<N, K, V> {
     
     private AbstractRMQTreeNode<?, K, V> leftChild;
@@ -28,7 +28,8 @@ extends AbstractRMQTreeNode<N, K, V> {
     
     @Override
     public String toString() {
-        return String.format("[INTERNAL: key = \"%s\"]",
-                             Objects.toString(key));
+        return String.format("[INTERNAL: key = \"%s\", value = \"%s\"]",
+                             Objects.toString(key),
+                             Objects.toString(value));
     }
 }
