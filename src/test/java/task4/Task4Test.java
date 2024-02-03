@@ -9,7 +9,8 @@ import org.junit.Test;
 public class Task4Test {
     
     @Test
-    public void testSmallRMQTree() {
+    public void passesOnTreeWith4Nodes() {
+        
         RMQTreeBuilder<Integer, String> rmqTreeBuilder = new RMQTreeBuilder<>();
         
         List<RMQTreeNode<Integer, String>> nodes = new ArrayList<>();
@@ -47,5 +48,36 @@ public class Task4Test {
         assertEquals("2", leaf2.getValue());
         assertEquals("3", leaf3.getValue());
         assertEquals("4", leaf4.getValue());
+    }
+    
+    @Test
+    public void passesOnTreeWith3Nodes() {
+        RMQTreeBuilder<Integer, String> rmqTreeBuilder = new RMQTreeBuilder<>();
+        
+        List<RMQTreeNode<Integer, String>> nodes = new ArrayList<>();
+        
+        nodes.add(new RMQTreeNode<>(2, "2"));
+        nodes.add(new RMQTreeNode<>(1, "1"));
+        nodes.add(new RMQTreeNode<>(3, "3"));
+        
+        RMQTreeNode<Integer, String> root = rmqTreeBuilder.buildRMQTree(nodes);
+        assertEquals(Integer.valueOf(3), root.getKey());
+        assertNull(root.getValue());
+        
+        RMQTreeNode<Integer, String> middleInternalNode = root.getRightChild();
+        assertEquals(Integer.valueOf(3), middleInternalNode.getKey());
+        assertNull(middleInternalNode.getValue());
+        
+        RMQTreeNode<Integer, String> leaf1 = root.getLeftChild();
+        RMQTreeNode<Integer, String> leaf2 = middleInternalNode.getLeftChild();
+        RMQTreeNode<Integer, String> leaf3 = middleInternalNode.getRightChild();
+        
+        assertEquals(Integer.valueOf(1), leaf1.getKey());
+        assertEquals(Integer.valueOf(2), leaf2.getKey());
+        assertEquals(Integer.valueOf(3), leaf3.getKey());
+        
+        assertEquals("1", leaf1.getValue());
+        assertEquals("2", leaf2.getValue());
+        assertEquals("3", leaf3.getValue());
     }
 }
