@@ -65,6 +65,7 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>,
 
         InternalRMQTreeNode<N, K, V> localRoot = new InternalRMQTreeNode<>();
         
+        // Link the children and their parent:
         localRoot.setLeftChild(leftSubTreeRoot);
         localRoot.setRightChild(rightSubTreeRoot);
         

@@ -10,25 +10,26 @@ public class Task4Test {
     
     @Test
     public void passesOnTreeWith4Nodes() {
+        List<KeyValuePair<Integer, Long>> keyValuePairs = new ArrayList<>(4);
         
-        RMQTreeBuilder<Integer, String> rmqTreeBuilder = new RMQTreeBuilder<>();
+        keyValuePairs.add(new KeyValuePair<>(2, 2L));
+        keyValuePairs.add(new KeyValuePair<>(4, 4L));
+        keyValuePairs.add(new KeyValuePair<>(1, 1L));
+        keyValuePairs.add(new KeyValuePair<>(3, 3L));
         
-        List<RMQTreeNode<Integer, String>> nodes = new ArrayList<>();
+        RMQTree<?, Integer, Long> tree = 
+                RMQTreeBuilder.buildRMQTree(keyValuePairs);
         
-        nodes.add(new RMQTreeNode<>(2, "2"));
-        nodes.add(new RMQTreeNode<>(4, "4"));
-        nodes.add(new RMQTreeNode<>(1, "1"));
-        nodes.add(new RMQTreeNode<>(3, "3"));
+        InternalRMQTreeNode<?, Integer, Long> root = 
+                (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
         
-        RMQTreeNode<Integer, String> root = rmqTreeBuilder.buildRMQTree(nodes);
+        InternalRMQTreeNode<?, Integer, Long> leftMiddleNode  = (InternalRMQTreeNode<?, Integer, Long>) root.getLeftChild();
+        InternalRMQTreeNode<?, Integer, Long> rightMiddleNode = (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
         
-        RMQTreeNode<Integer, String> leftMiddleNode  = root.getLeftChild();
-        RMQTreeNode<Integer, String> rightMiddleNode = root.getRightChild();
-        
-        RMQTreeNode<Integer, String> leaf1 = leftMiddleNode.getLeftChild();
-        RMQTreeNode<Integer, String> leaf2 = leftMiddleNode.getRightChild();
-        RMQTreeNode<Integer, String> leaf3 = rightMiddleNode.getLeftChild();
-        RMQTreeNode<Integer, String> leaf4 = rightMiddleNode.getRightChild();
+        LeafRMQTreeNode<?, Integer, String> leaf1 = (LeafRMQTreeNode<?, Integer, String>) leftMiddleNode.getLeftChild();
+        LeafRMQTreeNode<?, Integer, String> leaf2 = (LeafRMQTreeNode<?, Integer, String>) leftMiddleNode.getRightChild();
+        LeafRMQTreeNode<?, Integer, String> leaf3 = (LeafRMQTreeNode<?, Integer, String>) rightMiddleNode.getLeftChild();
+        LeafRMQTreeNode<?, Integer, String> leaf4 = (LeafRMQTreeNode<?, Integer, String>) rightMiddleNode.getRightChild();
         
         assertEquals(Integer.valueOf(4), root.getKey());
         assertNull(root.getValue());
@@ -52,32 +53,37 @@ public class Task4Test {
     
     @Test
     public void passesOnTreeWith3Nodes() {
-        RMQTreeBuilder<Integer, String> rmqTreeBuilder = new RMQTreeBuilder<>();
+        List<KeyValuePair<Integer, Long>> keyValuePairs = new ArrayList<>(4);
         
-        List<RMQTreeNode<Integer, String>> nodes = new ArrayList<>();
+        keyValuePairs.add(new KeyValuePair<>(2, 2L));
+        keyValuePairs.add(new KeyValuePair<>(1, 1L));
+        keyValuePairs.add(new KeyValuePair<>(3, 3L));
         
-        nodes.add(new RMQTreeNode<>(2, "2"));
-        nodes.add(new RMQTreeNode<>(1, "1"));
-        nodes.add(new RMQTreeNode<>(3, "3"));
+        RMQTree<?, Integer, Long> tree = 
+                RMQTreeBuilder.buildRMQTree(keyValuePairs);
         
-        RMQTreeNode<Integer, String> root = rmqTreeBuilder.buildRMQTree(nodes);
+        InternalRMQTreeNode<?, Integer, Long> root =
+                (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
+        
         assertEquals(Integer.valueOf(3), root.getKey());
-        assertNull(root.getValue());
+        assertEquals(Long.valueOf(1L), root.getValue());
         
-        RMQTreeNode<Integer, String> middleInternalNode = root.getRightChild();
+        InternalRMQTreeNode<?, Integer, Long> middleInternalNode = 
+                (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
+        
         assertEquals(Integer.valueOf(3), middleInternalNode.getKey());
-        assertNull(middleInternalNode.getValue());
+        assertEquals(Long.valueOf(2L), middleInternalNode.getValue());
         
-        RMQTreeNode<Integer, String> leaf1 = root.getLeftChild();
-        RMQTreeNode<Integer, String> leaf2 = middleInternalNode.getLeftChild();
-        RMQTreeNode<Integer, String> leaf3 = middleInternalNode.getRightChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf1 = (LeafRMQTreeNode<?, Integer, Long>) root.getLeftChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf2 = (LeafRMQTreeNode<?, Integer, Long>) middleInternalNode.getLeftChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf3 = (LeafRMQTreeNode<?, Integer, Long>) middleInternalNode.getRightChild();
         
         assertEquals(Integer.valueOf(1), leaf1.getKey());
         assertEquals(Integer.valueOf(2), leaf2.getKey());
         assertEquals(Integer.valueOf(3), leaf3.getKey());
         
-        assertEquals("1", leaf1.getValue());
-        assertEquals("2", leaf2.getValue());
-        assertEquals("3", leaf3.getValue());
+        assertEquals(Long.valueOf(1L), leaf1.getValue());
+        assertEquals(Long.valueOf(2L), leaf2.getValue());
+        assertEquals(Long.valueOf(3L), leaf3.getValue());
     }
 }

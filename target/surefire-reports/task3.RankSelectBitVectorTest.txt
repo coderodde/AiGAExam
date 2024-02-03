@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: task3.RankSelectBitVectorTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.189 s -- in task3.RankSelectBitVectorTest
