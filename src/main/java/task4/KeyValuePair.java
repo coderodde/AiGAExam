@@ -1,5 +1,7 @@
 package task4;
 
+import java.util.Objects;
+
 public final class KeyValuePair<K extends Comparable<? super K>, V> 
 implements Comparable<KeyValuePair<K, V>> {
     
@@ -14,6 +16,13 @@ implements Comparable<KeyValuePair<K, V>> {
     @Override
     public int compareTo(KeyValuePair<K, V> o) {
         return key.compareTo(o.key);
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("[KeyValuePair: key = \"%s\", value = \"%s\"]",
+                             Objects.toString(key),
+                             Objects.toString(value));
     }
 
     public K getKey() {
