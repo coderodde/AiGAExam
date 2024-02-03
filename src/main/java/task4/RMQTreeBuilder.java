@@ -5,40 +5,57 @@ import java.util.List;
 
 public final class RMQTreeBuilder<K extends Comparable<? super K>, V> {
 
-    public static <K extends Comparable<? super K>, V>
-            RMQTreeNode<K, V> buildRMQTree(List<RMQTreeNode<K, V>> nodes) {
+    public static <N extends AbstractRMQTreeNode<N, K, V>,
+                   K extends Comparable<? super K>,
+                   V>
+                    
+    AbstractRMQTreeNode<N, K, V> 
+        buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
         
-        if (nodes == null || nodes.isEmpty()) {
+        if (keyValuePairs == null || keyValuePairs.isEmpty()) {
             return null;
         }
         
-        Collections.sort(nodes);
-        return buildRMQTreeImpl(nodes);
+        Collections.sort(keyValuePairs);
+        return buildRMQTreeImpl(keyValuePairs);
     }
 
     // This algorithm seems much like in Task9, yet it differs: this one does 
     // not stored actual keys to the internal nodes, except to the leaf nodes,
     // unlike the algorithm in Task9.java.
-    private static <K extends Comparable<? super K>, V>
-            RMQTreeNode<K, V> buildRMQTreeImpl(List<RMQTreeNode<K, V>> nodes) {
+    private static <N extends AbstractRMQTreeNode<N, K, V>,
+                    K extends Comparable<? super K>,
+                    V>
+                    
+    AbstractRMQTreeNode<N, K, V> 
+        buildRMQTreeImpl(List<KeyValuePair<K, V>> keyValuePairs) {
 
-        if (nodes.size() == 1) {
-            return nodes.get(0);
+        if (keyValuePairs.size() == 1) {
+            KeyValuePair<K, V> keyValuePair = keyValuePairs.get(0);
+            
+            LeafRMQTreeNode<N, K, V> leaf = new LeafRMQTreeNode<>();
+            leaf.setKey(keyValuePair.getKey());
+            leaf.setValue(keyValuePair.getValue());
+            return leaf;
         }
+        
+        // middleIndex goes to the right:
+        int middleIndex = keyValuePairs.size() / 2;
 
-        int middleIndex = nodes.size() / 2; // middleIndex goes to the right.
+        AbstractRMQTreeNode<N, K, V> leftSubTreeRoot
+                = buildRMQTreeImpl(keyValuePairs.subList(0, middleIndex));
 
-        RMQTreeNode<K, V> leftSubTreeRoot
-                = buildRMQTreeImpl(nodes.subList(0, middleIndex));
+        AbstractRMQTreeNode<N, K, V> rightSubTreeRoot
+                = buildRMQTreeImpl(
+                        keyValuePairs.subList(
+                                middleIndex,
+                                keyValuePairs.size()));
 
-        RMQTreeNode<K, V> rightSubTreeRoot
-                = buildRMQTreeImpl(nodes.subList(middleIndex, nodes.size()));
-
-        RMQTreeNode<K, V> localRoot = 
-                new RMQTreeNode<>(rightSubTreeRoot.getKey(), null);
+        InternalRMQTreeNode<N, K, V> localRoot = new InternalRMQTreeNode<>();
         
         localRoot.setLeftChild(leftSubTreeRoot);
         localRoot.setRightChild(rightSubTreeRoot);
+        localRoot.setKey(rightSubTreeRoot.getKey()); // Important step!
 
         return localRoot;
     }

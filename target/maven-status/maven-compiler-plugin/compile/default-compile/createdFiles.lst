@@ -5,14 +5,17 @@ util\Utils.class
 task1\ParentsExpander.class
 task1\HeapNodeHolder.class
 task1\BidirectionalDijkstrasAlgorithm.class
+task4\KeyValuePair.class
 task1\LatticeNodeChildrenNodeExpander.class
 task0\Task0.class
 task9\Task9.class
 task0\ProteinPermutation.class
 task1\IntWeightFunction.class
+task4\AbstractRMQTreeNode.class
 task1\NodeExpander.class
 task1\ProbabilityDistribution$Entry.class
 task1\LatticeNodeParentsNodeExpander.class
+task4\InternalRMQTreeNode.class
 task2\Task2$LevenshteinEditDistanceResult.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
 task2\Task2$EditOperation.class
@@ -25,6 +28,7 @@ task2\Task2.class
 util\MultipleGroupPermuter.class
 task4\Task4.class
 task9\BinarySearchTreeNode.class
+task4\LeafRMQTreeNode.class
 task4\RMQTreeNode.class
 task1\DijkstrasAlgorithm.class
 task3\RankSelectBitVector.class
