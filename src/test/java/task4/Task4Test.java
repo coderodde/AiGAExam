@@ -26,29 +26,35 @@ public class Task4Test {
         InternalRMQTreeNode<?, Integer, Long> leftMiddleNode  = (InternalRMQTreeNode<?, Integer, Long>) root.getLeftChild();
         InternalRMQTreeNode<?, Integer, Long> rightMiddleNode = (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
         
-        LeafRMQTreeNode<?, Integer, String> leaf1 = (LeafRMQTreeNode<?, Integer, String>) leftMiddleNode.getLeftChild();
-        LeafRMQTreeNode<?, Integer, String> leaf2 = (LeafRMQTreeNode<?, Integer, String>) leftMiddleNode.getRightChild();
-        LeafRMQTreeNode<?, Integer, String> leaf3 = (LeafRMQTreeNode<?, Integer, String>) rightMiddleNode.getLeftChild();
-        LeafRMQTreeNode<?, Integer, String> leaf4 = (LeafRMQTreeNode<?, Integer, String>) rightMiddleNode.getRightChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf1 = (LeafRMQTreeNode<?, Integer, Long>) leftMiddleNode.getLeftChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf2 = (LeafRMQTreeNode<?, Integer, Long>) leftMiddleNode.getRightChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf3 = (LeafRMQTreeNode<?, Integer, Long>) rightMiddleNode.getLeftChild();
+        LeafRMQTreeNode<?, Integer, Long> leaf4 = (LeafRMQTreeNode<?, Integer, Long>) rightMiddleNode.getRightChild();
         
         assertEquals(Integer.valueOf(4), root.getKey());
-        assertNull(root.getValue());
+        assertEquals(Long.valueOf(1L), root.getValue());
         
         assertEquals(Integer.valueOf(2), leftMiddleNode.getKey());
-        assertNull(leftMiddleNode.getValue());
+        assertEquals(Long.valueOf(1L), leftMiddleNode.getValue());
         
         assertEquals(Integer.valueOf(4), rightMiddleNode.getKey());
-        assertNull(rightMiddleNode.getValue());
+        assertEquals(Long.valueOf(3L), rightMiddleNode.getValue());
         
         assertEquals(Integer.valueOf(1), leaf1.getKey());
         assertEquals(Integer.valueOf(2), leaf2.getKey());
         assertEquals(Integer.valueOf(3), leaf3.getKey());
         assertEquals(Integer.valueOf(4), leaf4.getKey());
         
-        assertEquals("1", leaf1.getValue());
-        assertEquals("2", leaf2.getValue());
-        assertEquals("3", leaf3.getValue());
-        assertEquals("4", leaf4.getValue());
+        assertEquals(Long.valueOf(1L), leaf1.getValue());
+        assertEquals(Long.valueOf(2L), leaf2.getValue());
+        assertEquals(Long.valueOf(3L), leaf3.getValue());
+        assertEquals(Long.valueOf(4L), leaf4.getValue());
+        
+        tree.update(4, -1L);
+        
+        assertEquals(Long.valueOf(-1L), leaf4.getValue());
+        assertEquals(Long.valueOf(-1L), rightMiddleNode.getValue());
+        assertEquals(Long.valueOf(-1L), root.getValue());
     }
     
     @Test
