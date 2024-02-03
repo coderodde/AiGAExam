@@ -16,10 +16,16 @@ public class Task4 {
         
         Collections.shuffle(keyValuePairs);
         
-        AbstractRMQTreeNode<?, Integer, String> root =
+        RMQTree<?, Integer, String> tree = 
                 RMQTreeBuilder.buildRMQTree(keyValuePairs);
         
-        printRMQTree(root);
+        printRMQTree(tree);
+        
+        tree.update(2, "0");
+        
+        System.out.println("==========");
+        
+        printRMQTree(tree);
     }
     
     private static List<KeyValuePair<Integer, String>> 
@@ -29,22 +35,21 @@ public class Task4 {
         
         for (int i = 0; i < TREE_SIZE; i++) {
             KeyValuePair keyValuePair = new KeyValuePair<>(Integer.valueOf(i),
-                                                           Integer.toString(i));
+                                                           Integer.toString(i + 1));
             keyValuePairs.add(keyValuePair);
         }
         
         return keyValuePairs;
     }
         
-    private static void printRMQTree(
-            AbstractRMQTreeNode<?, Integer, String> root) {
+    private static void printRMQTree(RMQTree<?, Integer, String> tree) {
         
         Deque<AbstractRMQTreeNode<?, Integer, String>> queue = 
                 new ArrayDeque<>();
         
-        queue.addLast(root);
+        queue.addLast(tree.getRoot());
         
-        AbstractRMQTreeNode<?, Integer, String> levelEnd = root;
+        AbstractRMQTreeNode<?, Integer, String> levelEnd = tree.getRoot();
         
         while (!queue.isEmpty()) {
             AbstractRMQTreeNode<?, Integer, String> currentNode = 

@@ -1,7 +1,10 @@
 package task4;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import static task4.Utils.min;
 
 public final class RMQTreeBuilder<K extends Comparable<? super K>,
                                   V extends Comparable<? super V>> {
@@ -10,15 +13,23 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>,
                    K extends Comparable<? super K>,
                    V extends Comparable<? super V>>
                     
-    AbstractRMQTreeNode<N, K, V> 
-        buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
+    RMQTree<N, K, V> buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
         
         if (keyValuePairs == null || keyValuePairs.isEmpty()) {
             return null;
         }
         
+        // Filter duplicates:
+        Set<KeyValuePair<K, V>> filter = new HashSet<>(keyValuePairs);
+        keyValuePairs.clear();
+        
+        for (KeyValuePair<K, V> keyValuePair : filter) {
+            keyValuePairs.add(keyValuePair);
+        }
+        
         Collections.sort(keyValuePairs);
-        return buildRMQTreeImpl(keyValuePairs);
+        
+        return new RMQTree<N, K, V>(buildRMQTreeImpl(keyValuePairs));
     }
 
     // This algorithm seems much like in Task9, yet it differs: this one does 
@@ -62,17 +73,5 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>,
                                rightSubTreeRoot.getValue()));
 
         return localRoot;
-    }
-        
-    /**
-     * Returns the smaller of the two given values.
-     * 
-     * @param <V>    the value of type. Must be {@link java.lang.Comparable}.
-     * @param value1 the first value.
-     * @param value2 the second value.
-     * @return the smaller of the two input values.
-     */
-    private static <V extends Comparable<? super V>> V min(V value1, V value2) {
-        return value1.compareTo(value2) < 0 ? value1 : value2;
     }
 }

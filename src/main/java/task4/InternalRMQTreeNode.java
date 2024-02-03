@@ -7,22 +7,22 @@ public final class InternalRMQTreeNode<N extends AbstractRMQTreeNode<N, K, V>,
                                        V extends Comparable<? super V>>
 extends AbstractRMQTreeNode<N, K, V> {
     
-    private AbstractRMQTreeNode<?, K, V> leftChild;
-    private AbstractRMQTreeNode<?, K, V> rightChild;
+    private AbstractRMQTreeNode<N, K, V> leftChild;
+    private AbstractRMQTreeNode<N, K, V> rightChild;
 
-    public AbstractRMQTreeNode<?, K, V> getLeftChild() {
+    public AbstractRMQTreeNode<N, K, V> getLeftChild() {
         return leftChild;
     }
 
-    public AbstractRMQTreeNode<?, K, V> getRightChild() {
+    public AbstractRMQTreeNode<N, K, V> getRightChild() {
         return rightChild;
     }
 
-    public void setLeftChild(AbstractRMQTreeNode<?, K, V> leftChild) {
+    public void setLeftChild(AbstractRMQTreeNode<N, K, V> leftChild) {
         this.leftChild = leftChild;
     }
 
-    public void setRightChild(AbstractRMQTreeNode<?, K, V> rightChild) {
+    public void setRightChild(AbstractRMQTreeNode<N, K, V> rightChild) {
         this.rightChild = rightChild;
     }
     

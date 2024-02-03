@@ -10,6 +10,7 @@ public abstract class AbstractRMQTreeNode
     
     protected K key;
     protected V value;
+    protected AbstractRMQTreeNode<N, K, V> parent;
 
     public K getKey() {
         return key;
@@ -25,6 +26,14 @@ public abstract class AbstractRMQTreeNode
 
     public void setValue(V value) {
         this.value = value;
+    }
+
+    public AbstractRMQTreeNode<N, K, V> getParent() {
+        return parent;
+    }
+
+    public void setParent(AbstractRMQTreeNode<N, K, V> parent) {
+        this.parent = parent;
     }
     
     @Override
