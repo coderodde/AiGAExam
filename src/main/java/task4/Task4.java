@@ -11,59 +11,60 @@ public class Task4 {
     private static final int TREE_SIZE = 5;
     
     public static void main(String[] args) {
-        List<KeyValuePair<Integer, String>> keyValuePairs = 
+        List<KeyValuePair<Integer, Long>> keyValuePairs = 
                 generateKeyValuePairs();
         
         Collections.shuffle(keyValuePairs);
         
-        RMQTree<?, Integer, String> tree = 
+        RMQTree<?, Integer, Long> tree = 
                 RMQTreeBuilder.buildRMQTree(keyValuePairs);
         
         printRMQTree(tree);
         
-        tree.update(2, "0");
+        tree.update(2, -1L);
         
         System.out.println("==========");
         
         printRMQTree(tree);
     }
     
-    private static List<KeyValuePair<Integer, String>> 
+    private static List<KeyValuePair<Integer, Long>> 
         generateKeyValuePairs() {
-        List<KeyValuePair<Integer, String>> keyValuePairs = 
+        List<KeyValuePair<Integer, Long>> keyValuePairs = 
                 new ArrayList<>(TREE_SIZE);
         
         for (int i = 0; i < TREE_SIZE; i++) {
             KeyValuePair keyValuePair = new KeyValuePair<>(Integer.valueOf(i),
-                                                           Integer.toString(i + 1));
+                                                           Long.valueOf(i));
             keyValuePairs.add(keyValuePair);
         }
         
         return keyValuePairs;
     }
         
-    private static void printRMQTree(RMQTree<?, Integer, String> tree) {
+    private static <K extends Comparable<? super K>, 
+             V extends Comparable<? super V>> void printRMQTree(RMQTree<?, K, V> tree) {
         
-        Deque<AbstractRMQTreeNode<?, Integer, String>> queue = 
+        Deque<AbstractRMQTreeNode<?, K, V>> queue = 
                 new ArrayDeque<>();
         
         queue.addLast(tree.getRoot());
         
-        AbstractRMQTreeNode<?, Integer, String> levelEnd = tree.getRoot();
+        AbstractRMQTreeNode<?, K, V> levelEnd = tree.getRoot();
         
         while (!queue.isEmpty()) {
-            AbstractRMQTreeNode<?, Integer, String> currentNode = 
-                    queue.removeFirst();
+            AbstractRMQTreeNode<?, K, V> currentNode = queue.removeFirst();
             
             System.out.printf("%s ", currentNode);
             
             if (currentNode instanceof InternalRMQTreeNode) {
-                AbstractRMQTreeNode<?, Integer, String> leftChild =
-                        ((InternalRMQTreeNode<?, Integer, String>) currentNode)
+                
+                AbstractRMQTreeNode<?, K, V> leftChild =
+                        ((InternalRMQTreeNode<?, K, V>) currentNode)
                                 .getLeftChild();
                 
-                AbstractRMQTreeNode<?, Integer, String> rightChild = 
-                        ((InternalRMQTreeNode<?, Integer, String>) currentNode)
+                AbstractRMQTreeNode<?, K, V> rightChild = 
+                        ((InternalRMQTreeNode<?, K, V>) currentNode)
                                 .getRightChild();
                 
                 queue.addLast(leftChild);
