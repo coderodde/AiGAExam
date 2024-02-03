@@ -68,6 +68,9 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>,
         localRoot.setLeftChild(leftSubTreeRoot);
         localRoot.setRightChild(rightSubTreeRoot);
         
+        leftSubTreeRoot.setParent(localRoot);
+        rightSubTreeRoot.setParent(localRoot);
+        
         localRoot.setKey(rightSubTreeRoot.getKey()); // Important steps!
         localRoot.setValue(min(leftSubTreeRoot.getValue(),
                                rightSubTreeRoot.getValue()));
