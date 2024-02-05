@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.Objects;
 import static task4.Utils.min;
 
-public final class RMQTree<N extends AbstractRMQTreeNode<N, K, V>,
+public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
                            K extends Comparable<? super K>,
                            V extends Comparable<? super V>> {
     
     private final AbstractRMQTreeNode<N, K, V> root;
     private final Map<K, LeafRMQTreeNode<N, K, V>> leafMap = new HashMap<>();
     
-    public RMQTree(AbstractRMQTreeNode<N, K, V> root) {
+    public SemiDynamicRMQTree(AbstractRMQTreeNode<N, K, V> root) {
         this.root = Objects.requireNonNull(root, "The root node is null.");
         loadLeafMap();
     }

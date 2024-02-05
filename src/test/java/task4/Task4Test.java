@@ -17,8 +17,8 @@ public class Task4Test {
         keyValuePairs.add(new KeyValuePair<>(1, 1L));
         keyValuePairs.add(new KeyValuePair<>(3, 3L));
         
-        RMQTree<?, Integer, Long> tree = 
-                RMQTreeBuilder.buildRMQTree(keyValuePairs);
+        SemiDynamicRMQTree<?, Integer, Long> tree = 
+                SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairs);
         
         InternalRMQTreeNode<?, Integer, Long> root = 
                 (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
@@ -65,8 +65,8 @@ public class Task4Test {
         keyValuePairs.add(new KeyValuePair<>(1, 1L));
         keyValuePairs.add(new KeyValuePair<>(3, 3L));
         
-        RMQTree<?, Integer, Long> tree = 
-                RMQTreeBuilder.buildRMQTree(keyValuePairs);
+        SemiDynamicRMQTree<?, Integer, Long> tree = 
+                SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairs);
         
         InternalRMQTreeNode<?, Integer, Long> root =
                 (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();

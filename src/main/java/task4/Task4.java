@@ -16,8 +16,8 @@ public class Task4 {
         
         Collections.shuffle(keyValuePairs);
         
-        RMQTree<?, Integer, Long> tree = 
-                RMQTreeBuilder.buildRMQTree(keyValuePairs);
+        SemiDynamicRMQTree<?, Integer, Long> tree = 
+                SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairs);
         
         printRMQTree(tree);
         
@@ -43,7 +43,7 @@ public class Task4 {
     }
         
     private static <K extends Comparable<? super K>, 
-             V extends Comparable<? super V>> void printRMQTree(RMQTree<?, K, V> tree) {
+             V extends Comparable<? super V>> void printRMQTree(SemiDynamicRMQTree<?, K, V> tree) {
         
         Deque<AbstractRMQTreeNode<?, K, V>> queue = 
                 new ArrayDeque<>();

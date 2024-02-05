@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Set;
 import static task4.Utils.min;
 
-public final class RMQTreeBuilder<K extends Comparable<? super K>,
+public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
                                   V extends Comparable<? super V>> {
 
     public static <N extends AbstractRMQTreeNode<N, K, V>,
                    K extends Comparable<? super K>,
                    V extends Comparable<? super V>>
                     
-    RMQTree<N, K, V> buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
+    SemiDynamicRMQTree<N, K, V> buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
         
         if (keyValuePairs == null || keyValuePairs.isEmpty()) {
             return null;
@@ -29,7 +29,7 @@ public final class RMQTreeBuilder<K extends Comparable<? super K>,
         
         Collections.sort(keyValuePairs);
         
-        return new RMQTree<N, K, V>(buildRMQTreeImpl(keyValuePairs));
+        return new SemiDynamicRMQTree<N, K, V>(buildRMQTreeImpl(keyValuePairs));
     }
 
     // This algorithm seems much like in Task9, yet it differs: this one does 
