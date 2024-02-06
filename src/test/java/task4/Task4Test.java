@@ -3,7 +3,6 @@ package task4;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 public class Task4Test {
@@ -23,21 +22,21 @@ public class Task4Test {
         InternalRMQTreeNode<?, Integer, Long> root = 
                 (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
         
-        InternalRMQTreeNode<?, Integer, Long> leftMiddleNode  = (InternalRMQTreeNode<?, Integer, Long>) root.getLeftChild();
-        InternalRMQTreeNode<?, Integer, Long> rightMiddleNode = (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
+        InternalRMQTreeNode<?, Integer, Long> leftMiddleNode  = 
+                (InternalRMQTreeNode<?, Integer, Long>) root.getLeftChild();
+        
+        InternalRMQTreeNode<?, Integer, Long> rightMiddleNode = 
+                (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
         
         LeafRMQTreeNode<?, Integer, Long> leaf1 = (LeafRMQTreeNode<?, Integer, Long>) leftMiddleNode.getLeftChild();
         LeafRMQTreeNode<?, Integer, Long> leaf2 = (LeafRMQTreeNode<?, Integer, Long>) leftMiddleNode.getRightChild();
         LeafRMQTreeNode<?, Integer, Long> leaf3 = (LeafRMQTreeNode<?, Integer, Long>) rightMiddleNode.getLeftChild();
         LeafRMQTreeNode<?, Integer, Long> leaf4 = (LeafRMQTreeNode<?, Integer, Long>) rightMiddleNode.getRightChild();
         
-        assertEquals(Integer.valueOf(4), root.getKey());
         assertEquals(Long.valueOf(1L), root.getValue());
         
-        assertEquals(Integer.valueOf(2), leftMiddleNode.getKey());
         assertEquals(Long.valueOf(1L), leftMiddleNode.getValue());
         
-        assertEquals(Integer.valueOf(4), rightMiddleNode.getKey());
         assertEquals(Long.valueOf(3L), rightMiddleNode.getValue());
         
         assertEquals(Integer.valueOf(1), leaf1.getKey());
@@ -50,6 +49,21 @@ public class Task4Test {
         assertEquals(Long.valueOf(3L), leaf3.getValue());
         assertEquals(Long.valueOf(4L), leaf4.getValue());
         
+        assertEquals(Long.valueOf(1L), 
+                     tree.getRangeMinimum(Integer.valueOf(1),
+                                          Integer.valueOf(2)));
+        
+        assertEquals(Long.valueOf(3L),
+                     tree.getRangeMinimum(Integer.valueOf(3), 
+                                          Integer.valueOf(4)));
+        
+        assertEquals(Long.valueOf(2L),
+                     tree.getRangeMinimum(Integer.valueOf(2), 
+                                          Integer.valueOf(4)));
+        
+        assertEquals(Long.valueOf(1L),
+                     tree.getRangeMinimum(Integer.valueOf(1), 
+                                          Integer.valueOf(4)));
         tree.update(4, -1L);
         
         assertEquals(Long.valueOf(-1L), leaf4.getValue());
@@ -71,13 +85,11 @@ public class Task4Test {
         InternalRMQTreeNode<?, Integer, Long> root =
                 (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
         
-        assertEquals(Integer.valueOf(3), root.getKey());
         assertEquals(Long.valueOf(1L), root.getValue());
         
         InternalRMQTreeNode<?, Integer, Long> middleInternalNode = 
                 (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
         
-        assertEquals(Integer.valueOf(3), middleInternalNode.getKey());
         assertEquals(Long.valueOf(2L), middleInternalNode.getValue());
         
         LeafRMQTreeNode<?, Integer, Long> leaf1 = (LeafRMQTreeNode<?, Integer, Long>) root.getLeftChild();

@@ -7,7 +7,7 @@ import java.util.Set;
 import static task4.Utils.min;
 
 public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
-                                  V extends Comparable<? super V>> {
+                                             V extends Comparable<? super V>> {
 
     public static <N extends AbstractRMQTreeNode<N, K, V>,
                    K extends Comparable<? super K>,
@@ -72,8 +72,7 @@ public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
         leftSubTreeRoot.setParent(localRoot);
         rightSubTreeRoot.setParent(localRoot);
         
-        localRoot.setKey(rightSubTreeRoot.getKey()); // Important steps!
-        localRoot.setValue(min(leftSubTreeRoot.getValue(),
+        localRoot.setValue(min(leftSubTreeRoot.getValue(), // Important step!
                                rightSubTreeRoot.getValue()));
 
         return localRoot;

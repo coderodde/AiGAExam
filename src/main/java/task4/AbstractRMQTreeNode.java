@@ -8,17 +8,17 @@ public abstract class AbstractRMQTreeNode
          V extends Comparable<? super V>>
         implements Comparable<AbstractRMQTreeNode<N, K, V>>{
     
-    protected K key;
+//    protected K key;
     protected V value;
     protected AbstractRMQTreeNode<N, K, V> parent;
 
-    public K getKey() {
-        return key;
-    }
-    
-    public void setKey(K key) {
-        this.key = key;
-    }
+//    public K getKey() {
+//        return key;
+//    }
+//    
+//    public void setKey(K key) {
+//        this.key = key;
+//    }
 
     public V getValue() {
         return value;
@@ -36,18 +36,18 @@ public abstract class AbstractRMQTreeNode
         this.parent = parent;
     }
     
-    @Override
-    public int compareTo(AbstractRMQTreeNode<N, K, V> o) {
-        return key.compareTo(o.key);
-    }
+//    @Override
+//    public int compareTo(AbstractRMQTreeNode<N, K, V> o) {
+//        return key.compareTo(o.key);
+//    }
+//    
+//    @Override
+//    public int hashCode() {
+//        return Objects.hashCode(key);
+//    }
     
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(key);
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        return key.equals(((AbstractRMQTreeNode<N, K, V>) o).key);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        return key.equals(((AbstractRMQTreeNode<N, K, V>) o).key);
+//    }
 }
