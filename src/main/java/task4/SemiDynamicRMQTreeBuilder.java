@@ -1,5 +1,6 @@
 package task4;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -13,23 +14,20 @@ public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
                    K extends Comparable<? super K>,
                    V extends Comparable<? super V>>
                     
-    SemiDynamicRMQTree<N, K, V> buildRMQTree(List<KeyValuePair<K, V>> keyValuePairs) {
+    SemiDynamicRMQTree<N, K, V> 
+        buildRMQTree(Set<KeyValuePair<K, V>> keyValuePairs) {
         
         if (keyValuePairs == null || keyValuePairs.isEmpty()) {
             return null;
         }
         
-        // Filter duplicates:
-        Set<KeyValuePair<K, V>> filter = new HashSet<>(keyValuePairs);
-        keyValuePairs.clear();
+        List<KeyValuePair<K, V>> keyValuePairList = 
+                new ArrayList<>(keyValuePairs);
         
-        for (KeyValuePair<K, V> keyValuePair : filter) {
-            keyValuePairs.add(keyValuePair);
-        }
+        Collections.sort(keyValuePairList);
         
-        Collections.sort(keyValuePairs);
-        
-        return new SemiDynamicRMQTree<N, K, V>(buildRMQTreeImpl(keyValuePairs));
+        return new SemiDynamicRMQTree<N, K, V>(
+                buildRMQTreeImpl(keyValuePairList));
     }
 
     // This algorithm seems much like in Task9, yet it differs: this one does 

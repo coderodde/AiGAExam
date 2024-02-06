@@ -59,8 +59,12 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
         List<AbstractRMQTreeNode<N, K, V>> leftPath = getPath(splitNode,
                                                               leftLeaf);
         
+        leftPath.add(leftLeaf);
+        
         List<AbstractRMQTreeNode<N, K, V>> rightPath = getPath(splitNode,
                                                                rightLeaf);
+        
+        rightPath.add(rightLeaf);
         
         List<AbstractRMQTreeNode<N, K, V>> leftPathV = 
                 computeLeftPathV(leftPath);
@@ -115,8 +119,7 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
             InternalRMQTreeNode<N, K, V> parent = 
                     (InternalRMQTreeNode<N, K, V>) path.get(i);
             
-            InternalRMQTreeNode<N, K, V> child  = 
-                    (InternalRMQTreeNode<N, K, V>) path.get(i + 1);
+            AbstractRMQTreeNode<N, K, V> child  = path.get(i + 1);
             
             if (parent.getLeftChild().equals(child)) {
                 nodeList.add(parent.getRightChild());
@@ -136,8 +139,7 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
             InternalRMQTreeNode<N, K, V> parent = 
                     (InternalRMQTreeNode<N, K, V>) path.get(i);
             
-            InternalRMQTreeNode<N, K, V> child = 
-                    (InternalRMQTreeNode<N, K, V>) path.get(i + 1);
+            AbstractRMQTreeNode<N, K, V> child = path.get(i + 1);
             
             if (parent.getRightChild().equals(child)) {
                 nodeList.add(parent.getLeftChild());
@@ -156,8 +158,7 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
             InternalRMQTreeNode<N, K, V> parent = 
                     (InternalRMQTreeNode<N, K, V>) path.get(i);
             
-            InternalRMQTreeNode<N, K, V> child = 
-                    (InternalRMQTreeNode<N, K, V>) path.get(i + 1);
+            AbstractRMQTreeNode<N, K, V> child = path.get(i + 1);
             
             if (parent.getLeftChild().equals(child)) {
                 nodeList.add(parent.getRightChild());

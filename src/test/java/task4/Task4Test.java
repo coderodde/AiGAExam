@@ -1,7 +1,9 @@
 package task4;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -9,7 +11,7 @@ public class Task4Test {
     
     @Test
     public void passesOnTreeWith4Nodes() {
-        List<KeyValuePair<Integer, Long>> keyValuePairs = new ArrayList<>(4);
+        Set<KeyValuePair<Integer, Long>> keyValuePairs = new HashSet<>(4);
         
         keyValuePairs.add(new KeyValuePair<>(2, 2L));
         keyValuePairs.add(new KeyValuePair<>(4, 4L));
@@ -73,7 +75,7 @@ public class Task4Test {
     
     @Test
     public void passesOnTreeWith3Nodes() {
-        List<KeyValuePair<Integer, Long>> keyValuePairs = new ArrayList<>(4);
+        Set<KeyValuePair<Integer, Long>> keyValuePairs = new HashSet<>(4);
         
         keyValuePairs.add(new KeyValuePair<>(2, 2L));
         keyValuePairs.add(new KeyValuePair<>(1, 1L));
