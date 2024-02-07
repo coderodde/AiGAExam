@@ -2,35 +2,26 @@ package task4;
 
 import java.util.Objects;
 
-public final class InternalRMQTreeNode<N extends AbstractRMQTreeNode<N, K, V>,
-                                       K extends Comparable<? super K>, 
+public final class InternalRMQTreeNode<N extends AbstractRMQTreeNode<N, V>,
                                        V extends Comparable<? super V>>
-extends AbstractRMQTreeNode<N, K, V> {
+extends AbstractRMQTreeNode<N, V> {
     
-    private AbstractRMQTreeNode<N, K, V> leftChild;
-    private AbstractRMQTreeNode<N, K, V> rightChild;
+    private AbstractRMQTreeNode<N, V> leftChild;
+    private AbstractRMQTreeNode<N, V> rightChild;
 
-    public V getValue() {
-        return value;
-    }
-    
-    public AbstractRMQTreeNode<N, K, V> getLeftChild() {
+    public AbstractRMQTreeNode<N, V> getLeftChild() {
         return leftChild;
     }
 
-    public AbstractRMQTreeNode<N, K, V> getRightChild() {
+    public AbstractRMQTreeNode<N, V> getRightChild() {
         return rightChild;
     }
-    
-    public void setValue(V value) {
-        this.value = value;
-    }
 
-    public void setLeftChild(AbstractRMQTreeNode<N, K, V> leftChild) {
+    public void setLeftChild(AbstractRMQTreeNode<N, V> leftChild) {
         this.leftChild = leftChild;
     }
 
-    public void setRightChild(AbstractRMQTreeNode<N, K, V> rightChild) {
+    public void setRightChild(AbstractRMQTreeNode<N, V> rightChild) {
         this.rightChild = rightChild;
     }
     
@@ -41,7 +32,8 @@ extends AbstractRMQTreeNode<N, K, V> {
     }
 
     @Override
-    public int compareTo(AbstractRMQTreeNode<N, K, V> o) {
-        throw new UnsupportedOperationException("Sorting internal RMQ tree nodes not uspported.");
+    public int compareTo(AbstractRMQTreeNode<N, V> o) {
+        throw new UnsupportedOperationException(
+                "Sorting internal RMQ tree nodes not uspported.");
     }
 }

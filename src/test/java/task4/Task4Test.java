@@ -1,8 +1,6 @@
 package task4;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -21,8 +19,8 @@ public class Task4Test {
         SemiDynamicRMQTree<?, Integer, Long> tree = 
                 SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairs);
         
-        InternalRMQTreeNode<?, Integer, Long> root = 
-                (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
+        InternalRMQTreeNode<?, Long> root = 
+                (InternalRMQTreeNode<?, Long>) tree.getRoot();
         
         InternalRMQTreeNode<?, Integer, Long> leftMiddleNode  = 
                 (InternalRMQTreeNode<?, Integer, Long>) root.getLeftChild();

@@ -2,7 +2,9 @@ package task4;
 
 import java.util.Objects;
 
-public final class KeyValuePair<K extends Comparable<? super K>, V> 
+public final class KeyValuePair<K extends Comparable<? super K>, 
+                                V extends Comparable<? super V>> 
+        
 implements Comparable<KeyValuePair<K, V>> {
     
     private final K key;

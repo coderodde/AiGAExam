@@ -16,47 +16,6 @@ public class Task4 {
     public static void main(String[] args) {
         replInterface();
     }
-    
-    private static <K extends Comparable<? super K>, 
-                    V extends Comparable<? super V>> 
-                
-        void printRMQTree(SemiDynamicRMQTree<?, K, V> tree) {
-        
-        Deque<AbstractRMQTreeNode<?, K, V>> queue = 
-                new ArrayDeque<>();
-        
-        queue.addLast(tree.getRoot());
-        
-        AbstractRMQTreeNode<?, K, V> levelEnd = tree.getRoot();
-        
-        while (!queue.isEmpty()) {
-            AbstractRMQTreeNode<?, K, V> currentNode = queue.removeFirst();
-            
-            System.out.printf("%s ", currentNode);
-            
-            if (currentNode instanceof InternalRMQTreeNode) {
-                
-                AbstractRMQTreeNode<?, K, V> leftChild =
-                        ((InternalRMQTreeNode<?, K, V>) currentNode)
-                                .getLeftChild();
-                
-                AbstractRMQTreeNode<?, K, V> rightChild = 
-                        ((InternalRMQTreeNode<?, K, V>) currentNode)
-                                .getRightChild();
-                
-                queue.addLast(leftChild);
-                queue.addLast(rightChild);
-            } 
-            
-            if (currentNode.equals(levelEnd)) {
-                if (!queue.isEmpty()) {
-                    levelEnd = queue.getLast();
-                }
-                    
-                System.out.println();
-            }
-        }
-    }
              
     private static SemiDynamicRMQTree<?, Integer, Long> 
         constructREPLTree(int size) {
@@ -80,39 +39,46 @@ public class Task4 {
             System.out.print("> ");
             
             String commandLine = scanner.nextLine().trim();
-            String[] commandLineParts = commandLine.split(" ");
-            String command = commandLineParts[0].trim();
             
-            switch (command) {
-                case "update":
-                    runUpdate(commandLineParts[1],
-                              commandLineParts[2]);
-                    break;
-                    
-                case "rmq":
-                    Long value = runRMQ(commandLineParts[1],
-                                        commandLineParts[2]);
-                    
-                    System.out.println(value);
-                    break;
-                    
-                case "print":
-                    printRMQTree(tree);
-                    break;
-                    
-                case "new":
-                    int size = Integer.parseInt(commandLineParts[1]);
-                    tree = constructREPLTree(size);
-                    break;
-                    
-                case "help":
-                    printHelp();
-                    break;
-                    
-                case "quit":
-                case "exit":
-                    System.out.println("Bye!");
-                    return;
+            try {
+                String[] commandLineParts = commandLine.split(" ");
+                String command = commandLineParts[0].trim();
+
+                switch (command) {
+                    case "update":
+                        runUpdate(commandLineParts[1],
+                                  commandLineParts[2]);
+                        break;
+
+                    case "rmq":
+                        Long value = runRMQ(commandLineParts[1],
+                                            commandLineParts[2]);
+
+                        System.out.println(value);
+                        break;
+
+                    case "print":
+                        System.out.println(tree);
+                        break;
+
+                    case "new":
+                        int size = Integer.parseInt(commandLineParts[1]);
+                        tree = constructREPLTree(size);
+                        break;
+
+                    case "help":
+                        printHelp();
+                        break;
+
+                    case "quit":
+                    case "exit":
+                        System.out.println("Bye!");
+                        return;
+                }
+            } catch (Exception ex) {
+                System.out.printf(
+                        "> ERROR: Could not parse command \"%s\".\n",
+                        commandLine);
             }
         }
     }

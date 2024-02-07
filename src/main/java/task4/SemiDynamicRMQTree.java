@@ -1,7 +1,9 @@
 package task4;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,24 +19,31 @@ import static task4.Utils.min;
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
+public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, V>,
                                       K extends Comparable<? super K>,
                                       V extends Comparable<? super V>> {
     
-    private final AbstractRMQTreeNode<N, K, V> root;
-    private final Map<K, LeafRMQTreeNode<N, K, V>> leafMap = new HashMap<>();
+    private final AbstractRMQTreeNode<N, V> root;
+    private final Map<K, LeafRMQTreeNode<N, V>> leafMap = new HashMap<>();
     
-    public SemiDynamicRMQTree(AbstractRMQTreeNode<N, K, V> root) {
+    public SemiDynamicRMQTree(AbstractRMQTreeNode<N, V> root) {
         this.root = Objects.requireNonNull(root, "The root node is null.");
         loadLeafMap();
     }
     
-    public AbstractRMQTreeNode<N, K, V> getRoot() {
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        toStringImpl(stringBuilder);
+        return stringBuilder.toString();
+    }
+    
+    public AbstractRMQTreeNode<N, V> getRoot() {
         return root;
     }
     
     public void update(K key, V newValue) {
-        AbstractRMQTreeNode<N, K, V> node = leafMap.get(key);
+        AbstractRMQTreeNode<N, V> node = leafMap.get(key);
         
         while (node != null) {
             node.setValue(min(node.getValue(), newValue));
@@ -43,34 +52,48 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
     }
     
     public V getRangeMinimum(K leftKey, K rightKey) {
-        if (leftKey.equals(rightKey)) {
-            // Handle the trivial case. This also will guarantee that splitNode
-            // will not be null.
-            return leafMap.get(leftKey).getValue();
+        
+        AbstractRMQTreeNode<N, V> leftLeaf  = leafMap.get(leftKey);
+        
+        Objects.requireNonNull(
+                leftLeaf,
+                String.format(
+                        "The left key [%s] is not in this tree.",
+                        leftKey));
+        
+        AbstractRMQTreeNode<N, V> rightLeaf = leafMap.get(rightKey);
+        
+        Objects.requireNonNull(
+                rightLeaf,
+                String.format(
+                        "The right key [%s] is not in this tree.",
+                        rightKey));
+        
+        if (leftKey.compareTo(rightKey) > 0) {
+            String exceptionMessage = 
+                    String.format(
+                            "The specified range [%s, %s] is descending.", 
+                            leftKey, 
+                            rightKey);
+            
+            throw new IllegalArgumentException(exceptionMessage);
         }
         
-        AbstractRMQTreeNode<N, K, V> leftLeaf  = leafMap.get(leftKey);
-        AbstractRMQTreeNode<N, K, V> rightLeaf = leafMap.get(rightKey);
-        
-        AbstractRMQTreeNode<N, K, V> splitNode =
+        AbstractRMQTreeNode<N, V> splitNode =
                 computeSplitNode(leftLeaf,
                                  rightLeaf);
         
-        List<AbstractRMQTreeNode<N, K, V>> leftPath = getPath(splitNode,
+        List<AbstractRMQTreeNode<N, V>> leftPath = getPath(splitNode,
                                                               leftLeaf);
         
-        leftPath.add(leftLeaf);
-        
-        List<AbstractRMQTreeNode<N, K, V>> rightPath = getPath(splitNode,
+        List<AbstractRMQTreeNode<N, V>> rightPath = getPath(splitNode,
                                                                rightLeaf);
         
-        rightPath.add(rightLeaf);
-        
-        List<AbstractRMQTreeNode<N, K, V>> leftPathV = 
+        List<AbstractRMQTreeNode<N, V>> leftPathV = 
                 computeLeftPathV(leftPath);
         
-        List<AbstractRMQTreeNode<N, K, V>> rightPathV = 
-                computeRightPathV(rightPath);
+        List<AbstractRMQTreeNode<N, V>> rightPathV = 
+                computeRightPartV(rightPath);
         
         V vl = computeMinimum(leftPathV);
         V vr = computeMinimum(rightPathV);
@@ -89,10 +112,11 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
         return min(vl, vr);
     }
     
-    private <N extends AbstractRMQTreeNode<N, K, V>, 
+    private <N extends AbstractRMQTreeNode<N, V>, 
              K extends Comparable<? super K>, 
              V extends Comparable<? super V>> 
-        V computeMinimum(List<AbstractRMQTreeNode<N, K, V>> nodes) {
+                
+        V computeMinimum(List<AbstractRMQTreeNode<N, V>> nodes) {
         
         if (nodes.isEmpty()) {
             return null;
@@ -101,7 +125,7 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
         V minValue = nodes.get(0).getValue();
         
         for (int i = 1; i < nodes.size(); i++) {
-            AbstractRMQTreeNode<N, K, V> node = nodes.get(i);
+            AbstractRMQTreeNode<N, V> node = nodes.get(i);
             
             minValue = min(minValue, node.getValue());
         }
@@ -109,59 +133,41 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
         return minValue;
     }
     
-    private List<AbstractRMQTreeNode<N, K, V>> 
-        computeLeftPathV(List<AbstractRMQTreeNode<N, K, V>> path) {
-        
-        List<AbstractRMQTreeNode<N, K, V>> nodeList = 
-                new ArrayList<>(path.size());
-        
-        for (int i = 0; i < path.size() - 1; i++) {
-            InternalRMQTreeNode<N, K, V> parent = 
-                    (InternalRMQTreeNode<N, K, V>) path.get(i);
+    private List<AbstractRMQTreeNode<N, V>> 
+        computeLeftPathV(List<AbstractRMQTreeNode<N, V>> path) {
             
-            AbstractRMQTreeNode<N, K, V> child  = path.get(i + 1);
+        Set<AbstractRMQTreeNode<N, V>> pathSet   = new HashSet<>(path);
+        List<AbstractRMQTreeNode<N, V>> nodeList = new ArrayList<>();
+        
+        for (int i = 0; i < path.size(); i++) {
+            InternalRMQTreeNode<N, V> parent = 
+                    (InternalRMQTreeNode<N, V>) path.get(i);
             
-            if (parent.getLeftChild().equals(child)) {
-                nodeList.add(parent.getRightChild());
+            AbstractRMQTreeNode<N, V> leftChild  = parent.getLeftChild();
+            AbstractRMQTreeNode<N, V> rightChild = parent.getRightChild();
+            
+            if (pathSet.contains(leftChild)) {
+                nodeList.add(rightChild);
             }
         }
         
         return nodeList;
     }
         
-    private List<AbstractRMQTreeNode<N, K, V>>
-        computeRightPartV(List<AbstractRMQTreeNode<N, K, V>> path) {
-        
-        List<AbstractRMQTreeNode<N, K, V>> nodeList = 
-                new ArrayList<>();
-        
-        for (int i = 0; i < path.size() - 1; i++) {
-            InternalRMQTreeNode<N, K, V> parent = 
-                    (InternalRMQTreeNode<N, K, V>) path.get(i);
-            
-            AbstractRMQTreeNode<N, K, V> child = path.get(i + 1);
-            
-            if (parent.getRightChild().equals(child)) {
-                nodeList.add(parent.getLeftChild());
-            }
-        }
-        
-        return nodeList;
-    }
-    
-    private List<AbstractRMQTreeNode<N, K, V>> 
-        computeRightPathV(List<AbstractRMQTreeNode<N, K, V>> path) {
-        
-        List<AbstractRMQTreeNode<N, K, V>> nodeList = new ArrayList<>();
+    private List<AbstractRMQTreeNode<N, V>>
+        computeRightPartV(List<AbstractRMQTreeNode<N, V>> path) {
+        Set<AbstractRMQTreeNode<N, V>> pathSet   = new HashSet<>(path);
+        List<AbstractRMQTreeNode<N, V>> nodeList = new ArrayList<>();
         
         for (int i = 0; i < path.size() - 1; i++) {
-            InternalRMQTreeNode<N, K, V> parent = 
-                    (InternalRMQTreeNode<N, K, V>) path.get(i);
+            InternalRMQTreeNode<N, V> parent = 
+                    (InternalRMQTreeNode<N, V>) path.get(i);
             
-            AbstractRMQTreeNode<N, K, V> child = path.get(i + 1);
+            AbstractRMQTreeNode<N, V> leftChild  = parent.getLeftChild();
+            AbstractRMQTreeNode<N, V> rightChild = parent.getRightChild();
             
-            if (parent.getLeftChild().equals(child)) {
-                nodeList.add(parent.getRightChild());
+            if (pathSet.contains(rightChild)) {
+                nodeList.add(leftChild);
             }
         }
         
@@ -176,13 +182,13 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
      * @param leafNode  the target node.
      * @return the path from {@code splitNode} to {@code leaf};
      */
-    private List<AbstractRMQTreeNode<N, K, V>> 
-        getPath(AbstractRMQTreeNode<N, K, V> splitNode, 
-                AbstractRMQTreeNode<N, K, V> leafNode) {
+    private List<AbstractRMQTreeNode<N, V>> 
+        getPath(AbstractRMQTreeNode<N, V> splitNode, 
+                AbstractRMQTreeNode<N, V> leafNode) {
         
-        List<AbstractRMQTreeNode<N, K, V>> path = new ArrayList<>();
+        List<AbstractRMQTreeNode<N, V>> path = new ArrayList<>();
         
-        AbstractRMQTreeNode<N, K, V> node = leafNode.getParent();
+        AbstractRMQTreeNode<N, V> node = leafNode.getParent();
         
         while (node != null && !node.equals(splitNode)) {
             path.add(node);
@@ -193,13 +199,13 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
         return path;
     }
     
-    private AbstractRMQTreeNode<N, K, V> 
-        computeSplitNode(AbstractRMQTreeNode<N, K, V> leftLeaf,
-                         AbstractRMQTreeNode<N, K, V> rightLeaf) {
+    private AbstractRMQTreeNode<N, V> 
+        computeSplitNode(AbstractRMQTreeNode<N, V> leftLeaf,
+                         AbstractRMQTreeNode<N, V> rightLeaf) {
             
-        Set<AbstractRMQTreeNode<N, K, V>> leftPathSet = new HashSet<>();
+        Set<AbstractRMQTreeNode<N, V>> leftPathSet = new HashSet<>();
         
-        AbstractRMQTreeNode<N, K, V> node = leftLeaf;
+        AbstractRMQTreeNode<N, V> node = leftLeaf;
         
         while (node != null) {
             leftPathSet.add(node);
@@ -223,18 +229,55 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, K, V>,
         loadLeafMapImpl(root);
     }
     
-    private void loadLeafMapImpl(AbstractRMQTreeNode<N, K, V> node) {
+    private void loadLeafMapImpl(AbstractRMQTreeNode<N, V> node) {
         if (node instanceof InternalRMQTreeNode) {
             
-            InternalRMQTreeNode<N, K, V> internalNode = 
-                    (InternalRMQTreeNode<N, K, V>) node;
+            InternalRMQTreeNode<N, V> internalNode = 
+                    (InternalRMQTreeNode<N, V>) node;
             
             loadLeafMapImpl(internalNode.getLeftChild());
             loadLeafMapImpl(internalNode.getRightChild());
             
         } else {
-            LeafRMQTreeNode<N, K, V> leafNode = (LeafRMQTreeNode<N, K, V>) node;
-            leafMap.put(leafNode.getKey(), leafNode);
+            LeafRMQTreeNode<N, V> leafNode = (LeafRMQTreeNode<N, V>) node;
+//            leafMap.put(leafNode.getKey(), leafNode);
+        }
+    }
+    
+    private void toStringImpl(StringBuilder stringBuilder) {
+        
+        Deque<AbstractRMQTreeNode<N, V>> queue = 
+                new ArrayDeque<>();
+        
+        queue.addLast(getRoot());
+        
+        AbstractRMQTreeNode<N, V> levelEnd = getRoot();
+        
+        while (!queue.isEmpty()) {
+            AbstractRMQTreeNode<N, V> currentNode = queue.removeFirst();
+            stringBuilder.append(String.format("%s ", currentNode));
+            
+            if (currentNode instanceof InternalRMQTreeNode) {
+                
+                AbstractRMQTreeNode<N, V> leftChild =
+                        ((InternalRMQTreeNode<N, V>) currentNode)
+                                .getLeftChild();
+                
+                AbstractRMQTreeNode<N, V> rightChild = 
+                        ((InternalRMQTreeNode<N, V>) currentNode)
+                                .getRightChild();
+                
+                queue.addLast(leftChild);
+                queue.addLast(rightChild);
+            } 
+            
+            if (currentNode.equals(levelEnd)) {
+                if (!queue.isEmpty()) {
+                    levelEnd = queue.getLast();
+                }
+                    
+                stringBuilder.append("\n");
+            }
         }
     }
 }
