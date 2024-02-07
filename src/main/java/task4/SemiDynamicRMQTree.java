@@ -4,12 +4,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import task4.SemiDynamicRMQTreeBuilder.RMQTreeBuilderResult;
 import static task4.Utils.min;
 
 /**
@@ -24,11 +24,14 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, V>,
                                       V extends Comparable<? super V>> {
     
     private final AbstractRMQTreeNode<N, V> root;
-    private final Map<K, LeafRMQTreeNode<N, V>> leafMap = new HashMap<>();
+    private final Map<K, LeafRMQTreeNode<N, V>> leafMap;
     
-    public SemiDynamicRMQTree(AbstractRMQTreeNode<N, V> root) {
-        this.root = Objects.requireNonNull(root, "The root node is null.");
-        loadLeafMap();
+    public SemiDynamicRMQTree(Set<KeyValuePair<K, V>> keyValuePairSet) {
+        RMQTreeBuilderResult<N, K, V> result = 
+                SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairSet);
+        
+        root = result.getRoot();
+        leafMap = result.getLeafMap();
     }
     
     @Override
@@ -212,7 +215,7 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, V>,
             node = node.getParent();
         }
         
-        node = rightLeaf.getParent();
+        node = rightLeaf;
         
         while (node != null) {
             if (leftPathSet.contains(node)) {
@@ -224,26 +227,7 @@ public final class SemiDynamicRMQTree<N extends AbstractRMQTreeNode<N, V>,
         
         throw new IllegalStateException("Should not get here.");
     }
-    
-    private void loadLeafMap() {
-        loadLeafMapImpl(root);
-    }
-    
-    private void loadLeafMapImpl(AbstractRMQTreeNode<N, V> node) {
-        if (node instanceof InternalRMQTreeNode) {
-            
-            InternalRMQTreeNode<N, V> internalNode = 
-                    (InternalRMQTreeNode<N, V>) node;
-            
-            loadLeafMapImpl(internalNode.getLeftChild());
-            loadLeafMapImpl(internalNode.getRightChild());
-            
-        } else {
-            LeafRMQTreeNode<N, V> leafNode = (LeafRMQTreeNode<N, V>) node;
-//            leafMap.put(leafNode.getKey(), leafNode);
-        }
-    }
-    
+        
     private void toStringImpl(StringBuilder stringBuilder) {
         
         Deque<AbstractRMQTreeNode<N, V>> queue = 

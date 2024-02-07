@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import static task4.Utils.min;
 
@@ -12,45 +13,41 @@ public final class SemiDynamicRMQTreeBuilder<N extends AbstractRMQTreeNode<N, V>
                                              K extends Comparable<? super K>,
                                              V extends Comparable<? super V>> {
 
-    public static <N extends AbstractRMQTreeNode<N, V>,
-                   K extends Comparable<? super K>,
-                   V extends Comparable<? super V>>
+    static <N extends AbstractRMQTreeNode<N, V>,
+            K extends Comparable<? super K>,
+            V extends Comparable<? super V>>
                     
-    SemiDynamicRMQTree<N, K, V> 
-        buildRMQTree(Set<KeyValuePair<K, V>> keyValuePairs) {
+    RMQTreeBuilderResult<N, K, V> 
+        buildRMQTree(Set<KeyValuePair<K, V>> keyValuePairSet) {
         
-        if (keyValuePairs == null || keyValuePairs.isEmpty()) {
-            return null;
+        Map<K, LeafRMQTreeNode<N, V>> leafMap = new HashMap<>();
+        
+        loadLeafMap(leafMap, keyValuePairSet);
+        
+        Objects.requireNonNull(
+                keyValuePairSet,
+                "The input KeyValuePair set is null.");
+        
+        if (keyValuePairSet.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No key/value pairs to process.");
         }
         
         List<KeyValuePair<K, V>> keyValuePairList = 
-                new ArrayList<>(keyValuePairs);
+                new ArrayList<>(keyValuePairSet);
         
         Collections.sort(keyValuePairList);
         
-        Map<K, LeafRMQTreeNode<N, V>> mapKeyToLeafNode = 
-                computeMapKeyToLeafNode(keyValuePairList);
+        Map<K, LeafRMQTreeNode<N, V>> mapKeyToLeafNode = new HashMap<>();
+        RMQTreeBuilderResult<N, K, V> result = new RMQTreeBuilderResult();
+        AbstractRMQTreeNode<N, V> root = 
+                buildRMQTreeImpl(keyValuePairList, 
+                                 mapKeyToLeafNode);
         
-        return new SemiDynamicRMQTree<>(
-                buildRMQTreeImpl(keyValuePairList, mapKeyToLeafNode));
-    }
+        result.setLeafMap(mapKeyToLeafNode);
+        result.setRoot(root);
         
-    private static <K extends Comparable<? super K>, 
-                    V extends Comparable<? super V>,
-                    N extends AbstractRMQTreeNode<N, V>> 
-                
-        Map<K, LeafRMQTreeNode<N, V>> 
-            computeMapKeyToLeafNode(List<KeyValuePair<K, V>> keyValuePairList) {
-            
-        Map<K, LeafRMQTreeNode<N, V>> map = 
-                new HashMap<>(keyValuePairList.size());
-        
-        for (KeyValuePair<K, V> keyValuePair : keyValuePairList ) {
-            LeafRMQTreeNode<N, V> leafNode = new LeafRMQTreeNode<>();
-            map.put(keyValuePair.getKey(), leafNode);
-        }
-        
-        return map;
+        return result;
     }
 
     // This algorithm seems much like in Task9, yet it differs: this one does 
@@ -65,16 +62,11 @@ public final class SemiDynamicRMQTreeBuilder<N extends AbstractRMQTreeNode<N, V>
                          Map<K, LeafRMQTreeNode<N, V>> mapKeyToLeafNodes) {
             
         if (keyValuePairs.size() == 1) {
-            return mapKeyToLeafNodes.get(keyValuePairs.get(0).getKey());
-//            KeyValuePair<K, V> keyValuePair = keyValuePairs.get(0);
-//            
-//            LeafRMQTreeNode<N, V> leaf = 
-//                    mapKeyToLeafNodes.get(keyValuePair.getKey());
-//            
-//            mapKeyToLeafNodes.put(keyValuePair.getKey(), leaf);
-//            leaf.setValue(keyValuePair.getValue());
-//            
-//            return leaf;
+            KeyValuePair<K, V> keyValuePair = keyValuePairs.get(0);
+            LeafRMQTreeNode<N, V> leaf = new LeafRMQTreeNode<>();
+            leaf.setValue(keyValuePair.getValue());
+            mapKeyToLeafNodes.put(keyValuePair.getKey(), leaf);
+            return leaf;
         }
         
         // middleIndex goes to the right:
@@ -105,5 +97,44 @@ public final class SemiDynamicRMQTreeBuilder<N extends AbstractRMQTreeNode<N, V>
                                rightSubTreeRoot.getValue()));
 
         return localRoot;
+    }
+        
+    private static <K extends Comparable<? super K>,
+                    V extends Comparable<? super V>, 
+                    N extends AbstractRMQTreeNode<N, V>>
+                
+    void loadLeafMap(Map<K, LeafRMQTreeNode<N, V>> leafMap, 
+                         Set<KeyValuePair<K, V>> keyValuePairSet) {
+        
+        for (KeyValuePair<K, V> keyValuePair : keyValuePairSet) {
+            LeafRMQTreeNode<N, V> leaf = new LeafRMQTreeNode<>();
+            leaf.setValue(keyValuePair.getValue());
+            leafMap.put(keyValuePair.getKey(), leaf);
+        }
+    }
+    
+    static final 
+            class RMQTreeBuilderResult<N extends AbstractRMQTreeNode<N, V>,
+                                       K extends Comparable<? super K>,
+                                       V extends Comparable<? super V>> {
+        
+        private Map<K, LeafRMQTreeNode<N, V>> leafMap;
+        private AbstractRMQTreeNode<N, V> root;
+
+        public void setLeafMap(Map<K, LeafRMQTreeNode<N, V>> leafMap) {
+            this.leafMap = leafMap;
+        }
+
+        public void setRoot(AbstractRMQTreeNode<N, V> root) {
+            this.root = root;
+        }
+        
+        Map<K, LeafRMQTreeNode<N, V>> getLeafMap() {
+            return leafMap;
+        }
+        
+        AbstractRMQTreeNode<N, V> getRoot() {
+            return root;
+        }
     }
 }

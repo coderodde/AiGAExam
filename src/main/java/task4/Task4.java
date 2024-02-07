@@ -1,7 +1,5 @@
 package task4;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -29,7 +27,7 @@ public class Task4 {
             keyValuePairSet.add(keyValuePair);
         }
         
-        return SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairSet);
+        return new SemiDynamicRMQTree<>(keyValuePairSet);
     }
              
     private static void replInterface() {

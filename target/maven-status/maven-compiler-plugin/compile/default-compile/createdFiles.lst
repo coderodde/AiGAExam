@@ -3,7 +3,9 @@ task0\ProteinPermutationComparator.class
 util\PAM250CostMatrix.class
 task3\Task3.class
 util\Utils.class
+task1\ParentsExpander.class
 task1\HeapNodeHolder.class
+task4\SemiDynamicRMQTreeBuilder.class
 task1\BidirectionalDijkstrasAlgorithm.class
 task4\KeyValuePair.class
 task1\LatticeNodeChildrenNodeExpander.class
@@ -15,8 +17,11 @@ task4\AbstractRMQTreeNode.class
 task1\NodeExpander.class
 task4\SemiDynamicRMQTree.class
 task1\ProbabilityDistribution$Entry.class
+task1\LatticeNodeParentsNodeExpander.class
+task4\InternalRMQTreeNode.class
 task2\Task2$LevenshteinEditDistanceResult.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
+task4\SemiDynamicRMQTreeBuilder$RMQTreeBuilderResult.class
 task2\Task2$EditOperation.class
 task1\LatticeWeightFunction.class
 util\Codon.class
@@ -29,6 +34,7 @@ task9\BinarySearchTreeNode.class
 task4\LeafRMQTreeNode.class
 task1\DijkstrasAlgorithm.class
 task3\RankSelectBitVector.class
+task1\Task1.class
 task1\LatticeNode.class
 task1\MultipleSequenceAlignmentInstance.class
 task1\ProbabilityDistribution.class

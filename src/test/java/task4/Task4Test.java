@@ -9,40 +9,35 @@ public class Task4Test {
     
     @Test
     public void passesOnTreeWith4Nodes() {
-        Set<KeyValuePair<Integer, Long>> keyValuePairs = new HashSet<>(4);
+        Set<KeyValuePair<Integer, Long>> keyValuePairSet = new HashSet<>(4);
         
-        keyValuePairs.add(new KeyValuePair<>(2, 2L));
-        keyValuePairs.add(new KeyValuePair<>(4, 4L));
-        keyValuePairs.add(new KeyValuePair<>(1, 1L));
-        keyValuePairs.add(new KeyValuePair<>(3, 3L));
+        keyValuePairSet.add(new KeyValuePair<>(2, 2L));
+        keyValuePairSet.add(new KeyValuePair<>(4, 4L));
+        keyValuePairSet.add(new KeyValuePair<>(1, 1L));
+        keyValuePairSet.add(new KeyValuePair<>(3, 3L));
         
         SemiDynamicRMQTree<?, Integer, Long> tree = 
-                SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairs);
+                new SemiDynamicRMQTree<>(keyValuePairSet);
         
         InternalRMQTreeNode<?, Long> root = 
                 (InternalRMQTreeNode<?, Long>) tree.getRoot();
         
-        InternalRMQTreeNode<?, Integer, Long> leftMiddleNode  = 
-                (InternalRMQTreeNode<?, Integer, Long>) root.getLeftChild();
+        InternalRMQTreeNode<?, Long> leftMiddleNode  = 
+                (InternalRMQTreeNode<?, Long>) root.getLeftChild();
         
-        InternalRMQTreeNode<?, Integer, Long> rightMiddleNode = 
-                (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
+        InternalRMQTreeNode<?, Long> rightMiddleNode = 
+                (InternalRMQTreeNode<?, Long>) root.getRightChild();
         
-        LeafRMQTreeNode<?, Integer, Long> leaf1 = (LeafRMQTreeNode<?, Integer, Long>) leftMiddleNode.getLeftChild();
-        LeafRMQTreeNode<?, Integer, Long> leaf2 = (LeafRMQTreeNode<?, Integer, Long>) leftMiddleNode.getRightChild();
-        LeafRMQTreeNode<?, Integer, Long> leaf3 = (LeafRMQTreeNode<?, Integer, Long>) rightMiddleNode.getLeftChild();
-        LeafRMQTreeNode<?, Integer, Long> leaf4 = (LeafRMQTreeNode<?, Integer, Long>) rightMiddleNode.getRightChild();
+        LeafRMQTreeNode<?, Long> leaf1 = (LeafRMQTreeNode<?, Long>) leftMiddleNode.getLeftChild();
+        LeafRMQTreeNode<?, Long> leaf2 = (LeafRMQTreeNode<?, Long>) leftMiddleNode.getRightChild();
+        LeafRMQTreeNode<?, Long> leaf3 = (LeafRMQTreeNode<?, Long>) rightMiddleNode.getLeftChild();
+        LeafRMQTreeNode<?, Long> leaf4 = (LeafRMQTreeNode<?, Long>) rightMiddleNode.getRightChild();
         
         assertEquals(Long.valueOf(1L), root.getValue());
         
         assertEquals(Long.valueOf(1L), leftMiddleNode.getValue());
         
         assertEquals(Long.valueOf(3L), rightMiddleNode.getValue());
-        
-        assertEquals(Integer.valueOf(1), leaf1.getKey());
-        assertEquals(Integer.valueOf(2), leaf2.getKey());
-        assertEquals(Integer.valueOf(3), leaf3.getKey());
-        assertEquals(Integer.valueOf(4), leaf4.getKey());
         
         assertEquals(Long.valueOf(1L), leaf1.getValue());
         assertEquals(Long.valueOf(2L), leaf2.getValue());
@@ -73,32 +68,28 @@ public class Task4Test {
     
     @Test
     public void passesOnTreeWith3Nodes() {
-        Set<KeyValuePair<Integer, Long>> keyValuePairs = new HashSet<>(4);
+        Set<KeyValuePair<Integer, Long>> keyValuePairSet = new HashSet<>(4);
         
-        keyValuePairs.add(new KeyValuePair<>(2, 2L));
-        keyValuePairs.add(new KeyValuePair<>(1, 1L));
-        keyValuePairs.add(new KeyValuePair<>(3, 3L));
+        keyValuePairSet.add(new KeyValuePair<>(2, 2L));
+        keyValuePairSet.add(new KeyValuePair<>(1, 1L));
+        keyValuePairSet.add(new KeyValuePair<>(3, 3L));
         
         SemiDynamicRMQTree<?, Integer, Long> tree = 
-                SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairs);
+                new SemiDynamicRMQTree<>(keyValuePairSet);
         
-        InternalRMQTreeNode<?, Integer, Long> root =
-                (InternalRMQTreeNode<?, Integer, Long>) tree.getRoot();
+        InternalRMQTreeNode<?, Long> root =
+                (InternalRMQTreeNode<?, Long>) tree.getRoot();
         
         assertEquals(Long.valueOf(1L), root.getValue());
         
-        InternalRMQTreeNode<?, Integer, Long> middleInternalNode = 
-                (InternalRMQTreeNode<?, Integer, Long>) root.getRightChild();
+        InternalRMQTreeNode<?, Long> middleInternalNode = 
+                (InternalRMQTreeNode<?, Long>) root.getRightChild();
         
         assertEquals(Long.valueOf(2L), middleInternalNode.getValue());
         
-        LeafRMQTreeNode<?, Integer, Long> leaf1 = (LeafRMQTreeNode<?, Integer, Long>) root.getLeftChild();
-        LeafRMQTreeNode<?, Integer, Long> leaf2 = (LeafRMQTreeNode<?, Integer, Long>) middleInternalNode.getLeftChild();
-        LeafRMQTreeNode<?, Integer, Long> leaf3 = (LeafRMQTreeNode<?, Integer, Long>) middleInternalNode.getRightChild();
-        
-        assertEquals(Integer.valueOf(1), leaf1.getKey());
-        assertEquals(Integer.valueOf(2), leaf2.getKey());
-        assertEquals(Integer.valueOf(3), leaf3.getKey());
+        LeafRMQTreeNode<?, Long> leaf1 = (LeafRMQTreeNode<?, Long>) root.getLeftChild();
+        LeafRMQTreeNode<?, Long> leaf2 = (LeafRMQTreeNode<?, Long>) middleInternalNode.getLeftChild();
+        LeafRMQTreeNode<?, Long> leaf3 = (LeafRMQTreeNode<?, Long>) middleInternalNode.getRightChild();
         
         assertEquals(Long.valueOf(1L), leaf1.getValue());
         assertEquals(Long.valueOf(2L), leaf2.getValue());
