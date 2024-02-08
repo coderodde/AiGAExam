@@ -15,7 +15,10 @@ import static task4.Utils.min;
 /**
  * This class implements a semi-dynamic RMQ (range minimum query) tree. While
  * it does not support modification of the tree, it supports update of leaf node
- * values.
+ * values. The operation 
+ * {@link #update(java.lang.Comparable, java.lang.Comparable)} runs in exact
+ * logarithmic time; so does the 
+ * {@link #getRangeMinimum(java.lang.Comparable, java.lang.Comparable) }.
  * 
  * @param <K> the key type.
  * @param <V> the value type.
@@ -57,7 +60,8 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
     }
     
     /**
-     * Associates the value {@code newValue} with the key {@code key}.
+     * Associates the value {@code newValue} with the key {@code key}. Runs in
+     * exact logarithmic time.
      * 
      * @param key      the target key.
      * @param newValue the new value for the target key.
@@ -73,7 +77,7 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
     
     /**
      * Given the range {@code R = [leftKey ... rightKey]}, return the minimum
-     * value in {@code R}.
+     * value in {@code R}. Runs in worst-case logarithmic time.
      * 
      * @param leftKey  the leftmost key of the range.
      * @param rightKey the rightmost key of the range.
