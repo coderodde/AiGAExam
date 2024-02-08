@@ -1,13 +1,9 @@
 package task4;
 
-public abstract class AbstractRMQTreeNode
-        <N extends AbstractRMQTreeNode<N, V>,
-         V extends Comparable<? super V>>
-        
-        implements Comparable<AbstractRMQTreeNode<N, V>>{
+public abstract class AbstractRMQTreeNode<V extends Comparable<? super V>> {
     
     protected V value;
-    protected AbstractRMQTreeNode<N, V> parent;
+    protected AbstractRMQTreeNode<V> parent;
 
     public V getValue() {
         return value;
@@ -17,11 +13,11 @@ public abstract class AbstractRMQTreeNode
         this.value = value;
     }
 
-    public AbstractRMQTreeNode<N, V> getParent() {
+    public AbstractRMQTreeNode<V> getParent() {
         return parent;
     }
 
-    public void setParent(AbstractRMQTreeNode<N, V> parent) {
+    public void setParent(AbstractRMQTreeNode<V> parent) {
         this.parent = parent;
-     }
+    }
 }

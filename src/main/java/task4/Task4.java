@@ -8,14 +8,14 @@ public class Task4 {
     
     private static final int INITIAL_TREE_SIZE = 4;
              
-    private static SemiDynamicRMQTree<?, Integer, Long> tree = 
+    private static SemiDynamicRMQTree<Integer, Long> tree = 
             constructREPLTree(INITIAL_TREE_SIZE);
     
     public static void main(String[] args) {
         replInterface();
     }
              
-    private static SemiDynamicRMQTree<?, Integer, Long> 
+    private static SemiDynamicRMQTree<Integer, Long> 
         constructREPLTree(int size) {
             
         long start = System.nanoTime();
@@ -37,7 +37,7 @@ public class Task4 {
         
         start = System.nanoTime();
         
-        SemiDynamicRMQTree<?, Integer, Long> tree =
+        SemiDynamicRMQTree<Integer, Long> tree =
                 new SemiDynamicRMQTree<>(keyValuePairSet);
 
         end = System.nanoTime();
@@ -99,7 +99,7 @@ public class Task4 {
                 }
             } catch (Exception ex) {
                 System.out.printf(
-                        "> ERROR: Could not parse command \"%s\".\n",
+                        "ERROR: Could not parse command \"%s\".\n",
                         commandLine);
             }
         }
@@ -118,19 +118,24 @@ public class Task4 {
     private static void runUpdate(String keyString, String newValueString) {
         Integer key = Integer.valueOf(keyString);
         Long value = Long.valueOf(newValueString);
+        
         long start = System.nanoTime();
         tree.update(key, value);
         long end = System.nanoTime();
+        
         System.out.printf("update in %,d nanoseconds.\n", end - start);
     }
     
     private static Long runRMQ(String leftKeyString, String rightKeyString) {
         Integer leftKey = Integer.valueOf(leftKeyString);
         Integer rightKey = Integer.valueOf(rightKeyString);
+        
         long start = System.nanoTime();
         Long returnValue = tree.getRangeMinimum(leftKey, rightKey);
         long end = System.nanoTime();
+        
         System.out.printf("rmq in %,d nanoseconds.\n", end - start);
+        
         return returnValue;
     }
 }
