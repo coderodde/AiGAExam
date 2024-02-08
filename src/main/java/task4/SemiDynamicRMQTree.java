@@ -34,7 +34,13 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
         leafMap = result.getLeafMap();
     }
     
-    public AbstractRMQTreeNode<V> getRoot() {
+    /**
+     * Returns the root node of this tree. Is package-private in order to be
+     * accessible from the unit tests.
+     * 
+     * @return the root node of this tree. 
+     */
+    AbstractRMQTreeNode<V> getRoot() {
         return root;
     }
     
