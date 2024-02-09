@@ -2,8 +2,7 @@ package task4;
 
 import java.util.Objects;
 
-public final class LeafRMQTreeNode<V extends Comparable<? super V>>
-extends AbstractRMQTreeNode<V> {
+final class LeafRMQTreeNode<V> extends AbstractRMQTreeNode<V> {
     
     @Override
     public String toString() {

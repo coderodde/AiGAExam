@@ -2,7 +2,6 @@ package task4;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +17,9 @@ import static task4.Utils.min;
  * values. The operation 
  * {@link #update(java.lang.Comparable, java.lang.Comparable)} runs in exact
  * logarithmic time; so does the 
- * {@link #getRangeMinimum(java.lang.Comparable, java.lang.Comparable) }.
+ * {@link #getRangeMinimum(java.lang.Comparable, java.lang.Comparable) }. 
+ * <p>
+ * Building the tree takes {@code O(n log n)} time.
  * 
  * @param <K> the key type.
  * @param <V> the value type.
@@ -29,22 +30,20 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
     private final AbstractRMQTreeNode<V> root;
     private final Map<K, LeafRMQTreeNode<V>> leafMap;
     
+    /**
+     * Construct an RMQ tree from the set of key/value pairs 
+     * ({@link com.github.coderodde.util.KeyValuePair}). Runs in 
+     * {@code O(n log n)} time.
+     * 
+     * @param keyValuePairSet the set of key/value pairs from which to construct
+     *                        the RMQ tree.
+     */
     public SemiDynamicRMQTree(Set<KeyValuePair<K, V>> keyValuePairSet) {
         RMQTreeBuilderResult<K, V> result = 
                 SemiDynamicRMQTreeBuilder.buildRMQTree(keyValuePairSet);
         
         root = result.getRoot();
         leafMap = result.getLeafMap();
-    }
-    
-    /**
-     * Returns the root node of this tree. Is package-private in order to be
-     * accessible from the unit tests.
-     * 
-     * @return the root node of this tree. 
-     */
-    AbstractRMQTreeNode<V> getRoot() {
-        return root;
     }
     
     /**
@@ -77,7 +76,7 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
     
     /**
      * Given the range {@code R = [leftKey ... rightKey]}, return the minimum
-     * value in {@code R}. Runs in worst-case logarithmic time.
+     * value in {@code R}. Runs in exact logarithmic time.
      * 
      * @param leftKey  the leftmost key of the range.
      * @param rightKey the rightmost key of the range.
@@ -115,17 +114,11 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
                 computeSplitNode(leftLeaf,
                                  rightLeaf);
         
-        List<AbstractRMQTreeNode<V>> leftPath = getPath(splitNode,
-                                                              leftLeaf);
+        List<AbstractRMQTreeNode<V>> leftPath  = getPath(splitNode, leftLeaf);
+        List<AbstractRMQTreeNode<V>> rightPath = getPath(splitNode, rightLeaf);
         
-        List<AbstractRMQTreeNode<V>> rightPath = getPath(splitNode,
-                                                               rightLeaf);
-        
-        List<AbstractRMQTreeNode<V>> leftPathV = 
-                computeLeftPathV(leftPath);
-        
-        List<AbstractRMQTreeNode<V>> rightPathV = 
-                computeRightPartV(rightPath);
+        List<AbstractRMQTreeNode<V>> leftPathV  = computeLeftPathV(leftPath);
+        List<AbstractRMQTreeNode<V>> rightPathV = computeRightPartV(rightPath);
         
         V vl = computeMinimum(leftPathV);
         V vr = computeMinimum(rightPathV);
@@ -142,6 +135,16 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
         vr = min(vr, rightLeaf.getValue());
         
         return min(vl, vr);
+    }
+    
+    /**
+     * Returns the root node of this tree. Is package-private in order to be
+     * accessible from the unit tests.
+     * 
+     * @return the root node of this tree. 
+     */
+    AbstractRMQTreeNode<V> getRoot() {
+        return root;
     }
     
     /**
@@ -181,10 +184,8 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
         Set<AbstractRMQTreeNode<V>> pathSet   = new HashSet<>(path);
         List<AbstractRMQTreeNode<V>> nodeList = new ArrayList<>();
         
-        for (int i = 0; i < path.size(); i++) {
-            InternalRMQTreeNode<V> parent = 
-                    (InternalRMQTreeNode<V>) path.get(i);
-            
+        for (AbstractRMQTreeNode<V> node : path) {
+            InternalRMQTreeNode<V> parent = (InternalRMQTreeNode<V>) node;
             AbstractRMQTreeNode<V> leftChild  = parent.getLeftChild();
             AbstractRMQTreeNode<V> rightChild = parent.getRightChild();
             
@@ -207,9 +208,9 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
         Set<AbstractRMQTreeNode<V>> pathSet   = new HashSet<>(path);
         List<AbstractRMQTreeNode<V>> nodeList = new ArrayList<>();
         
-        for (int i = 0; i < path.size() - 1; i++) {
+        for (AbstractRMQTreeNode<V> node : path) {
             InternalRMQTreeNode<V> parent = 
-                    (InternalRMQTreeNode<V>) path.get(i);
+                    (InternalRMQTreeNode<V>) node;
             
             AbstractRMQTreeNode<V> leftChild  = parent.getLeftChild();
             AbstractRMQTreeNode<V> rightChild = parent.getRightChild();
@@ -243,7 +244,6 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
             node = node.getParent();
         }
         
-        Collections.reverse(path);
         return path;
     }
     

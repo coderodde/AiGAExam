@@ -9,8 +9,14 @@ import java.util.Objects;
 import java.util.Set;
 import static task4.Utils.min;
 
-public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
-                                             V extends Comparable<? super V>> {
+/**
+ * This class is responsible for actual RMQ tree building.
+ * 
+ * @param <K> the key type.
+ * @param <V> the value type.
+ */
+final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
+                                      V extends Comparable<? super V>> {
 
     /**
      * Implements the actual tree building.'
@@ -25,10 +31,6 @@ public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
                     
     RMQTreeBuilderResult<K, V> 
         buildRMQTree(Set<KeyValuePair<K, V>> keyValuePairSet) {
-        
-        Map<K, LeafRMQTreeNode<V>> leafMap = new HashMap<>();
-        
-        loadLeafMap(leafMap, keyValuePairSet);
         
         Objects.requireNonNull(
                 keyValuePairSet,
@@ -45,15 +47,12 @@ public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
         Collections.sort(keyValuePairList);
         
         Map<K, LeafRMQTreeNode<V>> mapKeyToLeafNode = new HashMap<>();
-        RMQTreeBuilderResult<K, V> result = new RMQTreeBuilderResult();
+        
         AbstractRMQTreeNode<V> root = 
                 buildRMQTreeImpl(keyValuePairList, 
                                  mapKeyToLeafNode);
         
-        result.setLeafMap(mapKeyToLeafNode);
-        result.setRoot(root);
-        
-        return result;
+        return new RMQTreeBuilderResult<>(mapKeyToLeafNode, root);
     }
  
     /**
@@ -113,40 +112,17 @@ public final class SemiDynamicRMQTreeBuilder<K extends Comparable<? super K>,
 
         return localRoot;
     }
-        
-    /**
-     * Loads the map mapping keys to leaf nodes.
-     * '
-     * @param <K>             the key type.
-     * @param <V>             the value type.
-     * @param leafMap         the map to populate.
-     * @param keyValuePairSet the key/value pair set.
-     */
-    private static <K extends Comparable<? super K>,
-                    V extends Comparable<? super V>>
-                
-    void loadLeafMap(Map<K, LeafRMQTreeNode<V>> leafMap, 
-                         Set<KeyValuePair<K, V>> keyValuePairSet) {
-        
-        for (KeyValuePair<K, V> keyValuePair : keyValuePairSet) {
-            LeafRMQTreeNode<V> leaf = new LeafRMQTreeNode<>();
-            leaf.setValue(keyValuePair.getValue());
-            leafMap.put(keyValuePair.getKey(), leaf);
-        }
-    }
     
     static final 
             class RMQTreeBuilderResult<K extends Comparable<? super K>,
                                        V extends Comparable<? super V>> {
         
-        private Map<K, LeafRMQTreeNode<V>> leafMap;
-        private AbstractRMQTreeNode<V> root;
-
-        public void setLeafMap(Map<K, LeafRMQTreeNode<V>> leafMap) {
+        private final Map<K, LeafRMQTreeNode<V>> leafMap;
+        private final AbstractRMQTreeNode<V> root;
+        
+        RMQTreeBuilderResult(Map<K, LeafRMQTreeNode<V>> leafMap,
+                             AbstractRMQTreeNode<V> root) {
             this.leafMap = leafMap;
-        }
-
-        public void setRoot(AbstractRMQTreeNode<V> root) {
             this.root = root;
         }
         

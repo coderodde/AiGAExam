@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Task4 {
+final class Task4 {
     
     private static final int INITIAL_TREE_SIZE = 4;
              
@@ -98,9 +98,11 @@ public class Task4 {
                         return;
                 }
             } catch (Exception ex) {
-                System.out.printf(
+                System.err.printf(
                         "ERROR: Could not parse command \"%s\".\n",
                         commandLine);
+                
+                System.err.println(ex);
             }
         }
     }
@@ -123,7 +125,10 @@ public class Task4 {
         tree.update(key, value);
         long end = System.nanoTime();
         
-        System.out.printf("update in %,d nanoseconds.\n", end - start);
+        System.out.printf("update(%d, %d) in %,d nanoseconds.\n", 
+                          key,
+                          value,
+                          end - start);
     }
     
     private static Long runRMQ(String leftKeyString, String rightKeyString) {
@@ -134,7 +139,10 @@ public class Task4 {
         Long returnValue = tree.getRangeMinimum(leftKey, rightKey);
         long end = System.nanoTime();
         
-        System.out.printf("rmq in %,d nanoseconds.\n", end - start);
+        System.out.printf("rmq(%d, %d) in %,d nanoseconds.\n",
+                          leftKey, 
+                          rightKey, 
+                          end - start);
         
         return returnValue;
     }

@@ -253,21 +253,6 @@ public final class RankSelectBitVectorTest {
     }
     
     @Test
-    public void toInteger() {
-        RankSelectBitVector bitVector = new RankSelectBitVector(31);
-        assertEquals(0, bitVector.toInteger(20));
-        
-        bitVector.writeBit(1, true);
-        assertEquals(2, bitVector.toInteger(20));
-        
-        bitVector.writeBit(2, true);
-        assertEquals(6, bitVector.toInteger(20));
-        
-        bitVector.writeBit(4, true);
-        assertEquals(22, bitVector.toInteger(20));
-    }
-    
-    @Test
     public void readWriteBit() {
         RankSelectBitVector bitVector = new RankSelectBitVector(30);
         bitVector.writeBit(12, true);
@@ -277,7 +262,7 @@ public final class RankSelectBitVectorTest {
         assertFalse(bitVector.readBit(13));
     }
     
-//    @Test
+    @Test
     public void bruteForceBitVectorSelect() {
         BruteForceBitVector bv = new BruteForceBitVector(8);
         

@@ -1,5 +1,18 @@
 package task3;
 
+import static java.lang.Math.ceil;
+import static java.lang.Math.pow;
+
+/**
+ * This class defines a packed bit vector that supports {@code rank()} operation
+ * in {@code O(1)} time, and {@code select()} in {@code O(log n)} time. This 
+ * implementation counts the bits via {@link java.lang.Long#bitCount(long)}. We 
+ * also tried to JNI POPCNT-instruction, but it was somewhat slower than 
+ * {@linkplain java.lang.Long#bitCount(long) }.
+ * 
+ * @version 1.0.2
+ * @since 1.0.0
+ */
 public final class RankSelectBitVector {
     
     /**
@@ -11,19 +24,13 @@ public final class RankSelectBitVector {
     /**
      * The actual bit storage array.
      */
-    private final byte[] bytes;
+    private final long[] wordData;
     
     /**
      * The actual requested number of bits in this bit vector. Will be smaller 
      * than the total capacity.
      */
     private final int numberOfRequestedBits;
-    
-    /**
-     * Denotes index of the most rightmost meaningful bit. Will be set to 
-     * {@code numberOfRequestedBits - 1}.
-     */
-    private final int maximumBitIndex;
     
     /**
      * Caches the number of bits set to one (1).
@@ -33,19 +40,20 @@ public final class RankSelectBitVector {
     /**
      * The block size in the {@code first} table.
      */
-    private int ell;
+    private final int ell;
     
     /**
      * The block size in the {@code second} table.
      */
-    private int k;
+    private final int k;
     
     // The following three tables hold the index necessary for efficient rank 
-    // operation. According to internet, has space 
-    // O(sgrt(n) * log log n * log n.
-    private int[] first;
-    private int[] second;
-    private int[][] third;
+    // operation. According to internet, 'third' has space 
+    // O(sgrt(n) * log log n * log n, 'second' has space O(n / log(n)), and
+    // 'first' has space O(n / log^2(n)).
+    private final int[] first;
+    private final int[] second;
+    private final int[][] third;
     
     /**
      * Constructs a new bit vector.
@@ -58,16 +66,22 @@ public final class RankSelectBitVector {
         this.numberOfRequestedBits = numberOfRequestedBits;
         
         // Calculate the actual number of storage bytes:
-        int numberOfBytes = numberOfRequestedBits / Byte.SIZE + 
-                           (numberOfRequestedBits % Byte.SIZE != 0 ? 1 : 0);
+        int numberOfLongs = numberOfRequestedBits / Long.SIZE + 
+                           (numberOfRequestedBits % Long.SIZE != 0 ? 1 : 0);
         
-        numberOfBytes++; // Padding tail byte in order to simplify the last 
+        numberOfLongs++; // Padding tail long in order to simplify the last 
                          // rank/select.
         
-        bytes = new byte[numberOfBytes];
+        this.wordData = new long[numberOfLongs];
         
-        // Set the rightmost, valid index:
-        this.maximumBitIndex = this.bytes.length * Byte.SIZE - 1;
+        int n = wordData.length * Long.SIZE;
+        
+        this.ell = (int) pow(ceil(log2(n) / 2.0), 2.0);
+        this.k = (int) ceil(log2(n) / 2.0);
+        
+        this.first = new int[n / ell + 1];
+        this.second = new int[n / k + 1];
+        this.third = new int[(int) pow(2.0, this.k - 1)][];
     }
     
     @Override
@@ -103,12 +117,9 @@ public final class RankSelectBitVector {
         
         //// Deal with the 'first'.
         // n - total number of bit slots:
-        int n = bytes.length * Byte.SIZE;
+        int n = wordData.length * Long.SIZE;
         
         // elll - the l value:
-        this.ell = (int) Math.pow(Math.ceil(log2(n) / 2.0), 2.0);
-        this.first = new int[n / ell + 1];
-        
         for (int i = ell; i < n; i++) {
             if (i % ell == 0) {
                 int firstArraySlotIndex = i / ell;
@@ -123,9 +134,6 @@ public final class RankSelectBitVector {
         }
         
         //// Deal with the 'second'.
-        this.k = (int) Math.ceil(log2(n) / 2.0);
-        this.second = new int[n / k + 1];
-        
         for (int i = k; i < n; i++) {
             if (i % k == 0) {
                 second[i/k] = bruteForceRank(ell * (i / ell), i - 1);
@@ -133,15 +141,11 @@ public final class RankSelectBitVector {
         }
         
         //// Deal with the 'third': four Russians' technique:
-        this.third = new int[(int) Math.pow(2.0, k - 1)][];
-        
         for (int selectorIndex = 0;
                  selectorIndex < third.length;
                  selectorIndex++) {
             
             third[selectorIndex] = new int[k - 1];
-            
-            // third[selectorIndex][0] is always zero (0).
             third[selectorIndex][0] = (bitIsSet(selectorIndex, k - 2) ? 1 : 0);
             
             for (int j = 1; j < k - 1; j++) {
@@ -268,9 +272,7 @@ public final class RankSelectBitVector {
             return f + s;
         }
         
-        int selectorIndex = 
-                extractBitVector(index)
-                        .toInteger(k - 1);
+        int selectorIndex = computeSelectorIndex(index);
         
         return f + s + third[selectorIndex][thirdEntryIndex];
     }
@@ -327,12 +329,12 @@ public final class RankSelectBitVector {
         
         if (r >= bitIndex) {
             return selectImplFirst(bitIndex, 
-                              rangeStartIndex,
-                              halfRangeLength);
+                                   rangeStartIndex,
+                                   halfRangeLength);
         } else {
             return selectImplFirst(bitIndex, 
-                              rangeStartIndex + halfRangeLength,
-                              rangeLength - halfRangeLength);
+                                   rangeStartIndex + halfRangeLength,
+                                   rangeLength - halfRangeLength);
         }
     }
     
@@ -413,10 +415,10 @@ public final class RankSelectBitVector {
      * @return the value of the target bit.
      */
     boolean readBitImpl(int index) {
-        int byteIndex = index / Byte.SIZE;
-        int targetByteBitIndex = index % Byte.SIZE;
-        byte targetByte = bytes[byteIndex];
-        return (targetByte & (1 << targetByteBitIndex)) != 0;
+        int targetLongIndex = index / Long.SIZE;
+        int targetLongBitIndex = index % Long.SIZE;
+        long targetLong = wordData[targetLongIndex];
+        return (targetLong & (1L << targetLongBitIndex)) != 0;
     }
     
     /**
@@ -435,11 +437,11 @@ public final class RankSelectBitVector {
      * @param index the target bit index.
      */
     private void turnBitOn(int index) {
-        int byteIndex = index / Byte.SIZE;
-        int bitIndex = index % Byte.SIZE;
-        byte mask = 1;
-        mask <<= bitIndex;
-        bytes[byteIndex] |= mask;
+        int targetLongIndex = index / Long.SIZE;
+        int targetLongBitIndex = index % Long.SIZE;
+        long mask = 1L;
+        mask <<= targetLongBitIndex;
+        wordData[targetLongIndex] |= mask;
     }
     
     /**
@@ -448,31 +450,36 @@ public final class RankSelectBitVector {
      * @param index the target bit index.
      */
     private void turnBitOff(int index) {
-        int byteIndex = index / Byte.SIZE;
-        int bitIndex = index % Byte.SIZE;
-        byte mask = 1;
-        mask <<= bitIndex;
-        bytes[byteIndex] &= ~mask;
+        int targetLongIndex = index / Long.SIZE;
+        int targetLongBitIndex = index % Long.SIZE;
+        long mask = 1L;
+        mask <<= targetLongBitIndex;
+        wordData[targetLongIndex] &= ~mask;
     }
     
     private void checkBitIndexForSelect(int selectionIndex) {
         if (selectionIndex < 0) {
             throw new IndexOutOfBoundsException(
                     String.format(
-                            "The input selection index is negative: (%d).\n",
-                            selectionIndex));
+                            "The input selection index is negative: " + 
+                            "(%d). Must be within range [1..%d].\n",
+                            selectionIndex,
+                            numberOfSetBits));
         }
         
         if (selectionIndex == 0) {
             throw new IndexOutOfBoundsException(
-                    "The input selection index is zero (0).");
+                    String.format(
+                            "The input selection index is zero (0). " + 
+                            "Must be within range [1..%d].\n",
+                            numberOfSetBits));
         }
         
         if (selectionIndex > numberOfSetBits) {
             throw new IndexOutOfBoundsException(
                     String.format(
                             "The input selection index is too large (%d). " + 
-                                    "Must be within range [1..%d].\n", 
+                            "Must be within range [1..%d].\n", 
                             selectionIndex, 
                             numberOfSetBits));
         }
@@ -524,48 +531,119 @@ public final class RankSelectBitVector {
         return (value & (1 << bitIndex)) != 0;
     }
     
-    int toInteger(int numberOfBitsToRead) {
-        int integer = 0;
+    int computeSelectorIndex(int i) {
+        int startBitIndex = k * (i / k);
+        int endBitIndex = k * (i / k + 1) - 2;
         
-        for (int i = 0; i < numberOfBitsToRead; i++) {
+        int startLongIndex = startBitIndex / Long.SIZE;
+        int endLongIndex = endBitIndex / Long.SIZE;
+        
+        if (startLongIndex == endLongIndex) {
+            int bitRangeLength = endBitIndex - startBitIndex + 1;
+            int omitBitCountRight = startBitIndex - Long.SIZE * startLongIndex;
+            int omitBitCountLeft = 
+                    Long.SIZE - omitBitCountRight - bitRangeLength;
+                    
+            long word = wordData[startLongIndex];
+            word = Long.reverse(word);
             
-            boolean bit = readBitImpl(i);
+            word  <<= omitBitCountRight;
+            word >>>= omitBitCountLeft + omitBitCountRight;
             
-            if (bit == true) {
-                integer |= 1 << i;
-            }
+            return (int) word;
+        } else {
+            
+            int lengthWordLo = Long.SIZE - startBitIndex
+                                        + Long.SIZE * startLongIndex;
+            
+            int lengthWordHi = endBitIndex - Long.SIZE * endLongIndex + 1;
+            
+            long wordLo = wordData[startLongIndex];
+            long wordHi = wordData[endLongIndex];
+            
+            wordLo = preprocessLowWord(wordLo, lengthWordLo, lengthWordHi);
+            wordHi = preprocessHighWord(wordHi, lengthWordHi);
+            
+            // Make room for bits from 
+            wordLo <<= lengthWordHi;
+            // Add bits
+            wordLo |= wordHi;
+            
+            return (int)(wordHi | wordLo);
         }
-        
-        return integer;
     }
     
-    private RankSelectBitVector extractBitVector(int i) {
-        int startIndex = k * (i / k);
-        int endIndex = Math.min(k * (i / k + 1) - 2, maximumBitIndex);
+    private static long preprocessLowWord(long wordLo, 
+                                          int lengthWordLo, 
+                                          int lengthWordHi) {
+        // Take 'lengthWordLo' most-significant bits of 'wordLo':
+        wordLo >>>= Long.SIZE - lengthWordLo;
         
-        int extractedBitVectorLength = endIndex - startIndex + 1;
+        // Reverse the bits of 'wordLo':
+        wordLo = Long.reverse(wordLo);
         
-        RankSelectBitVector extractedBitVector = 
-                new RankSelectBitVector(extractedBitVectorLength);
-        
-        for (int index = extractedBitVectorLength - 1,
-                j = startIndex; 
-                j <= endIndex;
-                j++, index--) {
-            
-            extractedBitVector.writeBitImpl(index, this.readBitImpl(j));
-        }
-        
-        return extractedBitVector;
+        // Shift towards least-significant bits:
+        wordLo >>>= Long.SIZE - lengthWordLo;
+        return wordLo;
     }
     
+    private static long preprocessHighWord(long wordHi, int lengthWordHi) {
+        wordHi = Long.reverse(wordHi);
+        wordHi >>>= Long.SIZE - lengthWordHi;
+        return wordHi;
+    }
+    
+    // Relies on Long.bitCount (possibly compiled to the POPCOUNT CPU 
+    // instruction). Computes the rank of bit vector [startIndex..endIndex].
     private int bruteForceRank(int startIndex, int endIndex) {
+        if (startIndex > endIndex) {
+            return 0;
+        }
+        
+        int startLongIndex = startIndex / Long.SIZE;
+        int endLongIndex = endIndex / Long.SIZE;
         int rank = 0; 
         
-        for (int i = startIndex; i <= endIndex; i++) {
-            if (readBitImpl(i)) {
-                rank++;
+        for (int longIndex = startLongIndex + 1;
+                 longIndex < endLongIndex; 
+                 longIndex++) {
+            
+            rank += Long.bitCount(wordData[longIndex]);
+        }
+        
+        if (startLongIndex != endLongIndex) {
+            // Deal with leading bits:
+            int numberOfLeadingBits  = startIndex - startLongIndex * Long.SIZE;
+            int numberOfTrailingBits = 
+                    Long.SIZE - (endIndex - endLongIndex * Long.SIZE + 1);
+
+            long word1 = wordData[startLongIndex];
+            long word2 = wordData[endLongIndex];
+            
+            // Clear word1:
+            word1 >>>= numberOfLeadingBits;
+            word2 <<= numberOfTrailingBits;
+            
+            rank += Long.bitCount(word1) +
+                    Long.bitCount(word2);
+        } else {
+            // Here, 'startLongIndex == endLongIndex':
+            int rangeLength = endIndex - startIndex + 1;
+            int numberOfLeadingBits = startIndex - startLongIndex * Long.SIZE;
+            int numberOfTrailingBits = Long.SIZE - numberOfLeadingBits 
+                                                 - rangeLength;
+            
+            if (numberOfLeadingBits + numberOfTrailingBits == Long.SIZE) {
+                return rank;
             }
+            
+            // Grab the word:
+            long word = wordData[startLongIndex];
+            
+            word >>>= numberOfLeadingBits;
+            word  <<= numberOfLeadingBits + numberOfTrailingBits;
+            
+            rank += Long.bitCount(word);
         }
         
         return rank;
@@ -579,7 +657,7 @@ public final class RankSelectBitVector {
         if (numberOfRequestedBits < 0) {
             throw new IllegalArgumentException(
                     String.format(
-                            "Requested negative number of bits (%d).\n", 
+                            "Requested negative number of bits (%d).", 
                             numberOfRequestedBits));
         }
     }
@@ -588,4 +666,3 @@ public final class RankSelectBitVector {
         return Math.log(v) / Math.log(2.0);
     }
 }
-
