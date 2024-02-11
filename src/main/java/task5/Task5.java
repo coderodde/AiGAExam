@@ -9,5 +9,12 @@ public final class Task5 {
         SuffixArray suffixArray1 = builder1.buildSuffixArray("dabbb");
         
         System.out.println(suffixArray1);
+        
+        BruteForceSuffixArrayBuilder2 builder2 =
+                new BruteForceSuffixArrayBuilder2();
+        
+        SuffixArray suffixArray2 = builder2.buildSuffixArray("dabbb");
+        
+        System.out.println(suffixArray1);
     }
 }
