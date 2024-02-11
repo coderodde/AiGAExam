@@ -1,20 +1,40 @@
 package task5;
 
+import java.util.Random;
+
 public final class Task5 {
     
+    private static final int TEXT_LENGTH = 5000;
+    
     public static void main(String[] args) {
-        BruteForceSuffixArrayBuilder1 builder1 =
-                new BruteForceSuffixArrayBuilder1();
+        Random random = new Random(13L);
+        String text = computeRandomString(TEXT_LENGTH, random);
         
-        SuffixArray suffixArray1 = builder1.buildSuffixArray("dabbb");
+        benchmark(new BruteForceSuffixArrayBuilder1(), text);
+        benchmark(new BruteForceSuffixArrayBuilder2(), text);
+    }
+    
+    private static SuffixArray benchmark(SuffixArrayBuilder suffixArrayBuilder, 
+                                  String text) {
+        long start = System.currentTimeMillis();
+        SuffixArray suffixArray = suffixArrayBuilder.buildSuffixArray(text);
+        long end = System.currentTimeMillis();
         
-        System.out.println(suffixArray1);
+        System.out.printf("%s in %d milliseconds.\n", 
+                          suffixArrayBuilder.getClass().getSimpleName(),
+                          end - start);
         
-        BruteForceSuffixArrayBuilder2 builder2 =
-                new BruteForceSuffixArrayBuilder2();
+        return suffixArray;
+    }
+    
+    private static String computeRandomString(int length, Random random) {
+        StringBuilder sb = new StringBuilder(length);
         
-        SuffixArray suffixArray2 = builder2.buildSuffixArray("dabbb");
+        for (int i = 0; i < length; i++) {
+            char ch = (char)('a' + random.nextInt(26));
+            sb.append(ch);
+        }
         
-        System.out.println(suffixArray1);
+        return sb.toString();
     }
 }

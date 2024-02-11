@@ -1,5 +1,7 @@
 package task5;
 
+import java.util.Arrays;
+
 /**
  * This class specifies the suffix array.
  */
@@ -9,6 +11,11 @@ public final class SuffixArray {
     
     public SuffixArray(int length) {
         this.suffixArray = new int[length];
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        return Arrays.equals(suffixArray, ((SuffixArray) o).suffixArray);
     }
     
     @Override
