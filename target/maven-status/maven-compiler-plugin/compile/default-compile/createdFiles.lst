@@ -8,6 +8,7 @@ task1\HeapNodeHolder.class
 task4\SemiDynamicRMQTreeBuilder.class
 task1\BidirectionalDijkstrasAlgorithm.class
 task4\KeyValuePair.class
+task5\SuffixArrayBuilder.class
 task1\LatticeNodeChildrenNodeExpander.class
 task0\Task0.class
 task9\Task9.class
@@ -20,13 +21,16 @@ task1\ProbabilityDistribution$Entry.class
 task1\LatticeNodeParentsNodeExpander.class
 task4\InternalRMQTreeNode.class
 task2\Task2$LevenshteinEditDistanceResult.class
+task5\SuffixArray.class
 task1\BidirectionalDijkstrasAlgorithm$HeapNodeWrapper.class
 task4\SemiDynamicRMQTreeBuilder$RMQTreeBuilderResult.class
+task5\BruteForceSuffixArrayBuilder1.class
 task2\Task2$EditOperation.class
 task1\LatticeWeightFunction.class
 util\Codon.class
 task1\Alignment.class
 util\AminoAcidAlphabet.class
+task5\Task5.class
 task2\Task2.class
 util\MultipleGroupPermuter.class
 task4\Task4.class
