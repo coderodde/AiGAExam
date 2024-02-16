@@ -13,13 +13,15 @@ public final class BruteForceSuffixArrayBuilder2 implements SuffixArrayBuilder {
         String[] cyclicShifts = buildCyclicShifts(text);
         Map<String, Integer> indexMap = buildIndexMap(cyclicShifts);
         Arrays.sort(cyclicShifts);
-        return buildSuffixArray(cyclicShifts, indexMap);
+        return buildSuffixArray(text, cyclicShifts, indexMap);
     }
     
     private static SuffixArray buildSuffixArray(
+            String text,
             String[] suffixes,
             Map<String, Integer> indexMap) {
-        SuffixArray suffixArray = new SuffixArray(suffixes.length);
+        
+        SuffixArray suffixArray = new SuffixArray(text);
         int entryIndex = 0;
         
         for (String suffix : suffixes) {

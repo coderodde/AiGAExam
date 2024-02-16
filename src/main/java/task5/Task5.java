@@ -7,6 +7,7 @@ public final class Task5 {
     private static final int TEXT_LENGTH = 5000;
     
     public static void main(String[] args) {
+        
         Random random = new Random(13L);
         String text = computeRandomString(TEXT_LENGTH, random);
         

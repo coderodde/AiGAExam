@@ -11,13 +11,15 @@ public final class BruteForceSuffixArrayBuilder1 implements SuffixArrayBuilder {
         String[] suffixes = buildSuffixes(text);
         Map<String, Integer> indexMap = buildIndexMap(suffixes);
         Arrays.sort(suffixes);
-        return buildSuffixArray(suffixes, indexMap);
+        return buildSuffixArray(text, suffixes, indexMap);
     }
     
     private static SuffixArray buildSuffixArray(
+            String text,
             String[] suffixes,
             Map<String, Integer> indexMap) {
-        SuffixArray suffixArray = new SuffixArray(suffixes.length);
+        
+        SuffixArray suffixArray = new SuffixArray(text);
         int entryIndex = 0;
         
         for (String suffix : suffixes) {

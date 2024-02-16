@@ -1,4 +1,5 @@
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task4\InternalRMQTreeNode.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task6\Task6.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\util\AminoAcidAlphabet.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\HeapNodeHolder.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task9\Task9.java
@@ -6,18 +7,23 @@ C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task4\AbstractRMQTreeNode.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task5\BruteForceSuffixArrayBuilder2.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task3\Task3.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task5\SuffixDescriptor.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task4\KeyValuePair.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\ProbabilityDistribution.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task4\Task4.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\LatticeNode.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\util\Codon.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task4\Utils.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task6\HiddenMarkovModelStateType.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\Task1.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\LatticeWeightFunction.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task6\HiddenMarkovModelState.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task5\StringFactor.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task5\BruteForceSuffixArrayBuilder1.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task3\RankSelectBitVector.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\DijkstrasAlgorithm.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task2\Task2.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task6\HiddenMarkovModel.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\NodeExpander.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task5\Task5.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\IntWeightFunction.java
@@ -28,6 +34,7 @@ C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\Alignment.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\BidirectionalDijkstrasAlgorithm.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\util\Utils.java
+C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task5\LinearithmicSuffixArrayBuilder.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task1\MultipleSequenceAlignmentInstance.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\util\MultipleGroupPermuter.java
 C:\Users\rodio\OneDrive\Documents\NetBeansProjects\AiGAExam\src\main\java\task4\SemiDynamicRMQTreeBuilder.java

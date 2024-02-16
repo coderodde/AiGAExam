@@ -7,10 +7,17 @@ import java.util.Arrays;
  */
 public final class SuffixArray {
     
+    private final String text;
     private final int[] suffixArray;
+    private final SuffixDescriptor[] suffixDescriptorArray;
     
-    public SuffixArray(int length) {
-        this.suffixArray = new int[length];
+    public SuffixArray(String text) {
+        this.text = text;
+        this.suffixArray = new int[text.length()];
+        this.suffixDescriptorArray =
+                new SuffixDescriptor[this.suffixArray.length];
+        
+        constructSuffixDescriptorArray();
     }
     
     @Override
@@ -45,5 +52,15 @@ public final class SuffixArray {
     
     void set(int suffixArrayIndex, int suffixIndex) {
         suffixArray[suffixArrayIndex] = suffixIndex;
+    }
+    
+    void constructSuffixDescriptorArray() {
+        for (int len = text.length(), i = 0; len > 0; len--, i++) {
+            suffixDescriptorArray[i] = new SuffixDescriptor(text, len);
+        }
+    }
+    
+    void sortByFirstCharacter() {
+        Arrays.sort(suffixDescriptorArray);
     }
 }
