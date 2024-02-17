@@ -1,5 +1,6 @@
 package task6;
 
+import java.util.List;
 import java.util.Random;
 import util.Utils;
 
@@ -59,6 +60,14 @@ public final class Task6 {
         for (int i = 0; i < 10; i++) {
             int lineNumber = i + 1;
             System.out.printf("%2d: %s\n", lineNumber, hmm.compose());
+        }
+        
+        String sequence = "AG";
+        List<List<HiddenMarkovModelState>> paths = 
+                hmm.computeAllStatePaths(sequence);
+        
+        for (List<HiddenMarkovModelState> path : paths) {
+            System.out.println(path);
         }
     }
 }
