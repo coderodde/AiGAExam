@@ -1,5 +1,8 @@
 package task6;
 
+import static java.lang.Math.E;
+import static java.lang.Math.log;
+import static java.lang.Math.pow;
 import java.util.List;
 
 public final class HiddenMarkovModelStateSequence 
@@ -13,7 +16,7 @@ public final class HiddenMarkovModelStateSequence
                                    HiddenMarkovModel hiddenMarkovModel) {
         
         this.stateSequence = stateSequence;
-        this.probability = computeProbability(observedSymbols);
+        this.probability = computeJointProbability(observedSymbols);
     }
     
     public int size() {
@@ -26,6 +29,11 @@ public final class HiddenMarkovModelStateSequence
     
     public double getProbability() {
         return probability;
+    }
+    
+    @Override
+    public int compareTo(HiddenMarkovModelStateSequence o) {
+        return Double.compare(probability, o.probability);
     }
     
     @Override
@@ -51,23 +59,35 @@ public final class HiddenMarkovModelStateSequence
         return sb.toString();
     }
     
-    private double computeProbability(String observedSymbols) {
-        double probability = 1.0;
+    private double computeJointProbability(String observedSymbols) {
+        double logProbability = computeEmissionProbabilities(observedSymbols) +
+                                computeTransitionProbabilities();
         
-        for (int i = 1, j = 0; i < stateSequence.size() - 1; i++, j++) {
-            HiddenMarkovModelState state = stateSequence.get(i);
-            double tentativeProbability = 
-                    state.getEmissions()
-                         .get(observedSymbols.charAt(j));
-            
-            probability *= tentativeProbability;
+        return pow(E, logProbability);
+    }
+    
+    private double computeEmissionProbabilities(String observedSymbols) {
+        double probability = 0.0;
+        
+        for (int i = 0; i != observedSymbols.length(); i++) {
+            char observedSymbol = observedSymbols.charAt(i);
+            HiddenMarkovModelState state = stateSequence.get(i + 1);
+            probability += log(state.getEmissions().get(observedSymbol));
         }
         
         return probability;
     }
-
-    @Override
-    public int compareTo(HiddenMarkovModelStateSequence o) {
-        return Double.compare(probability, o.probability);
+    
+    private double computeTransitionProbabilities() {
+        double probability = 0.0;
+        
+        for (int i = 0; i < stateSequence.size() - 1; i++) {
+            HiddenMarkovModelState sourceState = stateSequence.get(i);
+            HiddenMarkovModelState targetState = stateSequence.get(i + 1);
+            probability += log(sourceState.getFollowingStates()
+                                          .get(targetState));
+        }
+        
+        return probability;
     }
 }

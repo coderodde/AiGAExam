@@ -71,8 +71,10 @@ public final class Task6 {
         
         long end = System.currentTimeMillis();
         
-        System.out.printf("Brute-force path inference in %d milliseconds.\n",
-                          end - start);
+        System.out.printf("Brute-force path inference in %d milliseconds for " +
+                         "sequence \"%s\".\n",
+                          end - start,
+                          sequence);
         
         int lineNumber = 1;
         
