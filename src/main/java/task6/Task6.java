@@ -62,12 +62,22 @@ public final class Task6 {
             System.out.printf("%2d: %s\n", lineNumber, hmm.compose());
         }
         
-        String sequence = "AG";
-        List<List<HiddenMarkovModelState>> paths = 
+        long start = System.currentTimeMillis();
+        
+        String sequence = "AGCG";
+        
+        List<HiddenMarkovModelStateSequence> stateSequenceList = 
                 hmm.computeAllStatePaths(sequence);
         
-        for (List<HiddenMarkovModelState> path : paths) {
-            System.out.println(path);
+        long end = System.currentTimeMillis();
+        
+        System.out.printf("Brute-force path inference in %d milliseconds.\n",
+                          end - start);
+        
+        int lineNumber = 1;
+        
+        for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
+            System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
         }
     }
 }

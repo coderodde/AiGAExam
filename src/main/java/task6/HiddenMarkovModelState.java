@@ -35,6 +35,10 @@ public final class HiddenMarkovModelState {
         this.type = type;
     }
     
+    public int getId() {
+        return id;
+    }
+    
     public Map<HiddenMarkovModelState, Double> getFollowingStates() {
         return Collections.unmodifiableMap(transitionMap);
     }

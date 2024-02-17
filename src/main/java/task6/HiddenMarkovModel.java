@@ -2,6 +2,7 @@ package task6;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,8 +44,9 @@ public final class HiddenMarkovModel {
         this.endState = endState;
     }
     
-    public List<List<HiddenMarkovModelState>> 
+    public List<HiddenMarkovModelStateSequence> 
         computeAllStatePaths(String sequence) {
+            
         int expectedStatePathSize = sequence.length() + 2;
         
         List<List<HiddenMarkovModelState>> statePaths = new ArrayList<>();
@@ -57,7 +59,21 @@ public final class HiddenMarkovModel {
                              expectedStatePathSize, 
                              startState);
         
-        return statePaths;
+        List<HiddenMarkovModelStateSequence> sequenceList = 
+                new ArrayList<>(statePaths.size());
+        
+        for (List<HiddenMarkovModelState> statePath : statePaths) {
+            sequenceList.add(
+                    new HiddenMarkovModelStateSequence(
+                            statePath, 
+                            sequence,
+                            this));
+        }
+        
+        Collections.sort(sequenceList);
+        Collections.reverse(sequenceList);
+        
+        return sequenceList;
     }
     
     public String compose() {
