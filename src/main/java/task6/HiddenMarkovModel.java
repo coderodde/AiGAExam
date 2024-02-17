@@ -49,11 +49,11 @@ public final class HiddenMarkovModel {
         
         List<List<HiddenMarkovModelState>> statePaths = new ArrayList<>();
         List<HiddenMarkovModelState> currentPath = new ArrayList<>();
-        Set<HiddenMarkovModelState> visited = new HashSet<>();
+        
+        currentPath.add(startState);
         
         depthFirstSearchImpl(statePaths, 
                              currentPath,
-                             visited,
                              expectedStatePathSize, 
                              startState);
         
@@ -148,36 +148,29 @@ public final class HiddenMarkovModel {
     private void depthFirstSearchImpl(
             List<List<HiddenMarkovModelState>> statePaths,
             List<HiddenMarkovModelState> currentPath,
-            Set<HiddenMarkovModelState> visited,
             int expectedStatePathSize,
             HiddenMarkovModelState currentState) {
         
-        if (currentPath.size() == expectedStatePathSize 
-                && currentState.equals(endState)) {
+        if (currentPath.size() == expectedStatePathSize) {
             
-            statePaths.add(new ArrayList<>(currentPath));
-            currentPath.remove(currentPath.size() - 1);
+            if (currentState.equals(endState)) {
+                statePaths.add(new ArrayList<>(currentPath));
+            }
+            
             return;
         }
-        
-        visited.add(currentState);
-        currentPath.add(currentState);
         
         for (HiddenMarkovModelState followerState 
                 : currentState.getFollowingStates().keySet()) {
             
-            if (visited.contains(followerState)) {
-                continue;
-            }
+            currentPath.add(followerState);
             
             depthFirstSearchImpl(statePaths,
                                  currentPath,
-                                 visited,
                                  expectedStatePathSize, 
-                                 followerState);    
+                                 followerState);
+            
+            currentPath.remove(currentPath.size() - 1);
         }
-        
-        visited.remove(currentState);
-        currentPath.remove(currentPath.size() - 1);
     }
 }
