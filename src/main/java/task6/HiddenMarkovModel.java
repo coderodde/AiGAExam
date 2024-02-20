@@ -75,6 +75,127 @@ public final class HiddenMarkovModel {
         
         return sequenceList;
     }
+        
+    public HiddenMarkovModelStateSequence runViterbi(String sequence) {
+        Set<HiddenMarkovModelState> graph = computeAllStates();
+        
+        if (!graph.contains(endState)) {
+            throw new IllegalStateException("End state is unreachable.");
+        }
+        
+        Map<Integer, HiddenMarkovModelState> stateMap = 
+                new HashMap<>(graph.size());
+        
+        Map<HiddenMarkovModelState, Integer> inverseStateMap = new HashMap<>();
+        
+        Map<Integer, Character> characterMap = new HashMap<>(sequence.length());
+        
+        stateMap.put(0, startState);
+        stateMap.put(graph.size() - 1, endState);
+        
+        inverseStateMap.put(startState, 0);
+        inverseStateMap.put(endState, graph.size() - 1);
+        
+        int stateId = 1;
+        
+        for (HiddenMarkovModelState state : graph) {
+            if (!state.equals(startState) && !state.equals(endState)) {
+                stateMap.put(stateId, state);
+                inverseStateMap.put(state, stateId);
+                stateId++;
+            }
+        }
+        
+        for (int i = 0; i < sequence.length(); i++) {
+            characterMap.put(i, sequence.charAt(i));
+        }
+        
+        double[][] v = new double[sequence.length() + 1]
+                                 [graph.size()];
+        
+        v[0][0] = 1.0;
+        
+        for (int i = 1; i < graph.size(); i++) {
+            v[0][i] = 0.0;
+        }
+        
+        v(sequence.length(), 
+          graph.size(),
+          characterMap, 
+          stateMap, 
+          inverseStateMap);
+        
+        return tracebackStateSequence(v, sequence, stateMap);
+    }
+    
+    private double v(int i,
+                     int h,
+                     Map<Integer, Character> sequenceMap,
+                     Map<Integer, HiddenMarkovModelState> stateMap,
+                     Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+        
+        char symbol = sequenceMap.get(i);
+        HiddenMarkovModelState state = stateMap.get(h - 1);
+        
+        double psih = state.getEmissions().get(symbol);
+        double pmax = Double.NEGATIVE_INFINITY;
+        
+        Set<HiddenMarkovModelState> parentsOfH = state.getIncomingStates();
+        
+        for (HiddenMarkovModelState parent : parentsOfH) {
+            double ptmp = 
+                    v(i - 1,
+                      inverseStateMap.get(parent), 
+                      sequenceMap,
+                      stateMap,
+                      inverseStateMap);
+            
+            ptmp *= parent.getFollowingStates().get(state);
+            pmax = Math.max(pmax, ptmp);
+        }
+        
+        return psih * pmax;
+    }
+    
+    private HiddenMarkovModelStateSequence 
+        tracebackStateSequence(
+                double[][] v,
+                String sequence,
+                Map<Integer, HiddenMarkovModelState> stateMap) {
+        
+        List<HiddenMarkovModelState> stateList = new ArrayList<>(v.length);
+        
+        for (int i = v.length - 1; i > 0; i--) {
+            int index = getArgMaxIndex(v, i);
+            stateList.add(stateMap.get(index));
+        }
+            
+        return new HiddenMarkovModelStateSequence(stateList, sequence, this);
+    }
+        
+    /**
+     * This method scans the row {@code v[i - 1]} and returns the index of the
+     * entry with maximum probability.
+     * 
+     * @param v the matrix.
+     * @param i the target row index
+     * @return the index of the most probable entry in row {@code i - 1}.
+     */
+    private int getArgMaxIndex(double[][] v, int i) {
+        int maxIndex = -1;
+        double maxProbability = Double.NEGATIVE_INFINITY;
+        
+        for (int j = 0; j != v[0].length; j++) {
+            double currentProbability = v[i - 1][j];
+            
+            if (maxProbability < currentProbability) {
+                maxProbability = currentProbability;
+                maxIndex = j;
+            }
+        }
+        
+        return maxIndex;
+    }
     
     public String compose() {
         StringBuilder sb = new StringBuilder();
@@ -133,7 +254,7 @@ public final class HiddenMarkovModel {
         }
     }
     
-    private int computeNumberOfNodes() {
+    private Set<HiddenMarkovModelState> computeAllStates() {
         Deque<HiddenMarkovModelState> queue = new ArrayDeque<>();
         Set<HiddenMarkovModelState> visited = new HashSet<>();
         
@@ -153,12 +274,7 @@ public final class HiddenMarkovModel {
             }
         }
         
-        if (!visited.contains(endState)) {
-            throw new IllegalStateException(
-                    "There is no path from the start state to the end state.");
-        }
-        
-        return visited.size();
+        return visited;
     }
     
     private void depthFirstSearchImpl(

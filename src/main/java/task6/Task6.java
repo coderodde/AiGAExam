@@ -81,5 +81,9 @@ public final class Task6 {
         for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
             System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
         }
+        
+        System.out.println("--- Viterbi ---");
+        
+        System.out.println(hmm.runViterbi("AT"));
     }
 }

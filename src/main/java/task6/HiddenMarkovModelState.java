@@ -2,7 +2,9 @@ package task6;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class defines the hidden states of a hidden Markov model.
@@ -26,6 +28,12 @@ public final class HiddenMarkovModelState {
             new HashMap<>();
     
     /**
+     * Holds all incoming states.
+     */
+    private final Set<HiddenMarkovModelState> incomingTransitions = 
+            new HashSet<>();
+    
+    /**
      * Maps each emission character to its probability. 
      */
     private final Map<Character, Double> emissionMap = new HashMap<>();
@@ -47,6 +55,10 @@ public final class HiddenMarkovModelState {
         return Collections.unmodifiableMap(emissionMap);
     }
     
+    public Set<HiddenMarkovModelState> getIncomingStates() {
+        return Collections.unmodifiableSet(incomingTransitions);
+    }
+    
     public void addStateTransition(HiddenMarkovModelState followerState, 
                                    Double probability) {
         if (type.equals(HiddenMarkovModelStateType.END)) {
@@ -55,6 +67,7 @@ public final class HiddenMarkovModelState {
         }
         
         transitionMap.put(followerState, probability);
+        followerState.incomingTransitions.add(this);
         normalizeTransitionMap();
     }
     
