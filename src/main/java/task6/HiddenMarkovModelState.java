@@ -59,6 +59,11 @@ public final class HiddenMarkovModelState {
         return Collections.unmodifiableSet(incomingTransitions);
     }
     
+    public void normalize() {
+        normalizeEmissionMap();
+        normalizeTransitionMap();
+    }
+    
     public void addStateTransition(HiddenMarkovModelState followerState, 
                                    Double probability) {
         if (type.equals(HiddenMarkovModelStateType.END)) {
@@ -68,7 +73,6 @@ public final class HiddenMarkovModelState {
         
         transitionMap.put(followerState, probability);
         followerState.incomingTransitions.add(this);
-        normalizeTransitionMap();
     }
     
     public void addEmissionTransition(Character character, Double probability) {
@@ -80,7 +84,6 @@ public final class HiddenMarkovModelState {
         }
         
         emissionMap.put(character, probability);
-        normalizeEmissionMap();
     }
     
     @Override
@@ -95,7 +98,7 @@ public final class HiddenMarkovModelState {
     
     @Override
     public String toString() {
-        return String.format("[HMM state, ID = %d]", id);
+        return String.format("[HMM state, ID = %d, type = %s]", id, type);
     }
     
     private void normalizeTransitionMap() {

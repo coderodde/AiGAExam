@@ -57,6 +57,11 @@ public final class Task6 {
         noncodingState.addEmissionTransition('T', 0.25);
         // END: Emissions.
         
+        startState.normalize();
+        codingState.normalize();
+        noncodingState.normalize();
+        endState.normalize();
+        
         for (int i = 0; i < 10; i++) {
             int lineNumber = i + 1;
             System.out.printf("%2d: %s\n", lineNumber, hmm.compose());
@@ -76,14 +81,55 @@ public final class Task6 {
                           end - start,
                           sequence);
         
-        int lineNumber = 1;
+        debugViterbi();
         
-        for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
-            System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
-        }
+//        int lineNumber = 1;
+//        
+//        for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
+//            System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
+//        }
+//        
+//        System.out.println("--- Viterbi ---");
+//        
+//        System.out.println(hmm.runViterbiAlgorithm("A"));
+    }
+    
+    private static void debugViterbi() {
+        System.out.println("--- debugViterbi() ---");
         
-        System.out.println("--- Viterbi ---");
+        HiddenMarkovModelState startState = 
+                new HiddenMarkovModelState(
+                        1,
+                        HiddenMarkovModelStateType.START);
         
-        System.out.println(hmm.runViterbiAlgorithm("AT"));
+        HiddenMarkovModelState hiddenState = 
+                new HiddenMarkovModelState(
+                        2,
+                        HiddenMarkovModelStateType.HIDDEN);
+        
+        HiddenMarkovModelState endState = 
+                new HiddenMarkovModelState(
+                        3,
+                        HiddenMarkovModelStateType.END);
+        
+        startState.addStateTransition(hiddenState, 1.0);
+        hiddenState.addStateTransition(hiddenState, 0.9);
+        hiddenState.addStateTransition(endState, 0.1);
+        hiddenState.addEmissionTransition('A', 0.3);
+        hiddenState.addEmissionTransition('T', 0.7);
+        
+        startState.normalize();
+        hiddenState.normalize();
+        endState.normalize();
+        
+        Random random = new Random(13L);
+        
+        HiddenMarkovModel hmm = new HiddenMarkovModel(startState, 
+                                                      endState,
+                                                      random);
+        
+        HiddenMarkovModelStateSequence sequence = hmm.runViterbiAlgorithm("A");
+        
+        System.out.println(sequence);
     }
 }

@@ -10,6 +10,7 @@ task0\Task0.class
 task9\Task9.class
 task0\ProteinPermutation.class
 task1\IntWeightFunction.class
+task6\HiddenMarkovModelStateType$1.class
 task6\HMMStatePathEnumerator.class
 task4\AbstractRMQTreeNode.class
 task1\ProbabilityDistribution$Entry.class
