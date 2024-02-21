@@ -84,6 +84,6 @@ public final class Task6 {
         
         System.out.println("--- Viterbi ---");
         
-        System.out.println(hmm.runViterbi("AT"));
+        System.out.println(hmm.runViterbiAlgorithm("AT"));
     }
 }

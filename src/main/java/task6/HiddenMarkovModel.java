@@ -2,6 +2,7 @@ package task6;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -76,7 +77,8 @@ public final class HiddenMarkovModel {
         return sequenceList;
     }
         
-    public HiddenMarkovModelStateSequence runViterbi(String sequence) {
+    public HiddenMarkovModelStateSequence runViterbiAlgorithm(String sequence) {
+        
         Set<HiddenMarkovModelState> graph = computeAllStates();
         
         if (!graph.contains(endState)) {
@@ -86,7 +88,8 @@ public final class HiddenMarkovModel {
         Map<Integer, HiddenMarkovModelState> stateMap = 
                 new HashMap<>(graph.size());
         
-        Map<HiddenMarkovModelState, Integer> inverseStateMap = new HashMap<>();
+        Map<HiddenMarkovModelState, Integer> inverseStateMap = 
+                new HashMap<>(graph.size());
         
         Map<Integer, Character> characterMap = new HashMap<>(sequence.length());
         
@@ -113,48 +116,80 @@ public final class HiddenMarkovModel {
         double[][] v = new double[sequence.length() + 1]
                                  [graph.size()];
         
+        for (double[] row : v) {
+            Arrays.fill(row, -1.0);
+        }
+        
         v[0][0] = 1.0;
         
         for (int i = 1; i < graph.size(); i++) {
             v[0][i] = 0.0;
         }
         
-        v(sequence.length(), 
-          graph.size(),
-          characterMap, 
-          stateMap, 
-          inverseStateMap);
+        v[sequence.length()][graph.size() - 1] = 
+                v(sequence.length(), 
+                  graph.size(),
+                  v,
+                  sequence, 
+                  stateMap, 
+                  inverseStateMap);
         
         return tracebackStateSequence(v, sequence, stateMap);
     }
     
+    /**
+     * Implements the actual Viterbi algorithm.
+     * 
+     * @param i               the sequence character index.
+     * @param h               the state ID.
+     * @param matrix          the Viterbi matrix.
+     * @param sequenceMap     the sequence.
+     * @param stateMap        the state map.
+     * @param inverseStateMap the inverse state map.
+     * @return the value for {@code matrix[i][h]}.
+     */
     private double v(int i,
                      int h,
-                     Map<Integer, Character> sequenceMap,
+                     double[][] matrix,
+                     String sequence,
                      Map<Integer, HiddenMarkovModelState> stateMap,
                      Map<HiddenMarkovModelState, Integer> inverseStateMap) {
         
-        char symbol = sequenceMap.get(i);
-        HiddenMarkovModelState state = stateMap.get(h - 1);
+        if (i == 0) {
+            return matrix[0][h];
+        }
+        
+        if (h == stateMap.size()) {
+            return -12.0;
+        }
+        
+        char symbol = sequence.charAt(i - 1);
+        
+        HiddenMarkovModelState state = stateMap.get(h);
         
         double psih = state.getEmissions().get(symbol);
         double pmax = Double.NEGATIVE_INFINITY;
         
-        Set<HiddenMarkovModelState> parentsOfH = state.getIncomingStates();
+        Set<HiddenMarkovModelState> parentsOfState = state.getIncomingStates();
         
-        for (HiddenMarkovModelState parent : parentsOfH) {
+        for (HiddenMarkovModelState parent : parentsOfState) {
             double ptmp = 
                     v(i - 1,
                       inverseStateMap.get(parent), 
-                      sequenceMap,
+                      matrix,
+                      sequence,
                       stateMap,
                       inverseStateMap);
             
             ptmp *= parent.getFollowingStates().get(state);
             pmax = Math.max(pmax, ptmp);
+            
+            matrix[i - 1][inverseStateMap.get(parent)] = pmax;
         }
         
-        return psih * pmax;
+        double resultProbability = psih * pmax;
+        matrix[i][h] = resultProbability;
+        return resultProbability;
     }
     
     private HiddenMarkovModelStateSequence 
@@ -163,13 +198,17 @@ public final class HiddenMarkovModel {
                 String sequence,
                 Map<Integer, HiddenMarkovModelState> stateMap) {
         
-        List<HiddenMarkovModelState> stateList = new ArrayList<>(v.length);
+        List<HiddenMarkovModelState> stateList = new ArrayList<>(v[0].length);
         
-        for (int i = v.length - 1; i > 0; i--) {
+        for (int i = v.length - 1; i >= 0; i--) {
             int index = getArgMaxIndex(v, i);
             stateList.add(stateMap.get(index));
         }
+        
+        stateList.add(endState);
             
+        Collections.reverse(stateList);
+        
         return new HiddenMarkovModelStateSequence(stateList, sequence, this);
     }
         
