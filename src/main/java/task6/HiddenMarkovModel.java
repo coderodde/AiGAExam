@@ -140,6 +140,10 @@ public final class HiddenMarkovModel {
         // Process the parents of the end state:
         for (HiddenMarkovModelState parentOfEndState : parentsOfEndState) {
             
+            if (parentOfEndState.equals(startState)) {
+                continue;
+            }
+            
             int n = sequence.length();
             int hPrime = inverseStateMap.get(parentOfEndState);
             
@@ -207,40 +211,24 @@ public final class HiddenMarkovModel {
         for (HiddenMarkovModelState parent : state.getIncomingStates()) {
             
             if (parent.equals(startState)) {
-                double p = Double.NEGATIVE_INFINITY;
-                
-                for (int j = 0; j < matrix[0].length; j++) {
-                    p = Math.max(p, matrix[0][j]);
-                }
-                
+                tentativeMaximumProbability = 1.0;
+            } else {
+                int parentStateIndex = inverseStateMap.get(parent);
+
+                double tentativeProbability = 
+                        v(i - 1,
+                          parentStateIndex, 
+                          numberOfStates,
+                          matrix,
+                          sequence,
+                          stateMap,
+                          inverseStateMap);
+
+                tentativeProbability *= parent.getFollowingStates().get(state);
                 tentativeMaximumProbability = 
                         Math.max(tentativeMaximumProbability,
-                                 p);
-                
-                // Start state cannot emit:
-                continue;
+                                 tentativeProbability);
             }
-            
-            int parentStateIndex = inverseStateMap.get(parent);
-            
-            double tentativeProbability = 
-                    v(i - 1,
-                      parentStateIndex, 
-                      numberOfStates,
-                      matrix,
-                      sequence,
-                      stateMap,
-                      inverseStateMap);
-            
-            tentativeProbability *= parent.getFollowingStates().get(state);
-            
-            tentativeMaximumProbability = Math.max(tentativeMaximumProbability, 
-                                                   tentativeProbability);
-            
-//            ptmp *= parent.getFollowingStates().get(state);
-//            pmax = Math.max(pmax, ptmp);
-//            
-//            matrix[i - 1][inverseStateMap.get(parent)] = pmax;
         }
         
         double resultProbability = psih * tentativeMaximumProbability;
@@ -255,14 +243,12 @@ public final class HiddenMarkovModel {
                 Map<Integer, HiddenMarkovModelState> stateMap) {
         
         List<HiddenMarkovModelState> stateList = new ArrayList<>(v[0].length);
+        stateList.add(endState);
         
         for (int i = v.length - 1; i >= 0; i--) {
-            int index = getArgMaxIndex(v, i);
+            int index = getIndexOfMaximumProbability(v, i);
             stateList.add(stateMap.get(index));
-            System.out.println("index = " + index);
         }
-        
-        stateList.add(endState);
             
         Collections.reverse(stateList);
         
@@ -270,19 +256,19 @@ public final class HiddenMarkovModel {
     }
         
     /**
-     * This method scans the row {@code v[i - 1]} and returns the index of the
-     * entry with maximum probability.
+     * This method scans the row {@code v[i]} and returns the index of the entry
+     * with maximum probability.
      * 
      * @param v the matrix.
-     * @param i the target row index
+     * @param targetRowIndex the target row index
      * @return the index of the most probable entry in row {@code i - 1}.
      */
-    private int getArgMaxIndex(double[][] v, int i) {
+    private int getIndexOfMaximumProbability(double[][] v, int targetRowIndex) {
         int maxIndex = -1;
         double maxProbability = Double.NEGATIVE_INFINITY;
         
         for (int j = 0; j != v[0].length; j++) {
-            double currentProbability = v[i - 1][j];
+            double currentProbability = v[targetRowIndex][j];
             
             if (maxProbability < currentProbability) {
                 maxProbability = currentProbability;

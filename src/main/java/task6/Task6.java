@@ -15,16 +15,16 @@ public final class Task6 {
                 new HiddenMarkovModelState(0, HiddenMarkovModelStateType.START);
         
         HiddenMarkovModelState endState = 
-                new HiddenMarkovModelState(1, HiddenMarkovModelStateType.END);
+                new HiddenMarkovModelState(3, HiddenMarkovModelStateType.END);
         
         HiddenMarkovModelState codingState = 
                 new HiddenMarkovModelState(
-                        2,
+                        1,
                         HiddenMarkovModelStateType.HIDDEN);
         
         HiddenMarkovModelState noncodingState = 
                 new HiddenMarkovModelState(
-                        3,
+                        2,
                         HiddenMarkovModelStateType.HIDDEN);
         
         HiddenMarkovModel hmm = new HiddenMarkovModel(startState, 
@@ -81,20 +81,28 @@ public final class Task6 {
                           end - start,
                           sequence);
         
-        debugViterbi();
+        int lineNumber = 1;
         
-//        int lineNumber = 1;
-//        
-//        for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
-//            System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
-//        }
-//        
-//        System.out.println("--- Viterbi ---");
-//        
-//        System.out.println(hmm.runViterbiAlgorithm("A"));
+        for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
+            System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
+        }
+        
+        System.out.println("--- Viterbi ---");
+        
+        HiddenMarkovModelStateSequence sequence1 =
+                hmm.computeAllStatePaths("AT").get(0);
+        
+        System.out.println("Expected state sequence: " + sequence1);
+        
+        HiddenMarkovModelStateSequence sequence2 =
+                hmm.runViterbiAlgorithm("AT");
+        
+        System.out.println("The comparison sequence: " + sequence2);
+        
+        debugViterbi1();
     }
     
-    private static void debugViterbi() {
+    private static void debugViterbi1() {
         System.out.println("--- debugViterbi() ---");
         
         HiddenMarkovModelState startState = 
