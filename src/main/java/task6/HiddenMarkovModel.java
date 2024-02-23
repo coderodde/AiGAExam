@@ -109,66 +109,195 @@ public final class HiddenMarkovModel {
             }
         }
         
-        double[][] v = new double[sequence.length() + 1]
-                                 [graph.size()];
+        double[][] viterbiMatrix =
+                computeViterbiMatrix(
+                        sequence,
+                        stateMap,
+                        inverseStateMap);
         
-        for (double[] row : v) {
-            Arrays.fill(row, UNSET_PROBABILITY);
+        System.out.println("yes");
+        
+//        double[][] v = new double[sequence.length() + 1]
+//                                 [graph.size()];
+//        
+//        for (double[] row : v) {
+//            Arrays.fill(row, UNSET_PROBABILITY);
+//        }
+//        
+//        v[0][0] = 1.0;
+//        
+//        for (int i = 1; i < graph.size(); i++) {
+//            v[0][i] = 0.0;
+//        }
+//         
+//        // Build the V[0...n|0..h-1] table. The rightmost column reserved to 
+//        // the end states are kept intact:
+//        v(sequence.length(), // n
+//          graph.size() - 2,  // h - 2
+//          graph.size(),      // h = |H|
+//          v,                 // the Viterbi matrix
+//          sequence, 
+//          stateMap, 
+//          inverseStateMap);
+//        
+//        double pmax = -1.0;
+//        
+//        Set<HiddenMarkovModelState> parentsOfEndState = 
+//                endState.getIncomingStates();
+//        
+//        // Process the parents of the end state:
+//        for (HiddenMarkovModelState parentOfEndState : parentsOfEndState) {
+//            
+//            if (parentOfEndState.equals(startState)) {
+//                continue;
+//            }
+//            
+//            int n = sequence.length();
+//            int hPrime = inverseStateMap.get(parentOfEndState);
+//            
+//            double transitionProbability = 
+//                    parentOfEndState.getFollowingStates().get(endState);
+//            
+//            double vProbability = 
+//                    v(n,
+//                      hPrime, 
+//                      graph.size(),
+//                      v,
+//                      sequence, 
+//                      stateMap,
+//                      inverseStateMap);
+//            
+//            double probabilityProduct = transitionProbability * vProbability;
+//            
+//            if (pmax < probabilityProduct) {
+//                pmax = probabilityProduct;
+//            }
+//        }
+//        
+//        v[sequence.length()][graph.size() - 1] = pmax;
+//        return tracebackStateSequence(v, sequence, stateMap);
+        return null;
+    }
+    
+    private double[][] computeViterbiMatrix(
+            String sequence,
+            Map<Integer, HiddenMarkovModelState> stateMap,
+            Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+        
+        double[][] viterbiMatrix = new double[sequence.length() + 1]
+                                             [stateMap.size()];
+        
+        for (int rowIndex = 1; rowIndex < viterbiMatrix.length; rowIndex++) {
+            Arrays.fill(viterbiMatrix[rowIndex], UNSET_PROBABILITY);
         }
         
-        v[0][0] = 1.0;
+        viterbiMatrix[0][0] = 1.0;
         
-        for (int i = 1; i < graph.size(); i++) {
-            v[0][i] = 0.0;
-        }
-         
-        // Build the V[0...n|0..h-1] table. The rightmost column reserved to 
-        // the end states are kept intact:
-        v(sequence.length(), // n
-          graph.size() - 2,  // h - 2
-          graph.size(),      // h = |H|
-          v,                 // the Viterbi matrix
-          sequence, 
-          stateMap, 
-          inverseStateMap);
-        
-        double pmax = -1.0;
-        
-        Set<HiddenMarkovModelState> parentsOfEndState = 
-                endState.getIncomingStates();
-        
-        // Process the parents of the end state:
-        for (HiddenMarkovModelState parentOfEndState : parentsOfEndState) {
+        for (int columnIndex = 1; 
+                 columnIndex < viterbiMatrix[0].length;
+                 columnIndex++) {
             
-            if (parentOfEndState.equals(startState)) {
-                continue;
-            }
-            
-            int n = sequence.length();
-            int hPrime = inverseStateMap.get(parentOfEndState);
-            
-            double transitionProbability = 
-                    parentOfEndState.getFollowingStates().get(endState);
-            
-            double vProbability = 
-                    v(n,
-                      hPrime, 
-                      graph.size(),
-                      v,
-                      sequence, 
-                      stateMap,
-                      inverseStateMap);
-            
-            double probabilityProduct = transitionProbability * vProbability;
-            
-            if (pmax < probabilityProduct) {
-                pmax = probabilityProduct;
-            }
-            
-            v[n][hPrime] = pmax;
+            viterbiMatrix[0][columnIndex] = 0.0;
         }
         
-        return tracebackStateSequence(v, sequence, stateMap);
+        for (int h = 1; h < viterbiMatrix[0].length - 1; h++) {
+            viterbiMatrix[sequence.length()][h] = 
+                computeViterbiMatrixImpl(
+                        sequence.length(),
+                        h,
+                        viterbiMatrix, 
+                        sequence, 
+                        stateMap,
+                        inverseStateMap);
+        }
+        
+        return viterbiMatrix;
+    }
+    
+    /**
+     * Computes the actual Viterbi matrix.
+     * 
+     * @param i             the {@code i} variable; the length of the sequence 
+     *                      prefix.
+     * @param h             the state index.
+     * @param viterbiMatrix the actual Viterbi matrix under construction.
+     * @param sequence      the symbol sequence.
+     * @param stateMap      the map mapping state IDs to states.
+     * @return 
+     */
+    private double computeViterbiMatrixImpl(
+            int i,
+            int h,
+            double[][] viterbiMatrix,
+            String sequence,
+            Map<Integer, HiddenMarkovModelState> stateMap,
+            Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+        
+        if (viterbiMatrix[i][h] != UNSET_PROBABILITY) {
+            return viterbiMatrix[i][h];
+        }
+        
+        final int NUMBER_OF_STATES = stateMap.size();
+        
+        if (h >= NUMBER_OF_STATES - 1) {
+            return UNSET_PROBABILITY;
+        }
+        
+        if (h == 0) {
+            return i == 0 ? 1.0 : -1.0;
+        }
+        
+        char symbol = sequence.charAt(i - 1);
+        
+        HiddenMarkovModelState state = stateMap.get(h);
+        double psih = state.getEmissions().get(symbol);
+                
+        Set<HiddenMarkovModelState> parentStates = state.getIncomingStates();
+        
+        double maximumProbability = Double.NEGATIVE_INFINITY;
+        
+        for (HiddenMarkovModelState parent : parentStates) {
+            double v = 
+                    computeViterbiMatrixImpl(
+                            i - 1, 
+                            inverseStateMap.get(parent),
+                            viterbiMatrix, 
+                            sequence,
+                            stateMap, 
+                            inverseStateMap);
+            
+            v *= parent.getFollowingStates().get(state);
+            maximumProbability = Math.max(maximumProbability, v);
+        }
+        
+        viterbiMatrix[i][h] = maximumProbability * psih;
+        
+//        for (int j = i - 1; j >= 0; j--) {
+//            double tentativeMaximumProbability = Double.NEGATIVE_INFINITY;
+//            
+//            Set<HiddenMarkovModelState> parents = state.getIncomingStates();
+//            
+//            for (HiddenMarkovModelState parent : parents) {
+//                double probability = 
+//                        computeViterbiMatrixImpl(
+//                                i - 1, 
+//                                inverseStateMap.get(parent),
+//                                viterbiMatrix, 
+//                                sequence,
+//                                stateMap,
+//                                inverseStateMap);
+//                
+//                probability *= parent.getFollowingStates().get(state);
+//                
+//                tentativeMaximumProbability =
+//                        Math.max(tentativeMaximumProbability, 
+//                                 probability);
+//            }
+//            
+//            viterbiMatrix[i][j] = psih * tentativeMaximumProbability;
+//        }
+        
+        return viterbiMatrix[i][h];
     }
     
     /**
@@ -194,6 +323,7 @@ public final class HiddenMarkovModel {
                      Map<HiddenMarkovModelState, Integer> inverseStateMap) {
         
         if (matrix[i][h] != UNSET_PROBABILITY) {
+//            System.out.println("matrix[" + i + "][" + h + "] = " + matrix[i][h]);
             return matrix[i][h];
         }
         

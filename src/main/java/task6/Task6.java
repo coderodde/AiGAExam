@@ -7,6 +7,9 @@ import util.Utils;
 public final class Task6 {
     
     public static void main(String[] args) {
+        example();
+        System.exit(0);
+        
         long seed = Utils.parseSeed(args);
         Random random = new Random(seed);
         System.out.printf("Seed = %d.\n", seed);
@@ -89,13 +92,15 @@ public final class Task6 {
         
         System.out.println("--- Viterbi ---");
         
+        String sequenceText = "CA";
+        
         HiddenMarkovModelStateSequence sequence1 =
-                hmm.computeAllStatePaths("AT").get(0);
+                hmm.computeAllStatePaths(sequenceText).get(0);
         
         System.out.println("Expected state sequence: " + sequence1);
         
         HiddenMarkovModelStateSequence sequence2 =
-                hmm.runViterbiAlgorithm("AT");
+                hmm.runViterbiAlgorithm(sequenceText);
         
         System.out.println("The comparison sequence: " + sequence2);
         
@@ -139,5 +144,71 @@ public final class Task6 {
         HiddenMarkovModelStateSequence sequence = hmm.runViterbiAlgorithm("A");
         
         System.out.println(sequence);
+    }
+    
+    private static void example() {
+        HiddenMarkovModelState startState = 
+                new HiddenMarkovModelState(
+                        0, 
+                        HiddenMarkovModelStateType.START);
+        
+        HiddenMarkovModelState endState = 
+                new HiddenMarkovModelState(
+                        3,
+                        HiddenMarkovModelStateType.END);
+        
+        HiddenMarkovModelState hiddenState1 = 
+                new HiddenMarkovModelState(
+                        1,
+                        HiddenMarkovModelStateType.HIDDEN);
+        
+        HiddenMarkovModelState hiddenState2 = 
+                new HiddenMarkovModelState(
+                        2,
+                        HiddenMarkovModelStateType.HIDDEN);
+        
+        Random random = new Random(13L);
+        
+        HiddenMarkovModel hmm = new HiddenMarkovModel(startState, 
+                                                      endState,
+                                                      random);
+        
+        // BEGIN: State transitions.
+        startState.addStateTransition(hiddenState1, 0.49);
+        startState.addStateTransition(hiddenState2, 0.49);
+        startState.addStateTransition(endState, 0.02);
+        
+        hiddenState1.addStateTransition(hiddenState1, 0.96);
+        hiddenState1.addStateTransition(hiddenState2, 0.02);
+        hiddenState1.addStateTransition(endState, 0.02);
+        
+        hiddenState2.addStateTransition(hiddenState1, 0.02);
+        hiddenState2.addStateTransition(hiddenState2, 0.96);
+        hiddenState2.addStateTransition(endState, 0.02);
+        // END: State transitions.
+        
+        // BEGIN: Emissions.
+        hiddenState1.addEmissionTransition('A', 0.6);
+        hiddenState1.addEmissionTransition('T', 0.4);
+        
+        hiddenState2.addEmissionTransition('A', 0.3);
+        hiddenState2.addEmissionTransition('T', 0.7);
+        // END: Emissions.
+        
+        startState.normalize();
+        hiddenState1.normalize();
+        hiddenState2.normalize();
+        endState.normalize();
+        
+        String text = "TA";
+        
+        HiddenMarkovModelStateSequence expectedSequence = 
+                hmm.computeAllStatePaths(text).get(0);
+        
+        HiddenMarkovModelStateSequence actualSequence =
+                hmm.runViterbiAlgorithm("TA");
+        
+        System.out.printf("Expected state sequence: %s\n", expectedSequence);
+        System.out.printf("Actual state sequence:   %s\n", actualSequence);
     }
 }
