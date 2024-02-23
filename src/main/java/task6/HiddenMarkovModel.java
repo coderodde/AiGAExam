@@ -115,68 +115,7 @@ public final class HiddenMarkovModel {
                         stateMap,
                         inverseStateMap);
         
-        System.out.println("yes");
-        
-//        double[][] v = new double[sequence.length() + 1]
-//                                 [graph.size()];
-//        
-//        for (double[] row : v) {
-//            Arrays.fill(row, UNSET_PROBABILITY);
-//        }
-//        
-//        v[0][0] = 1.0;
-//        
-//        for (int i = 1; i < graph.size(); i++) {
-//            v[0][i] = 0.0;
-//        }
-//         
-//        // Build the V[0...n|0..h-1] table. The rightmost column reserved to 
-//        // the end states are kept intact:
-//        v(sequence.length(), // n
-//          graph.size() - 2,  // h - 2
-//          graph.size(),      // h = |H|
-//          v,                 // the Viterbi matrix
-//          sequence, 
-//          stateMap, 
-//          inverseStateMap);
-//        
-//        double pmax = -1.0;
-//        
-//        Set<HiddenMarkovModelState> parentsOfEndState = 
-//                endState.getIncomingStates();
-//        
-//        // Process the parents of the end state:
-//        for (HiddenMarkovModelState parentOfEndState : parentsOfEndState) {
-//            
-//            if (parentOfEndState.equals(startState)) {
-//                continue;
-//            }
-//            
-//            int n = sequence.length();
-//            int hPrime = inverseStateMap.get(parentOfEndState);
-//            
-//            double transitionProbability = 
-//                    parentOfEndState.getFollowingStates().get(endState);
-//            
-//            double vProbability = 
-//                    v(n,
-//                      hPrime, 
-//                      graph.size(),
-//                      v,
-//                      sequence, 
-//                      stateMap,
-//                      inverseStateMap);
-//            
-//            double probabilityProduct = transitionProbability * vProbability;
-//            
-//            if (pmax < probabilityProduct) {
-//                pmax = probabilityProduct;
-//            }
-//        }
-//        
-//        v[sequence.length()][graph.size() - 1] = pmax;
-//        return tracebackStateSequence(v, sequence, stateMap);
-        return null;
+        return tracebackStateSequence(viterbiMatrix, sequence, stateMap);
     }
     
     private double[][] computeViterbiMatrix(
@@ -380,6 +319,7 @@ public final class HiddenMarkovModel {
             stateList.add(stateMap.get(index));
         }
             
+        stateList.add(startState);
         Collections.reverse(stateList);
         
         return new HiddenMarkovModelStateSequence(stateList, sequence, this);
@@ -393,20 +333,31 @@ public final class HiddenMarkovModel {
      * @param targetRowIndex the target row index
      * @return the index of the most probable entry in row {@code i - 1}.
      */
-    private int getIndexOfMaximumProbability(double[][] v, int targetRowIndex) {
-        int maxIndex = -1;
-        double maxProbability = Double.NEGATIVE_INFINITY;
+    private int getIndexOfMaximumProbability(
+            int i,
+            int h,
+            double[][] v, 
+            Map<Integer, HiddenMarkovModelState> stateMap,
+            Map<HiddenMarkovModelState, Integer> inverseStateMap) {
         
-        for (int j = 0; j != v[0].length; j++) {
-            double currentProbability = v[targetRowIndex][j];
+        HiddenMarkovModelState targetState = stateMap.get(h);
+        Set<HiddenMarkovModelState> parents = targetState.getIncomingStates();
+        double maximumProbability = Double.NEGATIVE_INFINITY;
+        int maximumProbabilityIndex = -1;
+        
+        for (HiddenMarkovModelState parent : parents) {
+            int parentIndex = inverseStateMap.get(parent);
             
-            if (maxProbability < currentProbability) {
-                maxProbability = currentProbability;
-                maxIndex = j;
+            double p = parent.getFollowingStates().get(targetState);
+            p *= v[i - 1][parentIndex];
+            
+            if (maximumProbability < p) {
+                maximumProbability = p;
+                maximumProbabilityIndex = parentIndex;
             }
         }
         
-        return maxIndex;
+        return maximumProbabilityIndex;
     }
     
     public String compose() {
