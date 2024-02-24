@@ -83,9 +83,7 @@ public final class Task6 {
         double hmmProbabilitySum = hmm.runForwardAlgorithm(sequence);
         
         System.out.printf("HMM total probability: %f.\n", hmmProbabilitySum);
-        
-        System.out.printf("Brute-force state paths: %s.\n", 
-                          statePathSequences.get(0));
+        System.out.println("Brute-force state paths:");
         
         int lineNumber = 1;
         
