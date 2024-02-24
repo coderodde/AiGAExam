@@ -115,7 +115,10 @@ public final class HiddenMarkovModel {
                         stateMap,
                         inverseStateMap);
         
-        return tracebackStateSequence(viterbiMatrix, sequence, stateMap);
+        return tracebackStateSequence(viterbiMatrix,
+                                      sequence,
+                                      stateMap,
+                                      inverseStateMap);
     }
     
     private double[][] computeViterbiMatrix(
@@ -210,133 +213,162 @@ public final class HiddenMarkovModel {
         }
         
         viterbiMatrix[i][h] = maximumProbability * psih;
-        
-//        for (int j = i - 1; j >= 0; j--) {
-//            double tentativeMaximumProbability = Double.NEGATIVE_INFINITY;
-//            
-//            Set<HiddenMarkovModelState> parents = state.getIncomingStates();
-//            
-//            for (HiddenMarkovModelState parent : parents) {
-//                double probability = 
-//                        computeViterbiMatrixImpl(
-//                                i - 1, 
-//                                inverseStateMap.get(parent),
-//                                viterbiMatrix, 
-//                                sequence,
-//                                stateMap,
-//                                inverseStateMap);
-//                
-//                probability *= parent.getFollowingStates().get(state);
-//                
-//                tentativeMaximumProbability =
-//                        Math.max(tentativeMaximumProbability, 
-//                                 probability);
-//            }
-//            
-//            viterbiMatrix[i][j] = psih * tentativeMaximumProbability;
-//        }
-        
         return viterbiMatrix[i][h];
-    }
-    
-    /**
-     * Implements the actual Viterbi algorithm. {@code h} may not be larger than
-     * {@code graph.size() - 2} since it cannot emit a symbol.
-     * 
-     * @param i               the sequence character index.
-     * @param h               the state ID. 0, 1, ..., (|H| - 2).
-     * @param numberOfStates  the total number of states in HMM.
-     * @param matrix          the Viterbi matrix.
-     * @param sequenceMap     the sequence.
-     * @param stateMap        the state map.
-     * @param inverseStateMap the inverse state map.
-     * 
-     * @return the value for {@code matrix[i][h]}.
-     */
-    private double v(int i,
-                     int h,
-                     int numberOfStates,
-                     double[][] matrix,
-                     String sequence,
-                     Map<Integer, HiddenMarkovModelState> stateMap,
-                     Map<HiddenMarkovModelState, Integer> inverseStateMap) {
-        
-        if (matrix[i][h] != UNSET_PROBABILITY) {
-//            System.out.println("matrix[" + i + "][" + h + "] = " + matrix[i][h]);
-            return matrix[i][h];
-        }
-        
-        if (h > numberOfStates - 2) {
-            return Double.NaN;
-        }
-        
-        char symbol = sequence.charAt(i - 1);
-        
-        HiddenMarkovModelState state = stateMap.get(h);
-        
-        double psih = state.getEmissions().get(symbol);
-        double tentativeMaximumProbability = Double.NEGATIVE_INFINITY;
-        
-        for (HiddenMarkovModelState parent : state.getIncomingStates()) {
-            
-            if (parent.equals(startState)) {
-                tentativeMaximumProbability = 1.0;
-            } else {
-                int parentStateIndex = inverseStateMap.get(parent);
-
-                double tentativeProbability = 
-                        v(i - 1,
-                          parentStateIndex, 
-                          numberOfStates,
-                          matrix,
-                          sequence,
-                          stateMap,
-                          inverseStateMap);
-
-                tentativeProbability *= parent.getFollowingStates().get(state);
-                tentativeMaximumProbability = 
-                        Math.max(tentativeMaximumProbability,
-                                 tentativeProbability);
-            }
-        }
-        
-        double resultProbability = psih * tentativeMaximumProbability;
-        matrix[i][h] = resultProbability;
-        return resultProbability;
     }
     
     private HiddenMarkovModelStateSequence 
         tracebackStateSequence(
-                double[][] v,
+                double[][] viterbiMatrix,
                 String sequence,
-                Map<Integer, HiddenMarkovModelState> stateMap) {
+                Map<Integer, HiddenMarkovModelState> stateMap,
+                Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+            
+        int bottomMaximumIndex = computeBottomMaximumIndex(viterbiMatrix);
         
-        List<HiddenMarkovModelState> stateList = new ArrayList<>(v[0].length);
+        HiddenMarkovModelState bottomState = stateMap.get(bottomMaximumIndex);
+        
+        List<HiddenMarkovModelState> stateList = 
+                new ArrayList<>(viterbiMatrix[0].length);
+        
         stateList.add(endState);
         
-        for (int i = v.length - 1; i >= 0; i--) {
-            int index = getIndexOfMaximumProbability(v, i);
-            stateList.add(stateMap.get(index));
-        }
-            
+        final int HIGHEST_I = viterbiMatrix.length - 1;
+        
+        tracebackStateSequenceImpl(viterbiMatrix,
+                                   HIGHEST_I, 
+                                   bottomState, 
+                                   stateList, 
+                                   inverseStateMap);
+        
         stateList.add(startState);
+        
         Collections.reverse(stateList);
         
         return new HiddenMarkovModelStateSequence(stateList, sequence, this);
     }
         
+    private void tracebackStateSequenceImpl(
+            double[][] viterbiMatrix,
+            int i,
+            HiddenMarkovModelState state,
+            List<HiddenMarkovModelState> stateList,
+            Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+        
+        if (state.equals(startState)) {
+            return;
+        }
+        
+        stateList.add(state);
+        
+        HiddenMarkovModelState nextState = 
+                computeNextState(viterbiMatrix, 
+                                 i,
+                                 state,
+                                 inverseStateMap);
+        
+        tracebackStateSequenceImpl(viterbiMatrix, 
+                                   i - 1,
+                                   nextState,
+                                   stateList,
+                                   inverseStateMap);
+    }
+    
+    private HiddenMarkovModelState
+         computeNextState(
+                 double[][] viterbiMatrix, 
+                 int i, 
+                 HiddenMarkovModelState state,
+                 Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+             
+        Set<HiddenMarkovModelState> parents = state.getIncomingStates();
+        HiddenMarkovModelState nextState = null;
+        
+        double maximumProbability = Double.NEGATIVE_INFINITY;
+        
+        for (HiddenMarkovModelState parent : parents) {
+            int parentIndex = inverseStateMap.get(parent);
+            
+            double probability = parent.getFollowingStates().get(state);
+            probability *= viterbiMatrix[i - 1][parentIndex];
+            
+            if (maximumProbability < probability) {
+                maximumProbability = probability;
+                nextState = parent;
+            }
+        }
+        
+        return nextState;
+    }
+        
+    private int computeBottomMaximumIndex(double[][] viterbiMatrix) {
+        int maximumIndex = -1;
+        double maximumProbability = Double.NEGATIVE_INFINITY;
+        final int ROW_INDEX = viterbiMatrix.length - 1;
+        
+        for (int i = 1; i < viterbiMatrix[0].length; i++) {
+            double currentProbability = viterbiMatrix[ROW_INDEX][i];
+            
+            if (maximumProbability < currentProbability) {
+                maximumProbability = currentProbability;
+                maximumIndex = i;
+            }
+        }
+        
+        return maximumIndex;
+    }
+    
+//    private void tracebackStateSequenceImpl(
+//            double[][] v,
+//            int i,
+//            int h,
+//            Map<Integer, HiddenMarkovModelState> startMap,
+//            Map<HiddenMarkovModelState, Integer> inverseStateMap,
+//            List<HiddenMarkovModelState> tentativeStateList) {
+//        
+//        
+//    }
+//
+//    private HiddenMarkovModelStateSequence 
+//        tracebackStateSequence(
+//                double[][] v,
+//                String sequence,
+//                Map<Integer, HiddenMarkovModelState> stateMap,
+//                Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+//        
+//        List<HiddenMarkovModelState> stateList = new ArrayList<>(v[0].length);
+//        stateList.add(endState);
+//        
+//        for (int i = v.length - 1; i > 0; i--) {
+//            for (int h = 1; h < v[0].length - 1; h++) {
+//                int index = getIndexOfMaximumProbability(
+//                        i,
+//                        h,
+//                        v,
+//                        stateMap, 
+//                        inverseStateMap);
+//                
+//                stateList.add(stateMap.get(index));
+//            }
+//        }
+//            
+//        stateList.add(startState);
+//        Collections.reverse(stateList);
+//        
+//        return new HiddenMarkovModelStateSequence(stateList, sequence, this);
+//    }
+        
     /**
      * This method scans the row {@code v[i]} and returns the index of the entry
      * with maximum probability.
      * 
-     * @param v the matrix.
+     * @param viterbiMatrix  the Viterbi matrix.
      * @param targetRowIndex the target row index
      * @return the index of the most probable entry in row {@code i - 1}.
      */
     private int getIndexOfMaximumProbability(
             int i,
             int h,
-            double[][] v, 
+            double[][] viterbiMatrix, 
             Map<Integer, HiddenMarkovModelState> stateMap,
             Map<HiddenMarkovModelState, Integer> inverseStateMap) {
         
@@ -349,7 +381,7 @@ public final class HiddenMarkovModel {
             int parentIndex = inverseStateMap.get(parent);
             
             double p = parent.getFollowingStates().get(targetState);
-            p *= v[i - 1][parentIndex];
+            p *= viterbiMatrix[i - 1][parentIndex];
             
             if (maximumProbability < p) {
                 maximumProbability = p;
@@ -372,7 +404,7 @@ public final class HiddenMarkovModel {
                 return sb.toString();
             }
             
-            sb.append(emit(currentState));
+            sb.append(doEmit(currentState));
         }
     }
     
@@ -394,7 +426,7 @@ public final class HiddenMarkovModel {
         throw new IllegalStateException("Should not get here.");
     }
     
-    private char emit(HiddenMarkovModelState currentState) {
+    private char doEmit(HiddenMarkovModelState currentState) {
         double coin = random.nextDouble();
         
         for (Map.Entry<Character, Double> e 
