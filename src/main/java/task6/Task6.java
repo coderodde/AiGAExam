@@ -2,13 +2,14 @@ package task6;
 
 import java.util.List;
 import java.util.Random;
+import static task6.HiddenMarkovModel.sumPathProbabilities;
 import util.Utils;
 
 public final class Task6 {
     
     public static void main(String[] args) {
-//        example();
-//        System.exit(0);
+        example();
+        System.exit(0);
         
         long seed = Utils.parseSeed(args);
         Random random = new Random(seed);
@@ -76,19 +77,28 @@ public final class Task6 {
         
         String sequence = "AGCG";
         
-        List<HiddenMarkovModelStatePath> stateSequenceList = 
+        List<HiddenMarkovModelStatePath> statePathSequences = 
                 hmm.computeAllStatePaths(sequence);
         
         long end = System.currentTimeMillis();
         
         System.out.printf("Brute-force path inference in %d milliseconds for " +
-                         "sequence \"%s\".\n",
+                         "sequence \"%s\", total probability = %f.\n",
                           end - start,
-                          sequence);
+                          sequence,
+                          HiddenMarkovModel.sumPathProbabilities(
+                                  statePathSequences));
+        
+        double hmmProbabilitySum = hmm.runForwardAlgorithm(sequence);
+        
+        System.out.printf("HMM total probability: %f.\n", hmmProbabilitySum);
+        
+        System.out.printf("Brute-force state path: %s.\n", 
+                          statePathSequences.get(0));
         
         int lineNumber = 1;
         
-        for (HiddenMarkovModelStatePath stateSequence : stateSequenceList) {
+        for (HiddenMarkovModelStatePath stateSequence : statePathSequences) {
             System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
         }
         
@@ -202,17 +212,22 @@ public final class Task6 {
         hiddenState2.normalize();
         endState.normalize();
         
-        String text = "TATTA";
+        String text = "TA";
+        List<HiddenMarkovModelStatePath> paths = hmm.computeAllStatePaths(text);
         
-        HiddenMarkovModelStatePath expectedSequence = 
-                hmm.computeAllStatePaths(text).get(0);
+        double pathsTotalProbability = sumPathProbabilities(paths);
         
-        HiddenMarkovModelStatePath actualSequence =
-                hmm.runViterbiAlgorithm(text);
+        System.out.printf("Brute force path probability sum: %f.\n",
+                          pathsTotalProbability);
         
-        System.out.printf("Expected state sequence: %s\n", expectedSequence);
-        System.out.printf("Actual state sequence:   %s\n", actualSequence);
+//        HiddenMarkovModelStatePath expectedSequence = paths.get(0);
+//        
+//        System.out.printf("Brute-force: %f.\n",
+//                          expectedSequence.getProbability());
+        
+        double forwardProbability = hmm.runForwardAlgorithm(text);
+        
+        System.out.printf("Forwawrd algorithm returned:      %f.\n", 
+                          forwardProbability);
     }
-    
-    
 }

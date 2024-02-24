@@ -21,6 +21,7 @@ task5\SuffixArray.class
 task4\SemiDynamicRMQTreeBuilder$RMQTreeBuilderResult.class
 task2\Task2$EditOperation.class
 task5\SuffixDescriptor.class
+task6\HiddenMarkovModelStatePath.class
 task1\LatticeWeightFunction.class
 task1\Alignment.class
 task6\HiddenMarkovModelStateType.class
@@ -37,7 +38,6 @@ task1\HeapNodeHolder.class
 task1\BidirectionalDijkstrasAlgorithm.class
 task5\LinearithmicSuffixArrayBuilder.class
 task1\LatticeNodeChildrenNodeExpander.class
-task6\HiddenMarkovModelStateSequence.class
 task1\NodeExpander.class
 task4\SemiDynamicRMQTree.class
 task1\LatticeNodeParentsNodeExpander.class

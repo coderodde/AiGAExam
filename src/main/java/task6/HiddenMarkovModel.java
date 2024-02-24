@@ -43,6 +43,17 @@ public final class HiddenMarkovModel {
         this.random = random;
     }
     
+    public static double sumPathProbabilities(
+            List<HiddenMarkovModelStatePath> paths) {
+        double psum = 0.0;
+        
+        for (HiddenMarkovModelStatePath path : paths) {
+            psum += path.getProbability();
+        }
+        
+        return psum;
+    }
+    
     /**
      * Performs a brute-force computation of the list of all possible paths in
      * this HMM.
@@ -137,10 +148,57 @@ public final class HiddenMarkovModel {
                         inverseStateMap);
         
         // Uses the dynamic programming result reconstruction:
-        return tracebackStateSequence(viterbiMatrix,
+        return tracebackStateSequenceViterbi(viterbiMatrix,
                                       sequence,
                                       stateMap,
                                       inverseStateMap);
+    }
+    
+    public double runForwardAlgorithm(String sequence) {
+        
+        Set<HiddenMarkovModelState> graph = computeAllStates();
+        
+        if (!graph.contains(endState)) {
+            // End state unreachable. Abort.
+            throw new IllegalStateException("End state is unreachable.");
+        }
+        
+        // Maps the column index to the corresponding state:
+        Map<Integer, HiddenMarkovModelState> stateMap = 
+                new HashMap<>(graph.size());
+        
+        // Maps the state to the corresponding column index:
+        Map<HiddenMarkovModelState, Integer> inverseStateMap = 
+                new HashMap<>(graph.size());
+        
+        // Initialize maps for start and end states:
+        stateMap.put(0, startState);
+        stateMap.put(graph.size() - 1, endState);
+        
+        inverseStateMap.put(startState, 0);
+        inverseStateMap.put(endState, graph.size() - 1);
+        
+        int stateId = 1;
+        
+        // Assign indices to hidden states:
+        for (HiddenMarkovModelState state : graph) {
+            if (!state.equals(startState) && !state.equals(endState)) {
+                stateMap.put(stateId, state);
+                inverseStateMap.put(state, stateId);
+                stateId++;
+            }
+        }
+        
+        // Computes the entire Viterbi matrix:
+        double[][] forwardMatrix =
+                computeForwardMatrix(
+                        sequence,
+                        stateMap,
+                        inverseStateMap);
+        
+        // Uses the dynamic programming result reconstruction:
+        return tracebackStateSequenceForward(forwardMatrix, 
+                                             inverseStateMap);
     }
        
     /**
@@ -178,38 +236,86 @@ public final class HiddenMarkovModel {
             Map<Integer, HiddenMarkovModelState> stateMap,
             Map<HiddenMarkovModelState, Integer> inverseStateMap) {
         
-        double[][] viterbiMatrix = new double[sequence.length() + 1]
-                                             [stateMap.size()];
+        double[][] matrix = new double[sequence.length() + 1]
+                                      [stateMap.size()];
         
         // Set all required cells to unset sentinel:
-        for (int rowIndex = 1; rowIndex < viterbiMatrix.length; rowIndex++) {
-            Arrays.fill(viterbiMatrix[rowIndex], UNSET_PROBABILITY);
+        for (int rowIndex = 1; rowIndex < matrix.length; rowIndex++) {
+            Arrays.fill(matrix[rowIndex], UNSET_PROBABILITY);
         }
         
         // BEGIN: Base case initialization.
-        viterbiMatrix[0][0] = 1.0;
+        matrix[0][0] = 1.0;
         
         for (int columnIndex = 1; 
-                 columnIndex < viterbiMatrix[0].length;
+                 columnIndex < matrix[0].length;
                  columnIndex++) {
             
-            viterbiMatrix[0][columnIndex] = 0.0;
+            matrix[0][columnIndex] = 0.0;
         }
         // END: Done with the base case initialization.
         
         // Recursively build the matrix:
-        for (int h = 1; h < viterbiMatrix[0].length - 1; h++) {
-            viterbiMatrix[sequence.length()][h] = 
+        for (int h = 1; h < matrix[0].length - 1; h++) {
+            matrix[sequence.length()][h] = 
                 computeViterbiMatrixImpl(
                         sequence.length(),
                         h,
-                        viterbiMatrix, 
+                        matrix, 
                         sequence, 
                         stateMap,
                         inverseStateMap);
         }
         
-        return viterbiMatrix;
+        return matrix;
+    }
+    
+    /**
+     * Computes the entire forward matrix.
+     * 
+     * @param sequence        the input text.
+     * @param stateMap        the state map. From column index to the state.
+     * @param inverseStateMap the inverse state map. From state to column index.
+     * 
+     * @return the entire Viterbi matrix.
+     */
+    private double[][] computeForwardMatrix(
+            String sequence,
+            Map<Integer, HiddenMarkovModelState> stateMap,
+            Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+        
+        double[][] forwardMatrix = new double[sequence.length() + 1]
+                                             [stateMap.size()];
+        
+        // Set all required cells to unset sentinel:
+        for (int rowIndex = 1; rowIndex < forwardMatrix.length; rowIndex++) {
+            Arrays.fill(forwardMatrix[rowIndex], UNSET_PROBABILITY);
+        }
+        
+        // BEGIN: Base case initialization.
+        forwardMatrix[0][0] = 1.0;
+        
+        for (int columnIndex = 1; 
+                 columnIndex < forwardMatrix[0].length;
+                 columnIndex++) {
+            
+            forwardMatrix[0][columnIndex] = 0.0;
+        }
+        // END: Done with the base case initialization.
+        
+        // Recursively build the matrix:
+        for (int h = 1; h < forwardMatrix[0].length - 1; h++) {
+            forwardMatrix[sequence.length()][h] = 
+                computeForwardMatrixImpl(
+                        sequence.length(),
+                        h,
+                        forwardMatrix, 
+                        sequence, 
+                        stateMap,
+                        inverseStateMap);
+        }
+        
+        return forwardMatrix;
     }
     
     /**
@@ -272,8 +378,69 @@ public final class HiddenMarkovModel {
         return viterbiMatrix[i][h];
     }
     
+    /**
+     * Computes the actual forward matrix.
+     * 
+     * @param i             the {@code i} variable; the length of the sequence 
+     *                      prefix.
+     * @param h             the state index.
+     * @param forwardMatrix the actual Viterbi matrix under construction.
+     * @param sequence      the symbol sequence.
+     * @param stateMap      the map mapping state IDs to states.
+     * 
+     * @return the forward matrix.
+     */
+    private double computeForwardMatrixImpl(
+            int i,
+            int h,
+            double[][] forwardMatrix,
+            String sequence,
+            Map<Integer, HiddenMarkovModelState> stateMap,
+            Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+        
+        if (forwardMatrix[i][h] != UNSET_PROBABILITY) {
+            return forwardMatrix[i][h];
+        }
+        
+        final int NUMBER_OF_STATES = stateMap.size();
+        
+        if (h >= NUMBER_OF_STATES - 1) {
+            return UNSET_PROBABILITY;
+        }
+        
+        if (h == 0) {
+            return i == 0 ? 1.0 : 0.0;
+        }
+        
+        char symbol = sequence.charAt(i - 1);
+        
+        HiddenMarkovModelState state = stateMap.get(h);
+        double psih = state.getEmissions().get(symbol);
+                
+        Set<HiddenMarkovModelState> parentStates = state.getIncomingStates();
+        
+        double totalProbability = 0.0;
+        
+        for (HiddenMarkovModelState parent : parentStates) {
+            double f =  
+                    computeForwardMatrixImpl(
+                            i - 1, 
+                            inverseStateMap.get(parent),
+                            forwardMatrix, 
+                            sequence,
+                            stateMap, 
+                            inverseStateMap);
+            
+            f  *= parent.getFollowingStates().get(state);
+            totalProbability += f ;
+        }
+        
+        forwardMatrix[i][h] = totalProbability * psih;
+        return forwardMatrix[i][h];
+    }
+    
     private HiddenMarkovModelStatePath 
-        tracebackStateSequence(
+        tracebackStateSequenceViterbi(
                 double[][] viterbiMatrix,
                 String sequence,
                 Map<Integer, HiddenMarkovModelState> stateMap,
@@ -301,6 +468,32 @@ public final class HiddenMarkovModel {
         Collections.reverse(stateList);
         
         return new HiddenMarkovModelStatePath(stateList, sequence, this);
+    }
+    
+    private double 
+        tracebackStateSequenceForward(
+                double[][] forwardMatrix,
+                Map<HiddenMarkovModelState, Integer> inverseStateMap) {
+            
+        final int ROW_INDEX = forwardMatrix.length - 1;
+        
+        double probability = 0.0;
+        
+        Set<HiddenMarkovModelState> parents = endState.getIncomingStates();
+        
+        for (HiddenMarkovModelState parent : parents) {
+            if (parent.equals(startState) || parent.equals(endState)) {
+                // Omit the start state:
+                continue;
+            }
+            
+            int parentIndex = inverseStateMap.get(parent);
+            double p = forwardMatrix[ROW_INDEX][parentIndex];
+            p *= parent.getFollowingStates().get(endState);
+            probability += p;
+        }
+        
+        return probability;
     }
         
     private void tracebackStateSequenceImpl(
