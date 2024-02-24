@@ -7,8 +7,8 @@ import util.Utils;
 public final class Task6 {
     
     public static void main(String[] args) {
-        example();
-        System.exit(0);
+//        example();
+//        System.exit(0);
         
         long seed = Utils.parseSeed(args);
         Random random = new Random(seed);
@@ -65,6 +65,8 @@ public final class Task6 {
         noncodingState.normalize();
         endState.normalize();
         
+        System.out.println("--- Composing random walks ---");
+        
         for (int i = 0; i < 10; i++) {
             int lineNumber = i + 1;
             System.out.printf("%2d: %s\n", lineNumber, hmm.compose());
@@ -92,7 +94,7 @@ public final class Task6 {
         
         System.out.println("--- Viterbi ---");
         
-        String sequenceText = "CA";
+        String sequenceText = "GCGCAAAAA";
         
         HiddenMarkovModelStateSequence sequence1 =
                 hmm.computeAllStatePaths(sequenceText).get(0);
@@ -104,7 +106,7 @@ public final class Task6 {
         
         System.out.println("The comparison sequence: " + sequence2);
         
-        debugViterbi1();
+//        debugViterbi1();
     }
     
     private static void debugViterbi1() {
@@ -200,13 +202,13 @@ public final class Task6 {
         hiddenState2.normalize();
         endState.normalize();
         
-        String text = "TA";
+        String text = "TATTA";
         
         HiddenMarkovModelStateSequence expectedSequence = 
                 hmm.computeAllStatePaths(text).get(0);
         
         HiddenMarkovModelStateSequence actualSequence =
-                hmm.runViterbiAlgorithm("TA");
+                hmm.runViterbiAlgorithm(text);
         
         System.out.printf("Expected state sequence: %s\n", expectedSequence);
         System.out.printf("Actual state sequence:   %s\n", actualSequence);
