@@ -5,13 +5,13 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import java.util.List;
 
-public final class HiddenMarkovModelStateSequence 
-    implements Comparable<HiddenMarkovModelStateSequence> {
+public final class HiddenMarkovModelStatePath 
+    implements Comparable<HiddenMarkovModelStatePath> {
     
     private final List<HiddenMarkovModelState> stateSequence;
     private final double probability;
     
-    HiddenMarkovModelStateSequence(List<HiddenMarkovModelState> stateSequence,
+    HiddenMarkovModelStatePath(List<HiddenMarkovModelState> stateSequence,
                                    String observedSymbols,
                                    HiddenMarkovModel hiddenMarkovModel) {
         
@@ -32,7 +32,7 @@ public final class HiddenMarkovModelStateSequence
     }
     
     @Override
-    public int compareTo(HiddenMarkovModelStateSequence o) {
+    public int compareTo(HiddenMarkovModelStatePath o) {
         return Double.compare(probability, o.probability);
     }
     

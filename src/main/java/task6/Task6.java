@@ -39,13 +39,13 @@ public final class Task6 {
         startState.addStateTransition(codingState, 0.49);
         startState.addStateTransition(endState, 0.02);
         
-        codingState.addStateTransition(codingState, 0.96);
-        codingState.addStateTransition(endState, 0.02);
-        codingState.addStateTransition(noncodingState, 0.02);
+        codingState.addStateTransition(codingState, 0.4);
+        codingState.addStateTransition(endState, 0.3);
+        codingState.addStateTransition(noncodingState, 0.3);
         
-        noncodingState.addStateTransition(noncodingState, 0.96);
-        noncodingState.addStateTransition(codingState, 0.02);
-        noncodingState.addStateTransition(endState, 0.02);
+        noncodingState.addStateTransition(noncodingState, 0.3);
+        noncodingState.addStateTransition(codingState, 0.35);
+        noncodingState.addStateTransition(endState, 0.35);
         // END: State transitions.
         
         // BEGIN: Emissions.
@@ -76,7 +76,7 @@ public final class Task6 {
         
         String sequence = "AGCG";
         
-        List<HiddenMarkovModelStateSequence> stateSequenceList = 
+        List<HiddenMarkovModelStatePath> stateSequenceList = 
                 hmm.computeAllStatePaths(sequence);
         
         long end = System.currentTimeMillis();
@@ -88,7 +88,7 @@ public final class Task6 {
         
         int lineNumber = 1;
         
-        for (HiddenMarkovModelStateSequence stateSequence : stateSequenceList) {
+        for (HiddenMarkovModelStatePath stateSequence : stateSequenceList) {
             System.out.printf("%4d: %s\n", lineNumber++, stateSequence);
         }
         
@@ -96,12 +96,12 @@ public final class Task6 {
         
         String sequenceText = "GCGCAAAAA";
         
-        HiddenMarkovModelStateSequence sequence1 =
+        HiddenMarkovModelStatePath sequence1 =
                 hmm.computeAllStatePaths(sequenceText).get(0);
         
         System.out.println("Expected state sequence: " + sequence1);
         
-        HiddenMarkovModelStateSequence sequence2 =
+        HiddenMarkovModelStatePath sequence2 =
                 hmm.runViterbiAlgorithm(sequenceText);
         
         System.out.println("The comparison sequence: " + sequence2);
@@ -143,7 +143,7 @@ public final class Task6 {
                                                       endState,
                                                       random);
         
-        HiddenMarkovModelStateSequence sequence = hmm.runViterbiAlgorithm("A");
+        HiddenMarkovModelStatePath sequence = hmm.runViterbiAlgorithm("A");
         
         System.out.println(sequence);
     }
@@ -204,13 +204,15 @@ public final class Task6 {
         
         String text = "TATTA";
         
-        HiddenMarkovModelStateSequence expectedSequence = 
+        HiddenMarkovModelStatePath expectedSequence = 
                 hmm.computeAllStatePaths(text).get(0);
         
-        HiddenMarkovModelStateSequence actualSequence =
+        HiddenMarkovModelStatePath actualSequence =
                 hmm.runViterbiAlgorithm(text);
         
         System.out.printf("Expected state sequence: %s\n", expectedSequence);
         System.out.printf("Actual state sequence:   %s\n", actualSequence);
     }
+    
+    
 }

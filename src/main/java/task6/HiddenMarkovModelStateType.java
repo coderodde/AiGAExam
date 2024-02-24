@@ -21,7 +21,7 @@ public enum HiddenMarkovModelStateType {
             default:
                 throw new EnumConstantNotPresentException(
                         HiddenMarkovModelStateType.class, 
-                        "Unknown enum constant.");
+                        "Unknown enum constant: " + this);
         }
     }
 }

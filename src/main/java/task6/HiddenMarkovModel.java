@@ -12,8 +12,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * This class implements an HMM (hidden Markov model).
+ */
 public final class HiddenMarkovModel {
     
+    /**
+     * Used to denote the Viterbi matrix cells that are not yet computed.
+     */
     private static final double UNSET_PROBABILITY = -1.0;
     
     /**
@@ -26,28 +32,26 @@ public final class HiddenMarkovModel {
      */
     private final HiddenMarkovModelState endState;
     
-    /**
-     * Maps each state ID to the HMM state having that ID.
-     */
-    private final Map<Integer, HiddenMarkovModelState> stateMap = 
-          new HashMap<>();
-    
-    private final Set<HiddenMarkovModelState> hiddenStateSet = new HashSet<>();
-    
     private final Random random;
     
     public HiddenMarkovModel(HiddenMarkovModelState startState,
                              HiddenMarkovModelState endState,
                              Random random) {
         
-        checkAlreadyStored(startState);
-        checkAlreadyStored(endState);
-        this.random = random;
         this.startState = startState;
         this.endState = endState;
+        this.random = random;
     }
     
-    public List<HiddenMarkovModelStateSequence> 
+    /**
+     * Performs a brute-force computation of the list of all possible paths in
+     * this HMM.
+     * 
+     * @param sequence the target text.
+     * @return the list of sequences, sorted from most probable to the most
+     *         improbable.
+     */
+    public List<HiddenMarkovModelStatePath> 
         computeAllStatePaths(String sequence) {
             
         int expectedStatePathSize = sequence.length() + 2;
@@ -55,6 +59,7 @@ public final class HiddenMarkovModel {
         List<List<HiddenMarkovModelState>> statePaths = new ArrayList<>();
         List<HiddenMarkovModelState> currentPath = new ArrayList<>();
         
+        // BEGIN: Do the search:
         currentPath.add(startState);
         
         depthFirstSearchImpl(statePaths, 
@@ -62,37 +67,51 @@ public final class HiddenMarkovModel {
                              expectedStatePathSize, 
                              startState);
         
-        List<HiddenMarkovModelStateSequence> sequenceList = 
+        // END: Searching done.
+        
+        // Construct the sequences:
+        List<HiddenMarkovModelStatePath> sequenceList = 
                 new ArrayList<>(statePaths.size());
         
         for (List<HiddenMarkovModelState> statePath : statePaths) {
             sequenceList.add(
-                    new HiddenMarkovModelStateSequence(
+                    new HiddenMarkovModelStatePath(
                             statePath, 
                             sequence,
                             this));
         }
         
+        // Put into descending order by probabilities:
         Collections.sort(sequenceList);
         Collections.reverse(sequenceList);
         
         return sequenceList;
     }
         
-    public HiddenMarkovModelStateSequence runViterbiAlgorithm(String sequence) {
+    /**
+     * Returns the most probable state path for the input sequence.
+     * 
+     * @param sequence the target sequence.
+     * @return the state path.
+     */
+    public HiddenMarkovModelStatePath runViterbiAlgorithm(String sequence) {
         
         Set<HiddenMarkovModelState> graph = computeAllStates();
         
         if (!graph.contains(endState)) {
+            // End state unreachable. Abort.
             throw new IllegalStateException("End state is unreachable.");
         }
         
+        // Maps the column index to the corresponding state:
         Map<Integer, HiddenMarkovModelState> stateMap = 
                 new HashMap<>(graph.size());
         
+        // Maps the state to the corresponding column index:
         Map<HiddenMarkovModelState, Integer> inverseStateMap = 
                 new HashMap<>(graph.size());
         
+        // Initialize maps for start and end states:
         stateMap.put(0, startState);
         stateMap.put(graph.size() - 1, endState);
         
@@ -101,6 +120,7 @@ public final class HiddenMarkovModel {
         
         int stateId = 1;
         
+        // Assign indices to hidden states:
         for (HiddenMarkovModelState state : graph) {
             if (!state.equals(startState) && !state.equals(endState)) {
                 stateMap.put(stateId, state);
@@ -109,18 +129,50 @@ public final class HiddenMarkovModel {
             }
         }
         
+        // Computes the entire Viterbi matrix:
         double[][] viterbiMatrix =
                 computeViterbiMatrix(
                         sequence,
                         stateMap,
                         inverseStateMap);
         
+        // Uses the dynamic programming result reconstruction:
         return tracebackStateSequence(viterbiMatrix,
                                       sequence,
                                       stateMap,
                                       inverseStateMap);
     }
+       
+    /**
+     * Composes a sequence according to this HMM.
+     * 
+     * @return a sequence.
+     */
+    public String compose() {
+        StringBuilder sb = new StringBuilder();
+        
+        HiddenMarkovModelState currentState = startState;
+        
+        while (true) {
+            currentState = doStateTransition(currentState);
+            
+            if (currentState.equals(endState)) {
+                return sb.toString();
+            }
+            
+            sb.append(doEmit(currentState));
+        }
+    }
     
+    /**
+     * Computes the entire Viterbi matrix.
+     * 
+     * @param sequence        the input text.
+     * @param stateMap        the state map. From column index to the state.
+     * @param inverseStateMap the inverse state map. From state to column index.
+     * 
+     * @return the entire Viterbi matrix.
+     */
     private double[][] computeViterbiMatrix(
             String sequence,
             Map<Integer, HiddenMarkovModelState> stateMap,
@@ -129,10 +181,12 @@ public final class HiddenMarkovModel {
         double[][] viterbiMatrix = new double[sequence.length() + 1]
                                              [stateMap.size()];
         
+        // Set all required cells to unset sentinel:
         for (int rowIndex = 1; rowIndex < viterbiMatrix.length; rowIndex++) {
             Arrays.fill(viterbiMatrix[rowIndex], UNSET_PROBABILITY);
         }
         
+        // BEGIN: Base case initialization.
         viterbiMatrix[0][0] = 1.0;
         
         for (int columnIndex = 1; 
@@ -141,7 +195,9 @@ public final class HiddenMarkovModel {
             
             viterbiMatrix[0][columnIndex] = 0.0;
         }
+        // END: Done with the base case initialization.
         
+        // Recursively build the matrix:
         for (int h = 1; h < viterbiMatrix[0].length - 1; h++) {
             viterbiMatrix[sequence.length()][h] = 
                 computeViterbiMatrixImpl(
@@ -216,7 +272,7 @@ public final class HiddenMarkovModel {
         return viterbiMatrix[i][h];
     }
     
-    private HiddenMarkovModelStateSequence 
+    private HiddenMarkovModelStatePath 
         tracebackStateSequence(
                 double[][] viterbiMatrix,
                 String sequence,
@@ -244,7 +300,7 @@ public final class HiddenMarkovModel {
         
         Collections.reverse(stateList);
         
-        return new HiddenMarkovModelStateSequence(stateList, sequence, this);
+        return new HiddenMarkovModelStatePath(stateList, sequence, this);
     }
         
     private void tracebackStateSequenceImpl(
@@ -316,22 +372,6 @@ public final class HiddenMarkovModel {
         
         return maximumIndex;
     }
-       
-    public String compose() {
-        StringBuilder sb = new StringBuilder();
-        
-        HiddenMarkovModelState currentState = startState;
-        
-        while (true) {
-            currentState = doStateTransition(currentState);
-            
-            if (currentState.equals(endState)) {
-                return sb.toString();
-            }
-            
-            sb.append(doEmit(currentState));
-        }
-    }
     
     private HiddenMarkovModelState 
         doStateTransition(HiddenMarkovModelState currentState) {
@@ -365,13 +405,6 @@ public final class HiddenMarkovModel {
         }
         
         throw new IllegalStateException("Should not get here.");
-    }
-    
-    private void checkAlreadyStored(HiddenMarkovModelState state) {
-        if (hiddenStateSet.contains(state)) {
-            throw new IllegalStateException(
-                    "The input state already in this HMM.");
-        }
     }
     
     private Set<HiddenMarkovModelState> computeAllStates() {
