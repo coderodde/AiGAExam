@@ -5,6 +5,9 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import java.util.List;
 
+/**
+ * This class stores the state path over the hidden states of an HMM.
+ */
 public final class HiddenMarkovModelStatePath 
     implements Comparable<HiddenMarkovModelStatePath> {
     
@@ -59,13 +62,28 @@ public final class HiddenMarkovModelStatePath
         return sb.toString();
     }
     
+    /**
+     * Computes the joint probability of this path.
+     * 
+     * @param observedSymbols the observation text.
+     * 
+     * @return the joint probability of this path and the input text.
+     */
     private double computeJointProbability(String observedSymbols) {
         double logProbability = computeEmissionProbabilities(observedSymbols) +
                                 computeTransitionProbabilities();
         
+        // Convert to probability:
         return pow(E, logProbability);
     }
     
+    /**
+     * Computes the product of emission probabilities over the input text.
+     * 
+     * @param observedSymbols the input text.
+     * 
+     * @return the total emission probability.
+     */
     private double computeEmissionProbabilities(String observedSymbols) {
         double probability = 0.0;
         
@@ -78,6 +96,11 @@ public final class HiddenMarkovModelStatePath
         return probability;
     }
     
+    /**
+     * Computes the product of transition probabilities over this path.
+     * 
+     * @return the product of transitions.
+     */
     private double computeTransitionProbabilities() {
         double probability = 0.0;
         

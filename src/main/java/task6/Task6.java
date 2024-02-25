@@ -2,14 +2,15 @@ package task6;
 
 import java.util.List;
 import java.util.Random;
-import util.Utils;
 
+/**
+ * This class implements the demonstration of the hidden Markov model.
+ */
 public final class Task6 {
     
     public static void main(String[] args) {
-        long seed = Utils.parseSeed(args);
-        Random random = new Random(seed);
-        System.out.printf("Seed = %d.\n", seed);
+        
+        Random random = new Random(13L);
         
         HiddenMarkovModelState startState = 
                 new HiddenMarkovModelState(0, HiddenMarkovModelStateType.START);
@@ -79,6 +80,16 @@ public final class Task6 {
                           sequence,
                           HiddenMarkovModel.sumPathProbabilities(
                                   statePathSequences));
+        
+        HiddenMarkovModelStatePath pathBruteForce = statePathSequences.get(0);
+        HiddenMarkovModelStatePath pathEfficient = 
+                hmm.runViterbiAlgorithm(sequence);
+        
+        System.out.printf("Brute-force most probable state path: %s.\n",
+                          pathBruteForce);
+        
+        System.out.printf("Efficient most probable state path:   %s.\n",
+                           pathEfficient);
         
         double hmmProbabilitySum = hmm.runForwardAlgorithm(sequence);
         

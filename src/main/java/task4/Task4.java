@@ -55,6 +55,7 @@ final class Task4 {
     }
              
     private static void replInterface() {
+        System.out.println("Type \"help\" for help index.");
         Scanner scanner = new Scanner(System.in);
         
         while (true) {
@@ -112,7 +113,9 @@ final class Task4 {
                             "rmq KEY1 KEY2\n" + 
                             "print\n" +
                             "new TREE_SIZE\n" +
-                            "help";
+                            "help\n" + 
+                            "quit\n" +
+                            "exit\n";
         
         System.out.println(help);
     }

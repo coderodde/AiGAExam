@@ -69,7 +69,7 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
         AbstractRMQTreeNode<V> node = leafMap.get(key);
         
         while (node != null) {
-            node.setValue(min(node.getValue(), newValue));
+            node.setValue(newValue);
             node = node.getParent();
         }
     }
