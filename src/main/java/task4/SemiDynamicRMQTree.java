@@ -67,10 +67,16 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
      */
     public void update(K key, V newValue) {
         AbstractRMQTreeNode<V> node = leafMap.get(key);
+        node.setValue(newValue);
+        node = node.getParent();
         
         while (node != null) {
-            node.setValue(newValue);
-            node = node.getParent();
+            InternalRMQTreeNode<V> internalNode = (InternalRMQTreeNode<V>) node;
+            
+            internalNode.setValue(min(internalNode.getLeftChild().getValue(),
+                                      internalNode.getRightChild().getValue()));
+            
+            node = internalNode.getParent();
         }
     }
     
@@ -108,6 +114,10 @@ public final class SemiDynamicRMQTree<K extends Comparable<? super K>,
                             rightKey);
             
             throw new IllegalArgumentException(exceptionMessage);
+        }
+        
+        if (leftKey.equals(rightKey)) {
+            return leafMap.get(leftKey).getValue();
         }
         
         AbstractRMQTreeNode<V> splitNode =
