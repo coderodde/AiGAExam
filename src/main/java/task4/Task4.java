@@ -109,13 +109,14 @@ final class Task4 {
     }
     
     private static void printHelp() {
-        final String help = "update KEY VALUE\n" + 
-                            "rmq KEY1 KEY2\n" + 
-                            "print\n" +
-                            "new TREE_SIZE\n" +
-                            "help\n" + 
-                            "quit\n" +
-                            "exit\n";
+        final String help =
+                "update KEY VALUE - Update the key value to VALUE.\n" + 
+                "rmq KEY1 KEY2    - Get the range minimum value.\n" + 
+                "print            - Print the RMQ tree.\n" +
+                "new TREE_SIZE    - Create new RMQ tree with TREE_SIZE nodes.\n" +
+                "help             - Print this help text.\n" + 
+                "quit             - Exit this program.\n" +
+                "exit             - Exit this program.\n";
         
         System.out.println(help);
     }
